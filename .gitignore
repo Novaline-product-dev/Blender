@@ -1,7 +1,10 @@
-env
+setup.txt
+
+# Output #
+##########
 output.txt
 output.csv
-setup.txt
+*.p
 
 # Compiled source #
 ###################

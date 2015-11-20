@@ -10,7 +10,7 @@ from selenium.webdriver.support import expected_conditions
 import time
 import random
 import requests
-import csv
+import pickle
 
 start_time=time.time() # For timing the whole operation
 
@@ -88,6 +88,9 @@ for x in range(len(address_book)):
 
 for i, string in enumerate(fulltext):
     fulltext[i] = ''.join([j if ord(j) < 128 else '' for j in string])
+
+with open("output.p", "wb") as f:
+    pickle.dump(fulltext, f)
 
 print ('Text from %s web pages scanned.' % len(address_book))
 t=time.time()-start_time

@@ -9,6 +9,7 @@ from selenium.webdriver.support import expected_conditions
 import time
 import random
 import requests
+import csv
 
 start_time=time.time() # For timing the whole operation
 
@@ -57,10 +58,8 @@ browser.quit()
 
 print (address_book)
 
-#address_book=['https://en.wikipedia.org/wiki/Pinochle', 'http://www.games.com/game/masque-publishing/pinochle', 'http://www.pagat.com/marriage/pinmain.html', 'http://www.playok.com/en/pinochle/', 'http://www.bicyclecards.com/how-to-play/pinochle-2/', 'https://play.google.com/store/apps/details?id=com.karmangames.pinochle&hl=en', 'http://www.pogo.com/games/pinochle', 'http://www.britannica.com/topic/pinochle', 'https://itunes.apple.com/us/app/pinochle/id351086172?mt=8', 'http://www.instructables.com/id/How-to-play-double-deck-Pinochle/']
-
 # Compile the text from all the web pages
-fulltext='' #initialize
+fulltext= [] # initialize empty list
 
 for x in range(len(address_book)):
     # Retrieve the html
@@ -73,8 +72,6 @@ for x in range(len(address_book)):
         script.extract()
     text = soup.get_text() # get text
 
-    # Found in stack overflow: http://stackoverflow.com/questions/22799990/beatifulsoup4-get-text-still-has-javascript
-    # BeautifulSoup Documentation: http://www.crummy.com/software/BeautifulSoup/bs4/doc/
     # perhaps not entirely necessary:
 
     # break into lines and remove leading and trailing spaces
@@ -84,13 +81,12 @@ for x in range(len(address_book)):
     # drop blank lines
     text = '\n'.join(chunk for chunk in chunks if chunk)
 ##    text=text.encode('utf-8')
+    text = text.replace(',', '')
 
-    fulltext = fulltext + text
+    fulltext.append(text) # append element with text from page x
 
-fulltext = ''.join([i if ord(i) < 128 else ' ' for i in fulltext])
-
-with open("output.txt", "w") as f:
-    f.write(fulltext)
+for i, string in enumerate(fulltext):
+    fulltext[i] = ''.join([j if ord(j) < 128 else '' for j in string])
 
 print ('Text from %s web pages scanned.' % len(address_book))
 t=time.time()-start_time

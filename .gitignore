@@ -1,5 +1,6 @@
 env
 output.txt
+output.csv
 setup.txt
 
 # Compiled source #

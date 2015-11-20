@@ -37,7 +37,7 @@ address_book = [] #initialize list
 # for allowing the page to load each time you get a new page of results
 wait = WebDriverWait(browser, 10) 
 
-# Do this for the first (n) pages
+# Do this for the first (n) pages  
 for n in range(pages):
 
     # Find the 'next page' button and wait until everything is loaded

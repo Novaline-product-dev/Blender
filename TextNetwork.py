@@ -7,7 +7,7 @@ import nltk
 from sklearn.feature_extraction import text 
 from nltk.corpus import stopwords
 
-os.chdir('/Users/mrswhitneybell/Documents/Blender')
+os.chdir(os.getenv('HOME') + '/Documents/Blender')
 textList = pickle.load( open("output.p", "rb"))
 
 # May want to move to a separate file with helper functions

@@ -1,5 +1,4 @@
 ## Scrapes the text from the first n pages on a Google search.
-# Comment
 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys

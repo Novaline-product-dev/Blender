@@ -30,4 +30,9 @@ t=time.time()-start_time
 ts = t % 60
 tm = t // 60
 print ('----- %i minutes, %i seconds -----' % (tm, ts))
-print("%i problem children: " %len(trouble_child), trouble_child)
+if len(trouble_child) == 0:
+    print ("All pages successfully scanned.")
+if len(trouble_child) == 1:
+    print ("1 problem child: ", trouble_child)
+if len(trouble_child) > 1:
+    print("%i problem children: " %len(trouble_child), trouble_child)

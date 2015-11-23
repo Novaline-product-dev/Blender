@@ -52,4 +52,45 @@ def gather_urls(search_term, page_count): # Gathers page_count urls from Google
 
     browser.quit()
 
-    print (address_book)
+    return (address_book)
+
+def text_clean(text): # Alters the text to a desireable format
+    # The following was found at http://stackoverflow.com/questions/22799990/beatifulsoup4-get-text-still-has-javascript
+    # perhaps not entirely necessary:
+
+    # break into lines and remove leading and trailing spaces
+    lines = (line.strip() for line in text.splitlines())
+    # break multi-headlines into a line each
+    chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
+    # drop blank lines
+    text = '\n'.join(chunk for chunk in chunks if chunk)
+    ##    text=text.encode('utf-8') # only if in python 2
+
+    # Other modifications
+    text = text.replace(',', '')
+
+def retrieve_text(address_book):  # Scrapes the text from a list of urls
+    fulltext= [] # initialize empty list
+
+    for x in range(len(address_book)):
+        # Retrieve the html
+        r=requests.get(address_book[x])
+        html=r.text
+
+        # Remove style elements
+        soup=BeautifulSoup(html,"lxml")
+        for script in soup(["script", "style"]):
+            script.extract()
+        text = soup.get_text() # get text
+
+        text_clean(text) # Puts the text ina useful format
+
+        fulltext.append(text) # append element with text from page x
+
+    for i, string in enumerate(fulltext):
+        fulltext[i] = ''.join([j if ord(j) < 128 else '' for j in string])
+
+    with open("output.p", "wb") as f:
+        pickle.dump(fulltext, f)
+
+    

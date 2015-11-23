@@ -71,21 +71,34 @@ def text_clean(text): # Alters the text to a desireable format
 
 def retrieve_text(address_book):  # Scrapes the text from a list of urls
     fulltext= [] # initialize empty list
+    global trouble_child
+    trouble_child = [] # initialize list to find pages that don't work
 
     for x in range(len(address_book)):
         # Retrieve the html
-        r=requests.get(address_book[x])
-        html=r.text
+        proceed ="y"
+        try:
+            r=requests.get(address_book[x])
+            html=r.text
+        except:
+            trouble=address_book[x]
+            trouble_child.append(trouble)
+            proceed="n"
+            pass
 
-        # Remove style elements
-        soup=BeautifulSoup(html,"lxml")
-        for script in soup(["script", "style"]):
-            script.extract()
-        text = soup.get_text() # get text
+        if proceed == "y":
+            # Remove style elements
+            soup=BeautifulSoup(html,"lxml")
+            for script in soup(["script", "style"]):
+                script.extract()
+            text = soup.get_text() # get text
 
-        text_clean(text) # Puts the text ina useful format
+            text_clean(text) # Puts the text in a useful format
 
-        fulltext.append(text) # append element with text from page x
+            fulltext.append(text) # append element with text from page x
+
+            # To track progress:
+            print ("Page: %s, %s to go" %(x+1, len(address_book)-x-1))
 
     for i, string in enumerate(fulltext):
         fulltext[i] = ''.join([j if ord(j) < 128 else '' for j in string])
@@ -93,4 +106,4 @@ def retrieve_text(address_book):  # Scrapes the text from a list of urls
     with open("output.p", "wb") as f:
         pickle.dump(fulltext, f)
 
-    
+    return trouble_child

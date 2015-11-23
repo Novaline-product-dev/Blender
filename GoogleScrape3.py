@@ -23,10 +23,11 @@ address_book=scraperfunctions.gather_urls(search_text, pages)
 print (address_book)
 
 # Scrape the text from each page, clean it, and write it to a pickled file ('output.p')
-scraperfunctions.retrieve_text(address_book)
+trouble_child = scraperfunctions.retrieve_text(address_book) # Also get a list of difficult web pages
 
-print ('Text from %s web pages scanned.' % len(address_book))
+print ('Text from %i web pages scanned.' % (len(address_book)-len(trouble_child)))
 t=time.time()-start_time
 ts = t % 60
 tm = t // 60
-print ('----- %s minutes, %s seconds -----' % (tm, ts))
+print ('----- %i minutes, %i seconds -----' % (tm, ts))
+print("%i problem children: " %len(trouble_child), trouble_child)

@@ -84,7 +84,7 @@ G = nx.relabel_nodes(G, labelMap)
 pos = nx.spring_layout(G)
 nx.draw(G, node_size = 0, pos = pos, alpha = 0.1)  
 nx.draw_networkx_labels(G, pos = pos, font_color = 'blue')
-plt.show() # shows the network without labels
+plt.show() 
 new_stimulus_index = int(len(totals) / 2)
 print(totals.index[new_stimulus_index])
 

@@ -1,18 +1,17 @@
-import pickle
-import os
+import pickle, os, string, random
 import numpy as np 
 import scipy as sp 
 import pandas as pd 
 import matplotlib.pyplot as plt 
 import nltk
-import string
 import networkx as nx
+from gensim import corpora, models, similarities
 
-# The next line throws a warning, but I checked and the sklearn dev team says don't worry about it.  
+# The next line throws a warning, but I checked and the sklearn dev team says
+# don't worry about it.
 from sklearn.feature_extraction import text 
 from nltk.corpus import stopwords
 from nltk.stem.snowball import SnowballStemmer
-
 
 os.chdir(os.getenv('HOME') + '/Documents/Blender')
 textList = pickle.load( open("output.p", "rb"))
@@ -31,7 +30,7 @@ def rmPunct(dirtyStr):
 
 stemmer = SnowballStemmer('english')
 for i, doc in enumerate(textList):
-	temp = doc.split() # split text into a list at spaces
+	temp = doc.split() # tokenize (simplistic and inefficient method)
 	
 	# remove words with numbers
 	temp = [w for w in temp if not hasNumber(w)]
@@ -43,39 +42,52 @@ for i, doc in enumerate(textList):
 	# remove characters specified by me
 	temp = [w for w in temp if w not in set(['[', ']', '\'', '\n'])]
 
-	# remove stopwords.  nltk is case-sensitive: use lowercase.  This step has to be done last, after removing punctuation, etc.
-	temp = [w for w in temp if w.lower() not in stopwords.words('english')]
+	# remove stopwords.  nltk is case-sensitive: use lowercase.  This step has
+	# to be done last, after removing punctuation, etc.
+	temp = [w.lower() for w in temp if w.lower() not in 
+		stopwords.words('english')]
 
-	# stemming is usually done, but in this case we want
-	# human readable format.  We'll have to explore here.
-	# temp = [stemmer.stem(w) for w in temp]
+	# stemming is usually done, but in this case we want human readable format.
+	# We'll have to explore this issue. temp = [stemmer.stem(w) for w in temp]
 
 	# reversing the split performed above
-	textList[i] = ' '.join(temp)
+	textList[i] = temp
 
+dictionary = corpora.Dictionary(textList) # collects stats for each word
+dictionary.save('currentDictionary.dict') # save for later
 
-vectorizer = text.CountVectorizer() # initializes a counter from sklearn
+# This is gensim's style of corpus
+corpus = [dictionary.doc2bow(doc) for doc in textList] 
+# store to disk, for later
+corpora.MmCorpus.serialize('textList.mm', corpus) 
 
-# the counter creates a dtm from textList 
-dtm = vectorizer.fit_transform(textList) 
-
-# dtm uses a method to convert itself to an array
-dtm = dtm.toarray()
-vocab = vectorizer.get_feature_names() # get all the words
-ranks = ['Rank %d' %(i + 1) for i in range(dtm.shape[0])] # just labeling
-
-# Turns dtm into a pandas DataFrame (based on the dataframe object in R)
-dtm = pd.DataFrame(dtm, index = ranks, columns = vocab) 
-tdm = dtm.transpose() # term-doc mat = transpose of doc-term mat
-
-# get the vocab ordered by frequency across all pages
-idx = tdm.sum(axis = 1).sort_values(ascending = False).index 
-tdm = tdm.ix[idx] # sort the term-doc mat by word frequency
-totals = tdm.sum(axis = 1)
-tdm = tdm[totals > 2] # remove rows for infrequent words
-# Crossproduct of term-doc matrix with itself
-ttm = np.dot(tdm, tdm.transpose()) # term-term matrix, or adjacency matrix
-ttm = np.matrix(ttm)
-np.fill_diagonal(ttm, 0)
-
-G = nx.from_numpy_matrix(ttm)
+#vectorizer = text.CountVectorizer() # initializes a counter from sklearn
+#
+## the counter creates a dtm from textList 
+#dtm = vectorizer.fit_transform(textList) 
+#
+## dtm uses a method to convert itself to an array
+#dtm = dtm.toarray()
+#vocab = vectorizer.get_feature_names() # get all the words
+#ranks = ['Rank %d' %(i + 1) for i in range(dtm.shape[0])] # just labeling
+#
+## Turns dtm into a pandas DataFrame (based on the dataframe object in R)
+#dtm = pd.DataFrame(dtm, index = ranks, columns = vocab) 
+#tdm = dtm.transpose() # term-doc mat = transpose of doc-term mat
+#
+## get the vocab ordered by frequency across all pages
+#idx = tdm.sum(axis = 1).sort_values(ascending = False).index 
+#tdm = tdm.ix[idx] # sort the term-doc mat by word frequency
+#totals = tdm.sum(axis = 1)
+#tdm = tdm[totals > 2] # remove rows for infrequent words
+## Crossproduct of term-doc matrix with itself
+#ttm = np.dot(tdm, tdm.transpose()) # term-term matrix, or adjacency matrix
+#ttm = np.matrix(ttm)
+#np.fill_diagonal(ttm, 0)
+#
+#G = nx.from_numpy_matrix(ttm)
+##nx.draw(G)  
+##plt.show() # shows the network without labels
+#print(random.choice(vocab))
+#
+#newStimulus = 

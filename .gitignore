@@ -1,5 +1,9 @@
 setup.txt
 __pycache__/
+*.mm
+*.mm.index
+*.dict
+Aux/
 
 # Output #
 ##########

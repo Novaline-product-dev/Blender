@@ -48,46 +48,44 @@ for i, doc in enumerate(textList):
 		stopwords.words('english')]
 
 	# stemming is usually done, but in this case we want human readable format.
-	# We'll have to explore this issue. temp = [stemmer.stem(w) for w in temp]
+	# We'll have to explore this issue. 
+	temp = [stemmer.stem(w) for w in temp]
 
 	# reversing the split performed above
-	textList[i] = temp
+	textList[i] = ' '.join(temp)
 
-dictionary = corpora.Dictionary(textList) # collects stats for each word
-dictionary.save('currentDictionary.dict') # save for later
+vectorizer = text.CountVectorizer() # initializes a counter from sklearn
 
-# This is gensim's style of corpus
-corpus = [dictionary.doc2bow(doc) for doc in textList] 
-# store to disk, for later
-corpora.MmCorpus.serialize('textList.mm', corpus) 
+# the counter creates a dtm from textList 
+dtm = vectorizer.fit_transform(textList) 
 
-#vectorizer = text.CountVectorizer() # initializes a counter from sklearn
-#
-## the counter creates a dtm from textList 
-#dtm = vectorizer.fit_transform(textList) 
-#
-## dtm uses a method to convert itself to an array
-#dtm = dtm.toarray()
-#vocab = vectorizer.get_feature_names() # get all the words
-#ranks = ['Rank %d' %(i + 1) for i in range(dtm.shape[0])] # just labeling
-#
-## Turns dtm into a pandas DataFrame (based on the dataframe object in R)
-#dtm = pd.DataFrame(dtm, index = ranks, columns = vocab) 
-#tdm = dtm.transpose() # term-doc mat = transpose of doc-term mat
-#
-## get the vocab ordered by frequency across all pages
-#idx = tdm.sum(axis = 1).sort_values(ascending = False).index 
-#tdm = tdm.ix[idx] # sort the term-doc mat by word frequency
-#totals = tdm.sum(axis = 1)
-#tdm = tdm[totals > 2] # remove rows for infrequent words
-## Crossproduct of term-doc matrix with itself
-#ttm = np.dot(tdm, tdm.transpose()) # term-term matrix, or adjacency matrix
-#ttm = np.matrix(ttm)
-#np.fill_diagonal(ttm, 0)
-#
-#G = nx.from_numpy_matrix(ttm)
-##nx.draw(G)  
-##plt.show() # shows the network without labels
-#print(random.choice(vocab))
-#
-#newStimulus = 
+# dtm uses a method to convert itself to an array
+dtm = dtm.toarray()
+vocab = vectorizer.get_feature_names() # get all the words
+ranks = ['Rank %d' %(i + 1) for i in range(dtm.shape[0])] # just labeling
+
+# Turns dtm into a pandas DataFrame (based on the dataframe object in R)
+dtm = pd.DataFrame(dtm, index = ranks, columns = vocab) 
+tdm = dtm.transpose() # term-doc mat = transpose of doc-term mat
+
+# get the vocab ordered by frequency across all pages
+idx = tdm.sum(axis = 1).sort_values(ascending = False).index 
+tdm = tdm.ix[idx] # sort the term-doc mat by word frequency
+totals = tdm.sum(axis = 1)
+tdm = tdm[totals > 2] # remove rows for infrequent words
+# Crossproduct of term-doc matrix with itself
+ttm = np.dot(tdm, tdm.transpose()) # term-term matrix, or adjacency matrix
+ttm = np.matrix(ttm)
+np.fill_diagonal(ttm, 0)
+
+G = nx.from_numpy_matrix(ttm)
+labelMap = dict(zip(G.nodes(), list(totals.index)))
+G = nx.relabel_nodes(G, labelMap)
+pos = nx.spring_layout(G)
+nx.draw(G, node_size = 0, pos = pos, alpha = 0.1)  
+nx.draw_networkx_labels(G, pos = pos, font_color = 'blue')
+plt.show() # shows the network without labels
+new_stimulus_index = int(len(totals) / 2)
+print(totals.index[new_stimulus_index])
+
+

@@ -6,9 +6,9 @@ from bs4 import BeautifulSoup
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions
+import requests
 import time
 import random
-import requests
 import pickle
 
 def gather_urls(search_term, page_count): # Gathers page_count urls from Google

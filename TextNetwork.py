@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 import nltk
 import string
 import networkx as nx
+
+# The next line throws a warning, but I checked and the sklearn dev team says don't worry about it.  
 from sklearn.feature_extraction import text 
 from nltk.corpus import stopwords
 from nltk.stem.snowball import SnowballStemmer

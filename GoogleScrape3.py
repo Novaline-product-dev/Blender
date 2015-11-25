@@ -6,8 +6,8 @@ from pyvirtualdisplay import Display
 
 start_time=time.time() # For timing the whole operation
 
-search_text=input("What do you seek? ") # Gives us our goal
-pages=int(input("How many pages of results would you like? "))
+search_text = input("What do you seek? ") # Gives us our goal
+pages = int(input("How many pages of results would you like? "))
 
 # Open the virtual display
 display = Display()

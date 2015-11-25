@@ -5,10 +5,9 @@ import pandas as pd
 import matplotlib.pyplot as plt 
 import nltk
 import networkx as nx
-from gensim import corpora, models, similarities
+from gensim import corpora, models, similarities, utils
 
-# The next line throws a warning, but I checked and the sklearn dev team says
-# don't worry about it.
+# The next line throws a warning, but I checked and the sklearn dev team says don't worry about it.
 from sklearn.feature_extraction import text 
 from nltk.corpus import stopwords
 from nltk.stem.snowball import SnowballStemmer
@@ -30,7 +29,7 @@ def rmPunct(dirtyStr):
 
 stemmer = SnowballStemmer('english')
 for i, doc in enumerate(textList):
-	temp = doc.split() # tokenize (simplistic and inefficient method)
+	temp = utils.simple_preprocess(doc) # tokenize
 	
 	# remove words with numbers
 	temp = [w for w in temp if not hasNumber(w)]
@@ -40,16 +39,16 @@ for i, doc in enumerate(textList):
 	temp = [rmPunct(w) for w in temp]
 	
 	# remove characters specified by me
-	temp = [w for w in temp if w not in set(['[', ']', '\'', '\n'])]
+	temp = [w for w in temp if w not in set(['[', ']', '\'', 
+		'\n', 'com'])]
 
 	# remove stopwords.  nltk is case-sensitive: use lowercase.  This step has
 	# to be done last, after removing punctuation, etc.
-	temp = [w.lower() for w in temp if w.lower() not in 
-		stopwords.words('english')]
+	temp = [w for w in temp if w not in stopwords.words('english')]
 
 	# stemming is usually done, but in this case we want human readable format.
 	# We'll have to explore this issue. 
-	temp = [stemmer.stem(w) for w in temp]
+	#temp = [stemmer.stem(w) for w in temp]
 
 	# reversing the split performed above
 	textList[i] = ' '.join(temp)
@@ -72,20 +71,38 @@ tdm = dtm.transpose() # term-doc mat = transpose of doc-term mat
 idx = tdm.sum(axis = 1).sort_values(ascending = False).index 
 tdm = tdm.ix[idx] # sort the term-doc mat by word frequency
 totals = tdm.sum(axis = 1)
-tdm = tdm[totals > 2] # remove rows for infrequent words
+
+# Below is a very heavy-handed way of making the network more manageable.  Just remove infrequent words.
+wordFreqThreshold = 50  
+tdm = tdm[totals > wordFreqThreshold] # remove rows for infrequent words
+totals = totals[totals > wordFreqThreshold]
+
 # Crossproduct of term-doc matrix with itself
 ttm = np.dot(tdm, tdm.transpose()) # term-term matrix, or adjacency matrix
 ttm = np.matrix(ttm)
 np.fill_diagonal(ttm, 0)
 
+new_stimulus_index = int(len(totals) / 2)
+print(totals.index[new_stimulus_index])
+
+# Plot the word network
 G = nx.from_numpy_matrix(ttm)
 labelMap = dict(zip(G.nodes(), list(totals.index)))
 G = nx.relabel_nodes(G, labelMap)
 pos = nx.spring_layout(G)
-nx.draw(G, node_size = 0, pos = pos, alpha = 0.1)  
-nx.draw_networkx_labels(G, pos = pos, font_color = 'blue')
+nx.draw(G, node_size = 0, pos = pos, alpha = 0.05)  
+nx.draw_networkx_labels(G, pos = pos, font_color = '#00441b')
 plt.show() 
-new_stimulus_index = int(len(totals) / 2)
-print(totals.index[new_stimulus_index])
+
+
+
+
+
+
+
+
+
+
+
 
 

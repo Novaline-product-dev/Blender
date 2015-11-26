@@ -1,3 +1,5 @@
+import string
+
 def hasNumber(stringToCheck):
 	if any(char.isdigit() for char in stringToCheck):
 		return(True)

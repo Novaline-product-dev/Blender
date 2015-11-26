@@ -5,6 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt 
 import nltk
 import networkx as nx
+import textFunctions
 from gensim import corpora, models, similarities, utils
 
 # The next line throws a warning, but I checked and the sklearn dev team says don't worry about it.
@@ -15,28 +16,16 @@ from nltk.stem.snowball import SnowballStemmer
 os.chdir(os.getenv('HOME') + '/Documents/Blender')
 textList = pickle.load( open("output.p", "rb"))
 
-# May want to move to a separate file with other helper functions
-def hasNumber(stringToCheck):
-	if any(char.isdigit() for char in stringToCheck):
-		return(True)
-	else:
-		return(False)
-
-def rmPunct(dirtyStr):
-	splitCleanStr = [ch for ch in dirtyStr if ch not in string.punctuation]
-	cleanStr = ''.join(splitCleanStr)
-	return(cleanStr)
-
 stemmer = SnowballStemmer('english')
 for i, doc in enumerate(textList):
 	temp = utils.simple_preprocess(doc) # tokenize
 	
 	# remove words with numbers
-	temp = [w for w in temp if not hasNumber(w)]
+	temp = [w for w in temp if not textFunctions.hasNumber(w)]
 
 	# remove freestanding punctuation, and punctuation in words
 	temp = [w for w in temp if w not in string.punctuation]
-	temp = [rmPunct(w) for w in temp]
+	temp = [textFunctions.rmPunct(w) for w in temp]
 	
 	# remove characters specified by me
 	temp = [w for w in temp if w not in set(['[', ']', '\'', 
@@ -71,7 +60,7 @@ tdm = tdm.ix[idx] # sort the term-doc mat by word frequency
 totals = tdm.sum(axis = 1)
 
 # Below is a very heavy-handed way of making the network more manageable.  Just remove infrequent words.
-wordFreqThreshold = 50  
+wordFreqThreshold = 30  
 tdm = tdm[totals > wordFreqThreshold] # remove rows for infrequent words
 totals = totals[totals > wordFreqThreshold]
 
@@ -88,8 +77,8 @@ G = nx.from_numpy_matrix(ttm)
 labelMap = dict(zip(G.nodes(), list(totals.index)))
 G = nx.relabel_nodes(G, labelMap)
 pos = nx.spring_layout(G)
-nx.draw(G, node_size = 0, pos = pos, alpha = 0.05)  
-nx.draw_networkx_labels(G, pos = pos, font_color = '#00441b')
+nx.draw(G, node_size = 0, pos = pos, alpha = 0.04)  
+nx.draw_networkx_labels(G, pos = pos, font_color = '#2ca25f')
 plt.show() 
 
 

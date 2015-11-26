@@ -42,13 +42,11 @@ for i, doc in enumerate(textList):
 	temp = [w for w in temp if w not in set(['[', ']', '\'', 
 		'\n', 'com'])]
 
-	# remove stopwords.  nltk is case-sensitive: use lowercase.  This step has
-	# to be done last, after removing punctuation, etc.
+	# remove stopwords.  nltk is case-sensitive: use lowercase.  This step has to be done last, after removing punctuation, etc.
 	temp = [w for w in temp if w not in stopwords.words('english')]
 
-	# stemming is usually done, but in this case we want human readable format.
-	# We'll have to explore this issue. 
-	#temp = [stemmer.stem(w) for w in temp]
+	# stemming is usually done, but in this case we want human readable format. We'll have to explore this issue. 
+	# temp = [stemmer.stem(w) for w in temp]
 
 	# reversing the split performed above
 	textList[i] = ' '.join(temp)

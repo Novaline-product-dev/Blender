@@ -1,4 +1,8 @@
-import pickle, os, string, random
+import pickle, os, string, random, statistics
+BlenderPath = os.getenv('HOME') + '/Documents/Blender'
+AuxPath = os.getenv('HOME') + '/Documents/Blender/Aux'
+os.chdir(BlenderPath)
+
 import numpy as np 
 import scipy as sp 
 import pandas as pd 
@@ -6,6 +10,7 @@ import matplotlib.pyplot as plt
 import nltk
 import networkx as nx
 import textFunctions
+import enchant 
 from gensim import corpora, models, similarities, utils
 
 # The next line throws a warning, but I checked and the sklearn dev team 
@@ -13,10 +18,6 @@ from gensim import corpora, models, similarities, utils
 from sklearn import feature_extraction 
 from nltk.corpus import stopwords
 from nltk.stem.snowball import SnowballStemmer
-
-AuxPath = os.getenv('HOME') + '/Documents/Blender/Aux'
-BlenderPath = os.getenv('HOME') + '/Documents/Blender'
-os.chdir(BlenderPath)
 
 textList = pickle.load( open("output.p", "rb"))
 
@@ -57,11 +58,17 @@ lsi = models.LsiModel(corpus, num_topics = len(textList))
 
 search_text = pickle.load(open('output2.p', 'rb'))
 index = similarities.MatrixSimilarity(lsi[corpus])
-searchList = [set(text) for text in textList]
+
+searchWords = []
+for text in textList:
+	searchWords.extend(text)
+searchWords = set(searchWords)
+
+d = enchant.Dict("en_US")
 simList = []
 wordList = []
-for text in searchList:
-	for word in text:
+for word in searchWords:
+	if d.check(word):
 		wordList.extend([word])
 		phrase = search_text + ' ' + word
 		vec_repr = dictionary.doc2bow(phrase.split())
@@ -69,8 +76,14 @@ for text in searchList:
 		sim = sum(index[vec_lsi])
 		simList.extend([sim])
 
-# new stimulus word
-print(wordList[np.argmin(np.absolute(simList))]) 
+
+# new stimulus words
+simFrame = pd.DataFrame(simList, index = wordList, columns = ['Similarity'])
+medDistFrame = abs(simFrame - simFrame.median())
+idxMed = medDistFrame.sort_values(by = 'Similarity', ascending = True).index
+print(idxMed[0:9])
+
+
 
 
 

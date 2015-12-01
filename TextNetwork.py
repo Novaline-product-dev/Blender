@@ -81,7 +81,8 @@ for word in searchWords:
 simFrame = pd.DataFrame(simList, index = wordList, columns = ['Similarity'])
 medDistFrame = abs(simFrame - simFrame.median())
 idxMed = medDistFrame.sort_values(by = 'Similarity', ascending = True).index
-print(idxMed[0:9])
+newStimulusWords = pd.DataFrame(idxMed[0:9], columns = ['New Stimuli'])
+print(newStimulusWords)
 
 
 

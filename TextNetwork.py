@@ -81,10 +81,39 @@ for word in searchWords:
 simFrame = pd.DataFrame(simList, index = wordList, columns = ['Similarity'])
 medDistFrame = abs(simFrame - simFrame.median())
 idxMed = medDistFrame.sort_values(by = 'Similarity', ascending = True).index
-newStimulusWords = pd.DataFrame(idxMed[0:9], columns = ['New Stimuli'])
-print(newStimulusWords)
+newStimulusWords = pd.Series(idxMed)
+counter = 0
+for word in newStimulusWords:
+	if counter >= 10:
+		break
+	wordTag = nltk.pos_tag([word])[0][1]
+	if wordTag in ['NN', 'NNP']:
+		print('Try blending your idea with a %s' %word)
+		counter = counter + 1
+	elif wordTag in ['NNS', 'NNPS']:
+		print('Try blending your idea with %s' %word)
+		counter = counter + 1
+	elif wordTag in ['JJ']:
+		print('Try making your idea more %s' %word)
+		counter = counter + 1
+	elif wordTag in ['JJS', 'RBS']:
+		print('Imagine the %s version of your idea' %word)
+		counter = counter + 1
+	elif wordTag in ['JJR', 'RBR']:
+		print('Imagine a %s version of your idea' %word)
+		counter = counter + 1
+	elif wordTag in ['RB']:
+		print('How would your idea change if you implemented it %s' %word)
+		counter = counter + 1
+	elif wordTag in ['VB']:
+		print('How could you %s with your idea?' %word)
+		counter = counter + 1
+
+
+#print(newStimulusWords)
 
 # An example: the first stimulus word for the concept '3D printing' is 'photo', which suggests that a new possible use for 3D printers is printing photographs with texture or depth.  The fourth stimulus word is 'changeable', which could mean changing the printing material partway through a process, in order to print composite structures.  (When I asked someone else, she said it brougth to mind a less rigid object, so the printer would create a squishy object instead of a totally hard one.  This demonstrates the fact that 2 different humans interacting with this system would generate different ideas, which is another interesting topic for exploration.)  
+
 # These examples are encouraging, but since the other words are mostly useless, we still have some work to do.  Next I plan to use POS tags to help generate more sensible stimuli, by placing the words in a template sentance.  For instance, if the word is a singular noun, the template sentence may be: "try incorporating elements from a ____."  If it is an adjective, the sentence may be: "try making your idea more (or less) ____"
 
 

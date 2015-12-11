@@ -1,4 +1,8 @@
 ## Scrapes the text from the first n pages on a Google search.
+import os
+BlenderPath = os.getenv('HOME') + '/Documents/Blender'
+AuxPath = os.getenv('HOME') + '/Documents/Blender/Aux'
+os.chdir(BlenderPath)
 
 import scraperfunctions
 import pickle

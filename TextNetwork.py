@@ -54,7 +54,8 @@ dictionary.save(AuxPath + '/currentDictionary.dict') # save for later
 corpus = [dictionary.doc2bow(doc) for doc in textList] 
 # store to disk, for later
 corpora.MmCorpus.serialize(AuxPath + '/textList.mm', corpus) 
-lsi = models.LsiModel(corpus, num_topics = len(textList))
+lsi = models.LsiModel(corpus, id2word = dictionary, 
+	num_topics = len(textList))
 
 search_text = pickle.load(open('output2.p', 'rb'))
 index = similarities.MatrixSimilarity(lsi[corpus])

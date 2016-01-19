@@ -56,7 +56,7 @@ corpus = [dictionary.doc2bow(doc) for doc in textList]
 corpora.MmCorpus.serialize(AuxPath + '/textList.mm', corpus) 
 lsi = models.LsiModel(corpus, num_topics = len(textList))
 
-search_text = pickle.load(open('output2.p', 'rb'))
+search_text = pickle.load(open('output2.p', 'rb')) # Loads the search text
 index = similarities.MatrixSimilarity(lsi[corpus])
 
 searchWords = []
@@ -64,6 +64,7 @@ for text in textList:
 	searchWords.extend(text)
 searchWords = set(searchWords)
 
+# Weed out non-english words
 d = enchant.Dict("en_US")
 simList = []
 wordList = []

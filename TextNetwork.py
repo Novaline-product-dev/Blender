@@ -42,7 +42,7 @@ for i, doc in enumerate(textList):
 
 	# stemming is usually done, but in this case we want human readable format. 
 	# We'll have to explore this issue. 
-	# temp = [stemmer.stem(w) for w in temp]
+	temp = [stemmer.stem(w) for w in temp]
 
 	# reversing the split performed above
 	textList[i] = temp
@@ -56,6 +56,9 @@ corpus = [dictionary.doc2bow(doc) for doc in textList]
 corpora.MmCorpus.serialize(AuxPath + '/textList.mm', corpus) 
 lsi = models.LsiModel(corpus, id2word = dictionary, 
 	num_topics = len(textList))
+
+#lda = models.LdaModel(corpus, id2word = dictionary, 
+#	num_topics = len(	textList))
 
 search_text = pickle.load(open('output2.p', 'rb')) # Loads the search text
 index = similarities.MatrixSimilarity(lsi[corpus])

@@ -4,10 +4,14 @@ from gensim import corpora, models, utils
 from nltk.corpus import stopwords
 from nltk.stem.snowball import SnowballStemmer
 import string
-#import textFunctions as tf
 from lxml import html
 
 stemmer = SnowballStemmer('english')
+
+def rmPunct(dirtyStr):
+	splitCleanStr = [ch for ch in dirtyStr if ch not in string.punctuation]
+	cleanStr = ''.join(splitCleanStr)
+	return(cleanStr)
 
 def prune(doc):
     """This takes a single document and tokenizes the words, removes
@@ -18,7 +22,7 @@ def prune(doc):
 
     # Remove freestanding punctuation and punctuation in words
     temp = [w for w in temp if w not in string.punctuation]
-    #temp = [tf.rmPunct(w) for w in temp] <----ASK JASON (from ksEvaluator.py)
+    temp = [tf.rmPunct(w) for w in temp]
 
     # Remove specific tokens
     temp = [w for w in temp if w not in set(['[', ']', "'", '\n', 'com'])]
@@ -55,11 +59,14 @@ files = ['Example_wiki_html_short.txt']
 # Run through each file at a time, collecting stats about tokens
 # Weird list comprehension: http://stackoverflow.com/ ...
 # questions/1198777/double-iteration-in-list-comprehension
+# Try reading it from bottom to top
 dictionary = corpora.Dictionary(
-    prune(doc) for file in files for doc in textractor(file))
+    prune(doc)
+        for file in files
+            for doc in textractor(file))
 # Remove words that appear only once, then remove holes
-once_ids = [dictionary.token2id[stopword] for stopword in
-            stopwords.words('english') if stopword in dictionary.token2id]
+once_ids = [tokenid for tokenid, docfreq in dictionary.dfs.iteitems()
+            if docfreq == 1]
 dictionary.filter_tokens(once_ids)
 dictionary.compactify()        
 

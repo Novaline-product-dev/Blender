@@ -7,19 +7,19 @@ from gensim import corpora, models
 from lxml import html
 
 
-def textractor(file):
+def textractor(file_name):
     """Accesses the text of documents in an html file (returns a list)."""
     raw_text = []
-    with open(file) as f:
+    with open(file_name) as f:
         soup = html.fromstring(f.read())
         for doc in soup.xpath('//doc'):
             raw_text.append(doc.text)
     return raw_text
 
-def titlextractor(file):
+def titlextractor(file_name):
     """Accesses the title of documents in an html file (returns a list)."""
     titles=[]
-    with open(file) as f:
+    with open(file_name) as f:
         soup = html.fromstring(f.read())
         for title in soup.xpath('//@title'):
             titles.append(title)
@@ -36,8 +36,8 @@ files = ['Example_wiki_html_short.txt']
 # Try reading it from bottom to top
 dictionary = corpora.Dictionary(
     tf.prune(doc)
-        for file in files
-            for doc in textractor(file))
+        for file_name in files
+            for doc in textractor(file_name))
 # Remove frequent and infrequent words, and limit tokens to 100,000
 dictionary.filter_extremes(no_below = 0)  # Remove no_below for large dictionary
 dictionary.compactify()
@@ -47,9 +47,9 @@ dictionary.compactify()
 # This only holds one file in memory at a time.
 class MyCorpus(object):
     def __iter__(self):
-        for file in files:
-            titles = titlextractor(file)
-            docs = textractor(file)
+        for file_name in files:
+            titles = titlextractor(file_name)
+            docs = textractor(file_name)
             for title, doc in zip(titles, docs):
                 with open('titles.txt', 'a') as f:      # This may not be the most memory-efficient. Research it
                     f.write(''.join((title, '\n')))

@@ -44,17 +44,25 @@ dictionary.compactify()
 
 
 # Create a corpus using the previous dictionary and all the files
+# This only holds one file in memory at a time.
 class MyCorpus(object):
     def __iter__(self):
-        for file in files:                 # Access each file one at a time
+        for file in files:
             titles = titlextractor(file)
             docs = textractor(file)
             for title, doc in zip(titles, docs):
-                yield [title, dictionary.doc2bow(tf.prune(doc))]
+                with open('titles.txt', 'a') as f:      # This may not be the most memory-efficient. Research it
+                    f.write(''.join((title, '\n')))
+                f.close()
+                yield dictionary.doc2bow(tf.prune(doc))
 
 
 corpus = MyCorpus()
-for vector in corpus:
-    print(vector)
+
+# For debugging:
+##for vector in corpus:
+##    print(vector)
     
-    
+# Convert the corpus to Market Matrix format and save it.
+corpora.MmCorpus.serialize('testcorpus.mm', corpus)
+# To load this corpus, use corpus = corpora.MmCorpus('testcorpus.mm')

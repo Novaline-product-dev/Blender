@@ -84,11 +84,11 @@ testing on smaller sets of documents."""
 
 # Load the Market Matrix corpus
 mmcorpus = corpora.MmCorpus('testcorpus.mm')
- # Create the tfidf model object
- tfidf = models.TfidfModel(mmcorpus)
- # Transform the whole corpus and save it
- mmcorpus_tfidf = tfidf[corpus]
- corpora.Mmcorpus.serialize('testcorpus_tfidf.mm', mmcorpus_tfidf)
+# Create the tfidf model object
+tfidf = models.TfidfModel(mmcorpus)
+# Transform the whole corpus and save it
+mmcorpus_tfidf = tfidf[corpus]
+corpora.Mmcorpus.serialize('testcorpus_tfidf.mm', mmcorpus_tfidf)
  
  
 

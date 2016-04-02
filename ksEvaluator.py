@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import random
 import nltk
 import networkx as nx
-import textFunctions as tf
+import textFunctions 
 import enchant
 from gensim import corpora, models, similarities, utils
 
@@ -24,27 +24,7 @@ from nltk.corpus import stopwords
 from nltk.stem.snowball import SnowballStemmer
 
 textList = pickle.load( open("output.p", "rb"))
-
-stemmer = SnowballStemmer('english')
-for i, doc in enumerate(textList):
-	temp = utils.simple_preprocess(doc) # tokenize
-
-	# remove freestanding punctuation, and punctuation in words
-	temp = [w for w in temp if w not in string.punctuation]
-	temp = [tf.rmPunct(w) for w in temp]
-	
-	# remove tokens specified by me
-	temp = [w for w in temp if w not in set(['[', ']', '\'', 
-		'\n', 'com'])]
-
-	# remove stopwords.  nltk is case-sensitive: use lowercase. 
-	# This step has to be done last, after removing punctuation, etc.
-	temp = [w for w in temp if w not in stopwords.words('english')]
-
-	# stem words
-	temp = [stemmer.stem(w) for w in temp]
-
-	textList[i] = temp
+textList = [textFunctions.prune(doc) for doc in textList]
 
 for i, text in enumerate(textList):
 	textList[i] = ' '.join(text)

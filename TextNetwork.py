@@ -20,32 +20,7 @@ from nltk.corpus import stopwords
 from nltk.stem.snowball import SnowballStemmer
 
 textList = pickle.load( open("output.p", "rb"))
-
-stemmer = SnowballStemmer('english')
-for i, doc in enumerate(textList):
-	temp = utils.simple_preprocess(doc) # tokenize
-	
-	# remove words with numbers
-	temp = [w for w in temp if not textFunctions.hasNumber(w)]
-
-	# remove freestanding punctuation, and punctuation in words
-	temp = [w for w in temp if w not in string.punctuation]
-	temp = [textFunctions.rmPunct(w) for w in temp]
-	
-	# remove tokens specified by me
-	temp = [w for w in temp if w not in set(['[', ']', '\'', 
-		'\n', 'com'])]
-
-	# remove stopwords.  nltk is case-sensitive: use lowercase. 
-	# This step has to be done last, after removing punctuation, etc.
-	temp = [w for w in temp if w not in stopwords.words('english')]
-
-	# stemming is usually done, but in this case we want human readable format. 
-	# We'll have to explore this issue. 
-	temp = [stemmer.stem(w) for w in temp]
-
-	# reversing the split performed above
-	textList[i] = temp
+textList = [textFunctions.prune(doc) for doc in textList]
 
 dictionary = corpora.Dictionary(textList) # collects stats for each word
 dictionary.save(AuxPath + '/currentDictionary.dict') # save for later

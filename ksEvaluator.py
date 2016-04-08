@@ -23,7 +23,7 @@ from sklearn import feature_extraction
 from nltk.corpus import stopwords
 from nltk.stem.snowball import SnowballStemmer
 
-textList = pickle.load( open("output.p", "rb"))
+textList = pickle.load( open("fulltext.p", "rb"))
 textList = [textFunctions.prune(doc) for doc in textList]
 
 for i, text in enumerate(textList):
@@ -90,12 +90,12 @@ def jaccard(text):
 
 cdfMat = np.zeros([500, len(textList)])
 for i, doc in enumerate(textList):
-		cdfMat[:, i] = tf.cdf(jaccard(doc))
+		cdfMat[:, i] = textFunctions.cdf(jaccard(doc))
 
 # empirical cdfs averaged across documents in textList yeilds baseline cdf
 baseline = cdfMat.sum(1) / len(textList)
 
-searchText = pickle.load( open("output2.p", "rb"))
+searchText = pickle.load( open("search_text.p", "rb"))
 
 searchWords = []
 for text in textList:
@@ -117,7 +117,7 @@ else :
 	for l, word in enumerate(searchWords):
 		temp2 = list(temp)
 		temp2.extend([word])
-		ksVec[l] = tf.ks(tf.cdf(jaccard(temp2)), baseline)
+		ksVec[l] = textFunctions.ks(textFunctions.cdf(jaccard(temp2)), baseline)
 	print('New word: %s' % searchWords[ksVec.argmin()])
 
 

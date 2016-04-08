@@ -48,7 +48,7 @@ idx = tdm.sum(axis = 1).sort_values(ascending = False).index
 tdm = tdm.ix[idx] # sort the term-doc mat by word frequency
 totals = tdm.sum(axis = 1)
 
-# Below is a very heavy-handed way of making the corpus more manageable:
+# Below is a heavy-handed way of making the corpus more manageable:
 # just remove infrequent words
 wordFreqThreshold = 10
 tdm = tdm[totals > wordFreqThreshold] # remove rows for infrequent words
@@ -81,7 +81,8 @@ numToWord = dict(zip(nums, vocab))
 jaccardMat = pd.DataFrame(interMat / unionMat, index = vocab, 
 	columns = vocab)
 
-# Need to define this function here since it uses some vars in the script
+# Need to define this function here since it uses some vars in the script.
+# bad programming, I know
 def jaccard(text):
 	index = [wordToNum[word] for word in text]
 	out = jaccardMat.iloc[index, index]
@@ -91,7 +92,7 @@ cdfMat = np.zeros([500, len(textList)])
 for i, doc in enumerate(textList):
 		cdfMat[:, i] = tf.cdf(jaccard(doc))
 
-# empirical cdfs averaged across documents in textList yeilds basline cdf
+# empirical cdfs averaged across documents in textList yeilds baseline cdf
 baseline = cdfMat.sum(1) / len(textList)
 
 searchText = pickle.load( open("output2.p", "rb"))

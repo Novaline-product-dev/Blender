@@ -19,7 +19,7 @@ from sklearn import feature_extraction
 from nltk.corpus import stopwords
 from nltk.stem.snowball import SnowballStemmer
 
-textList = pickle.load( open("output.p", "rb"))
+textList = pickle.load( open("fulltext.p", "rb"))
 textList = [textFunctions.prune(doc) for doc in textList]
 
 dictionary = corpora.Dictionary(textList) # collects stats for each word
@@ -35,7 +35,7 @@ lsi = models.LsiModel(corpus, id2word = dictionary,
 #lda = models.LdaModel(corpus, id2word = dictionary, 
 #	num_topics = len(	textList))
 
-search_text = pickle.load(open('output2.p', 'rb')) # Loads the search text
+search_text = pickle.load(open('search_text.p', 'rb')) # Loads the search text
 index = similarities.MatrixSimilarity(lsi[corpus])
 
 searchWords = []

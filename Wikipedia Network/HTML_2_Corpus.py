@@ -1,7 +1,9 @@
 ## Processes the HTML-format file of all Wikipedia articles
+## Line 42 needs to be changed to access your articles in HTML form
 
 import sys
 sys.path.append("..")
+import os
 import textFunctions as tf
 from gensim import corpora, models
 from lxml import html
@@ -30,11 +32,15 @@ def titlextractor(file_name):
 
 print(time(), 'Start.')
 # Provide a route by which to access all the files
-chdir(os.environ['HOME']+'/wikidump/wiki_html3')
+os.chdir(os.environ['HOME'])
 files = []
-with open('filenames.txt', 'r') as f:
+# Make sure you have already generated a list of files with
+# filename_list_generator.py
+with open('Documents/Blender/Wikipedia Network/filenames.txt', 'r') as f:
     for line in f:
         files.append(line.strip('\n'))
+os.chdir('wikidump/wiki_html3')  ### THIS IS HARDCODED FOR FSL.byu.edu -
+# You can change this to your directory that houses the AA,AB,AC files
 
 
 # Run through each file at a time, collecting stats about tokens
@@ -100,5 +106,4 @@ for testing on smaller sets of documents."""
 ### Transform the whole corpus and save it
 ##mmcorpus_lsi = lsi[mmcorpus]
 ##corpora.MmCorpus.serialize('testcorpus_lsi.mm', mmcorpus_lsi)
-
 

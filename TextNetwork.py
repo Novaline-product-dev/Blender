@@ -5,13 +5,10 @@ os.chdir(BlenderPath)
 
 import numpy as np 
 import pandas as pd
-import matplotlib.pyplot as plt
 import nltk
-import networkx as nx
 import textFunctions
 import enchant
 from gensim import corpora, models, similarities, utils
-from sklearn import feature_extraction 
 
 
 textList = pickle.load( open("fulltext.p", "rb"))
@@ -55,7 +52,7 @@ medDistFrame = abs(simFrame - simFrame.median())
 idxMed = medDistFrame.sort_values(by = 'Similarity', ascending = True).index
 newStimulusWords = pd.Series(idxMed)
 counter = 0
-num_items = 30
+num_items = 10
 for word in newStimulusWords:
     if counter >= num_items:
         break
@@ -85,4 +82,4 @@ for word in newStimulusWords:
 
 # Below is just for plotting.  Comment if you don't want the plot
 #--------------------------------------------------------------------
-textNetworkPlot(textList)
+textFunctions.textNetworkPlot(textList)

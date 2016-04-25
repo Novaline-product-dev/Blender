@@ -4,10 +4,13 @@ from scipy import stats
 import numpy as np
 from numpy import *
 import pandas as pd
+import networkx as nx
+import matplotlib.pyplot as plt
 from statsmodels.distributions import empirical_distribution as ed
 from gensim import utils
 from nltk.stem.snowball import SnowballStemmer
 from nltk.corpus import stopwords
+from sklearn import feature_extraction 
 
 def hasNumber(stringToCheck):
     """Checks string for numbers, returns a boolean."""
@@ -59,6 +62,10 @@ def prune(doc):
     return temp
 
 def textNetworkPlot(textList, wordFreqThreshold = 10):
+    """ Plots a pared-down word-word connection network.  If you increase wordFreqThreshold, it pares down the network.  wordFreqThreshold will depend on the size of textList. 
+
+        textList should be a list of unordered lists of words. 
+    """
     for i, text in enumerate(textList):
         textList[i] = ' '.join(text)
 

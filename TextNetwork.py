@@ -4,7 +4,6 @@ AuxPath = os.getenv('HOME') + '/Documents/Blender/Aux'
 os.chdir(BlenderPath)
 
 import numpy as np 
-import scipy as sp
 import pandas as pd
 import matplotlib.pyplot as plt
 import nltk
@@ -12,12 +11,8 @@ import networkx as nx
 import textFunctions
 import enchant
 from gensim import corpora, models, similarities, utils
-
-# The next line throws a warning, but I checked and the sklearn dev team 
-# says don't worry about it.
 from sklearn import feature_extraction 
-from nltk.corpus import stopwords
-from nltk.stem.snowball import SnowballStemmer
+
 
 textList = pickle.load( open("fulltext.p", "rb"))
 textList = [textFunctions.prune(doc) for doc in textList]
@@ -31,9 +26,6 @@ corpus = [dictionary.doc2bow(doc) for doc in textList]
 corpora.MmCorpus.serialize(AuxPath + '/textList.mm', corpus) 
 lsi = models.LsiModel(corpus, id2word = dictionary, 
 	num_topics = len(textList))
-
-#lda = models.LdaModel(corpus, id2word = dictionary, 
-#	num_topics = len(	textList))
 
 search_text = pickle.load(open('search_text.p', 'rb')) # Loads the search text
 index = similarities.MatrixSimilarity(lsi[corpus])
@@ -93,15 +85,9 @@ for word in newStimulusWords:
 
 #print(newStimulusWords)
 
-# An example: the first stimulus word for the concept '3D printing' is 'photo', which suggests that a new possible use for 3D printers is printing photographs with texture or depth.  Another stimulus word is 'changeable', which could mean changing the printing material partway through a process, in order to print composite structures.  (When I asked someone else, she said it brougth to mind a less rigid object, so the printer would create a squishy object instead of a totally hard one.  This demonstrates the fact that 2 different humans interacting with this system would generate different ideas, which is another interesting topic for exploration.)  
 
-# These examples are encouraging, but since the other words are mostly useless, we still have some work to do.  Next I plan to use POS tags to help generate more sensible stimuli, by placing the words in a template sentance.  For instance, if the word is a singular noun, the template sentence may be: "try incorporating elements from a ____."  If it is an adjective, the sentence may be: "try making your idea more (or less) ____"
-
-
-
-
-# Below is just for plotting.  Comment out if you don't want the plot
-#-------------------------------------------------------------------------------
+# Below is just for plotting.  Comment if you don't want the plot
+#--------------------------------------------------------------------
 for i, text in enumerate(textList):
 	textList[i] = ' '.join(text)
 

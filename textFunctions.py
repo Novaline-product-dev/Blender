@@ -6,7 +6,6 @@ from numpy import *
 import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
-from statsmodels.distributions import empirical_distribution as ed
 from gensim import utils
 from nltk.stem.snowball import SnowballStemmer
 from nltk.corpus import stopwords
@@ -22,23 +21,7 @@ def rmPunct(dirtyStr):
     cleanStr = ''.join(splitCleanStr)
     return(cleanStr)
 
-def cdf(array):
-    """This takes a 2D array (matrix) of jaccard indices and returns the cdf values on a grid with 500 points equally spaced from 0 to 1.
-    """
-    array = np.array(array)
-    utVec = np.diagonal(array)
-    for i in range(1, array.shape[0]):
-        utVec = np.concatenate([utVec, np.diagonal(array, i)])
-    xgrid = np.linspace(0, 1, 500)
-    ecdf = ed.ECDF(utVec)
-    yvals = ecdf(xgrid)
-    return(yvals)
-
-def ks(cdfVec1, cdfVec2):
-    """ Computes the Kolmogorov-Smirnov Distance between 2 cdf vectors."""
-    return(max(abs(cdfVec1 - cdfVec2)))
-
-def prune(doc):
+def prune(doc, stoplist = None):
     """This takes a single document and tokenizes the words, removes
     undesirable elements, and prepares it to be loaded into a dictionary.
     """
@@ -48,6 +31,10 @@ def prune(doc):
     # Remove freestanding punctuation and punctuation in words
     temp = [w for w in temp if w not in string.punctuation]
     temp = [rmPunct(w) for w in temp]
+
+    # Remove words in passed stoplist
+    if stoplist:
+        temp = [w for w in temp if w not in stoplist]
 
     # Remove specific tokens
     temp = [w for w in temp if w not in set(['[', ']', "'", '\n', 'com'])]

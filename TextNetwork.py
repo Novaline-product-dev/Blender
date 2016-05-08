@@ -10,7 +10,6 @@ import textFunctions
 import enchant
 from gensim import corpora, models, similarities, utils
 
-
 textList = pickle.load( open("fulltext.p", "rb"))
 textList = [textFunctions.prune(doc) for doc in textList]
 
@@ -44,7 +43,6 @@ for word in searchWords:
         vec_lsi = lsi[vec_repr] # convert the query to LSI space
         sim = sum(index[vec_lsi])
         simList.extend([sim])
-
 
 # new stimulus words
 simFrame = pd.DataFrame(simList, index = wordList, columns = ['Similarity'])
@@ -80,6 +78,6 @@ for word in newStimulusWords:
         counter = counter + 1
 
 
-# Below is just for plotting.  Comment if you don't want the plot
+# Plot.  Comment if you don't care.
 #--------------------------------------------------------------------
 textFunctions.textNetworkPlot(textList)

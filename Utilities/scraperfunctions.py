@@ -132,15 +132,15 @@ def google_scrape(search_text, pages, p = False):
     # ('fulltext.p'). Also returns a list of difficult web pages.
     # Prints logging information
     trouble_child = retrieve_text(address_book)
-
-    print ('Text from %i web pages scanned.' % (len(address_book)-len(trouble_child)))
-    t=time.time()-start_time
-    ts = t % 60
-    tm = t // 60
-    print ('----- %i minutes, %i seconds -----' % (tm, ts))
-    if len(trouble_child) == 0:
-        print ("All pages successfully scanned.")
-    if len(trouble_child) == 1:
-        print ("1 problem child: ", trouble_child)
-    if len(trouble_child) > 1:
-        print("%i problem children: " % len(trouble_child),  trouble_child)
+    if p == True:
+        print ('Text from %i web pages scanned.' % (len(address_book)-len(trouble_child)))
+        t=time.time()-start_time
+        ts = t % 60
+        tm = t // 60
+        print ('----- %i minutes, %i seconds -----' % (tm, ts))
+        if len(trouble_child) == 0:
+            print ("All pages successfully scanned.")
+        if len(trouble_child) == 1:
+            print ("1 problem child: ", trouble_child)
+        if len(trouble_child) > 1:
+            print("%i problem children: " % len(trouble_child),  trouble_child)

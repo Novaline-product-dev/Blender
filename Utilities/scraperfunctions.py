@@ -133,7 +133,7 @@ def google_scrape(search_text, pages, save_path):
     print (address_book)
 
     # Scrape the text from each page, clean it, and write it to a 
-    # pickled file ('output.p')
+    # pickled file ('fulltext.p')
     # Also get a list of difficult web pages
     result_pages = retrieve_text(address_book, save_path)
     trouble_child = result_pages.failed_pages 

@@ -39,7 +39,7 @@ def gather_urls(search_term, page_count): # Gathers page_count urls from Google
         # Find the 'next page' button and wait until everything is loaded
         #elem=wait.until(expected_conditions.element_to_be_clickable((By.XPATH,'//a[@id="pnnext"]')))
         
-        elems = browser.find_elements_by_xpath("//ol//div//div/div/h3/a")
+        elems = browser.find_elements_by_xpath("//div//div/div/h3/a")
         for el in elems:
             url=str(el.get_attribute('href'))
             address_book.append(url)

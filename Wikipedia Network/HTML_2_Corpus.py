@@ -39,7 +39,7 @@ files = []
 with open('Documents/Blender/Wikipedia Network/filenames.txt', 'r') as f:
     for line in f:
         files.append(line.strip('\n'))
-os.chdir('wikidump/wiki_html3')  ### THIS IS HARDCODED FOR FSL.byu.edu -
+os.chdir('Documents/BlenderTester')  ### THIS IS HARDCODED FOR FSL.byu.edu -
 # You can change this to your directory that houses the AA,AB,AC files
 
 
@@ -52,12 +52,11 @@ dictionary = corpora.Dictionary(
     tf.prune(doc)
         for file_name in files
             for doc in textractor(file_name))
-dictionary.save('testdictionary.dict')
 print(time(), 'Dictionary loaded. Filtering extremes.')
 # Remove frequent and infrequent words, and limit tokens to 100,000
-dictionary.filter_extremes(no_below = 0)  # Remove no_below for large dictionary
+dictionary.filter_extremes()
 dictionary.compactify()
-
+dictionary.save('dictionary.dict')
 
 # Create a corpus using the previous dictionary and all the files
 # This only holds one file in memory at a time.
@@ -82,28 +81,28 @@ corpus = MyCorpus()
     
 # Convert the corpus to Market Matrix format and save it.
 print(time(), 'Corpus built. Converting to Market Matrix format.')
-corpora.MmCorpus.serialize('testcorpus.mm', corpus)
+corpora.MmCorpus.serialize('corpus.mm', corpus)
 print(time(), 'Market Matrix format saved. Process finished.')
 
 """The following will set everything up to use wikiScript to make comparisons.
-wikiScript.py requires a tfidfcorpus (testcorpus_tfidf.mm, see below),
-a dictionary (testdictionary.dict, see above), and an lsi model
-(testcorpus_lsi.mm). This is probably best done from the shell as each of these
+wikiScript.py requires a tfidfcorpus (corpus_tfidf.mm, see below),
+a dictionary (dictionary.dict, see above), and an lsi model
+(corpus_lsi.mm). This is probably best done from the shell as each of these
 steps will take a very long time. However, this section can be uncommented out
 for testing on smaller sets of documents."""
 
 ### Load the Market Matrix corpus
-##mmcorpus = corpora.MmCorpus('testcorpus.mm')
+##mmcorpus = corpora.MmCorpus('corpus.mm')
 ### Create the tfidf model object
 ##tfidf = models.TfidfModel(mmcorpus)
 ### Transform the whole corpus and save it
 ##mmcorpus_tfidf = tfidf[mmcorpus]
-##corpora.MmCorpus.serialize('testcorpus_tfidf.mm', mmcorpus_tfidf)
+##corpora.MmCorpus.serialize('corpus_tfidf.mm', mmcorpus_tfidf)
 ### Create the lsi model object
-##dictionary=corpora.Dictionary.load('testdictionary.dict')
+##dictionary=corpora.Dictionary.load('dictionary.dict')
 ##lsi = models.LsiModel(mmcorpus, id2word=dictionary, num_topics=2)
 ##lsi.print_topics(2)
 ### Transform the whole corpus and save it
 ##mmcorpus_lsi = lsi[mmcorpus]
-##corpora.MmCorpus.serialize('testcorpus_lsi.mm', mmcorpus_lsi)
+##corpora.MmCorpus.serialize('corpus_lsi.mm', mmcorpus_lsi)
 

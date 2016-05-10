@@ -1,4 +1,7 @@
 import pickle, os, string, random, statistics
+UtilPath = os.getenv('HOME') + '/Documents/Blender/Utilities'
+os.chdir(UtilPath)
+import textFunctions
 BlenderPath = os.getenv('HOME') + '/Documents/Blender'
 AuxPath = os.getenv('HOME') + '/Documents/Blender/Aux'
 os.chdir(BlenderPath)
@@ -6,7 +9,6 @@ os.chdir(BlenderPath)
 import numpy as np 
 import pandas as pd
 import nltk
-import textFunctions
 import enchant
 from gensim import corpora, models, similarities, utils
 

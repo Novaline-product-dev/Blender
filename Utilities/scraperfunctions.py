@@ -56,6 +56,7 @@ def gather_urls(search_term, page_count): # Gathers page_count urls from Google
 
     return (address_book)
 
+
 def text_clean(text): # Alters the text to a desireable format
     # The following was found at http://stackoverflow.com/questions/22799990/beatifulsoup4-get-text-still-has-javascript
     # perhaps not entirely necessary:
@@ -70,6 +71,7 @@ def text_clean(text): # Alters the text to a desireable format
 
     # Other modifications
     text = text.replace(',', '')
+
 
 def retrieve_text(address_book, save_path):  # Scrapes the text from a list of urls
     fulltext= [] # initialize empty list
@@ -110,6 +112,7 @@ def retrieve_text(address_book, save_path):  # Scrapes the text from a list of u
 
     out_tuple = namedtuple('out_tuple', ['failed_pages', 'fulltext'])
     return out_tuple(failed_pages, fulltext)
+
 
 def google_scrape(search_text, pages, save_path):
     start_time = time.time() # For timing the whole operation

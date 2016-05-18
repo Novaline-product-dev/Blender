@@ -52,7 +52,7 @@ medDistFrame = abs(simFrame - simFrame.median())
 idxMed = medDistFrame.sort_values(by = 'Similarity', ascending = True).index
 newStimulusWords = pd.Series(idxMed)
 counter = 0
-num_items = 10
+num_items = 40
 for word in newStimulusWords:
     if counter >= num_items:
         break
@@ -82,4 +82,4 @@ for word in newStimulusWords:
 
 # Plot.  Comment if you don't care.
 #--------------------------------------------------------------------
-textFunctions.textNetworkPlot(textList)
+#textFunctions.textNetworkPlot(textList)

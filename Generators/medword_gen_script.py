@@ -12,7 +12,7 @@ import nltk
 import enchant
 from gensim import corpora, models, similarities, utils
 
-print(' '.join(medword.median_words()))
+print(' '.join(medword.median_words('..')))
 
 # Plot.  Comment if you don't care.
 #--------------------------------------------------------------------

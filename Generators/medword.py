@@ -1,13 +1,13 @@
 import pickle, os, string, random
-import textFunctions
+import text_fun
 import numpy as np 
 import pandas as pd
 import nltk
 from gensim import corpora, models, similarities, utils
 
-def medWordGen():
+def median_words(num_ideas = 30):
     textList = pickle.load( open("fulltext.p", "rb"))
-    textList = [textFunctions.prune(doc) for doc in textList]
+    textList = [text_fun.prune(doc) for doc in textList]
 
     dictionary = corpora.Dictionary(textList) # collects stats for each word
     corpus = [dictionary.doc2bow(doc) for doc in textList] 
@@ -39,10 +39,9 @@ def medWordGen():
     idxMed = medDistFrame.sort_values(by = 'Similarity', ascending = True).index
     newStimulusWords = pd.Series(idxMed)
     counter = 0
-    num_items = 30
     ideaList = []
     for word in newStimulusWords:
-        if counter >= num_items:
+        if counter >= num_ideas:
             break
         wordTag = nltk.pos_tag([word])[0][1]
         if wordTag in ['NN', 'NNP']:

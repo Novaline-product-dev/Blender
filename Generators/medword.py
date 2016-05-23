@@ -23,15 +23,17 @@ def median_words(path_to_inputs, num_ideas = 30):
         searchWords.extend(text)
     searchWords = set(searchWords)
 
+    d = enchant.Dict("en_US")
     simList = []
     wordList = []
     for word in searchWords:
-        wordList.extend([word])
-        phrase = search_text + ' ' + word
-        vec_repr = dictionary.doc2bow(phrase.split())
-        vec_lsi = lsi[vec_repr] # convert the query to LSI space
-        sim = sum(index[vec_lsi])
-        simList.extend([sim])
+        if d.check(word):
+            wordList.extend([word])
+            phrase = search_text + ' ' + word
+            vec_repr = dictionary.doc2bow(phrase.split())
+            vec_lsi = lsi[vec_repr] # convert the query to LSI space
+            sim = sum(index[vec_lsi])
+            simList.extend([sim])
 
     # new stimulus words
     simFrame = pd.DataFrame(simList, index = wordList, 

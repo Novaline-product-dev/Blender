@@ -11,6 +11,7 @@ The current version is preliminary and merely produces stimulus words associated
 4. The new stimulus words are POS-tagged and embedded in a sentence which suggests a way to innovate on the seed term.  For example, if a user entered "3D printing" as a seed term, an output might be: "Try blending 3D printing with a photo."
 5. The interpretation of the stimulus term is up to the user, that's the human intelligence part!
 6. In addition to the suggestions, Blender produces a word-word network plot.  It is important to note that the network plot is only a single representation among infinitely many.
+7. See [centaurific.com](https://centaurific.com/blender) to try it as a web application.
 
 
 ## <span style = "color:#002699">Why? </span>

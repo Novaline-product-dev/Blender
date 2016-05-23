@@ -1,7 +1,7 @@
 import pickle, os, string, random, statistics
 UtilPath = os.getenv('HOME') + '/Documents/Blender/Utilities'
 os.chdir(UtilPath)
-import textFunctions
+import text_fun
 BlenderPath = os.getenv('HOME') + '/Documents/Blender'
 AuxPath = os.getenv('HOME') + '/Documents/Blender/Aux'
 os.chdir(BlenderPath)
@@ -13,7 +13,7 @@ import enchant
 from gensim import corpora, models, similarities, utils
 
 textList = pickle.load( open("fulltext.p", "rb"))
-textList = [textFunctions.prune(doc) for doc in textList]
+textList = [text_fun.prune(doc) for doc in textList]
 
 dictionary = corpora.Dictionary(textList) # collects stats for each word
 dictionary.save(AuxPath + '/currentDictionary.dict') # save for later
@@ -82,4 +82,4 @@ for word in newStimulusWords:
 
 # Plot.  Comment if you don't care.
 #--------------------------------------------------------------------
-#textFunctions.textNetworkPlot(textList)
+#text_fun.textNetworkPlot(textList)

@@ -5,12 +5,12 @@ import requests
 import time
 import random
 import pickle
-import os
+import os, re
 
 def gather_urls(search_term, page_count): # Gathers page_count urls from Google
 
     r = requests.get('http://www.google.com/search?q=' + search_term)
-    soup = BS(r.text)
+    soup = BS(r.text, 'lxml')
 
     stop_str1 = 'Shop for ' + search_term + ' on Google'
     stop_str2 = 'Images for ' + search_term
@@ -23,14 +23,17 @@ def gather_urls(search_term, page_count): # Gathers page_count urls from Google
             r = requests.get('http://www.google.com/search?q=' + search_term)
         else:
             r = requests.get('http://www.google.com/search?q=' + search_term + '&start=' + str(start))
-        soup = BS(r.text)
+        soup = BS(r.text, 'lxml')
         blue_links = soup('h3', class_ = 'r')
         for link in blue_links:
             if link.text not in stop_list:
                 href = link.a['href']
                 url = href.replace('/url?q=', '')
-                address_book.append(url)
+                url = re.sub('&sa=.*', '', url)
+                if not re.search('/search\\?q=', url):
+                    address_book.append(url)
         print('Page ' + str(i) + ' of Google urls gathered.')
+        time.sleep(random.uniform(0, 5))
 
     return address_book
 

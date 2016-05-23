@@ -1,7 +1,7 @@
 import os
 UtilPath = os.getenv('HOME') + '/Documents/Blender/Utilities'
 os.chdir(UtilPath)
-import scraperfunctions
+import scraper_fun
 import pickle
 import time
 
@@ -14,5 +14,5 @@ pages = int(input("How many pages of results would you like? "))
 with open(BlenderPath + "/search_text.p", "wb") as f:
     pickle.dump(search_text, f)
 
-scraperfunctions.google_scrape(search_text, pages, True)
+scraper_fun.google_scrape(search_text, pages, True)
 

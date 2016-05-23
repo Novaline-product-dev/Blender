@@ -2,6 +2,7 @@ import pickle, os, string, random
 import numpy as np 
 import pandas as pd
 import nltk
+import enchant
 from gensim import corpora, models, similarities, utils
 os.chdir(os.getenv('HOME') + '/Documents/Blender/Utilities')
 import text_fun

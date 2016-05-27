@@ -7,7 +7,7 @@ from gensim import utils
 from sklearn import feature_extraction
 from statsmodels.distributions import empirical_distribution as ed 
 sys.path.append("..")
-import textFunctions
+import text_fun
 
 
 def ks(cdfVec1, cdfVec2):
@@ -82,7 +82,7 @@ def ksFunctionGenerator(textList):
 
 	# To calculate the ks distance for some text:
 	def ksEvaluator(doc):
-		tokenList = textFunctions.prune(doc)
+		tokenList = text_fun.prune(doc)
 		return ks(cdf(jaccard(tokenList)), 
 			baselineCDF)
 

@@ -48,10 +48,10 @@ def median_words(path_to_inputs, num_ideas = 30):
         if counter >= num_ideas:
             break
         wordTag = nltk.pos_tag([word])[0][1]
-        if wordTag in ['NN', 'NNP']:
+        if wordTag in ['NN']:
             counter = counter + 1
             ideaList.append('Try blending %s with a %s \n' %(search_text, word))
-        elif wordTag in ['NNS', 'NNPS']:
+        elif wordTag in ['NNS']:
             counter = counter + 1
             ideaList.append('Try blending %s with %s \n' %(search_text, word))
         elif wordTag in ['JJ']:

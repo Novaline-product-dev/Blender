@@ -2,6 +2,7 @@ import string
 import re
 from scipy import stats
 import numpy as np
+import enchant
 from numpy import *
 import pandas as pd
 import networkx as nx
@@ -21,7 +22,7 @@ def rmPunct(dirtyStr):
     cleanStr = ''.join(splitCleanStr)
     return(cleanStr)
 
-def prune(doc, stoplist = None):
+def prune(doc, stoplist = None, stem = True, english_dictionary_words = False):
     """This takes a single document and tokenizes the words, removes
     undesirable elements, and prepares it to be loaded into a dictionary.
     """
@@ -43,9 +44,13 @@ def prune(doc, stoplist = None):
     temp = [w for w in temp if w not in stopwords.words('english')]
 
     # Stem the remaining words
-    stemmer = SnowballStemmer('english')
-    temp = [stemmer.stem(w) for w in temp]
+    if stem:
+        stemmer = SnowballStemmer('english')
+        temp = [stemmer.stem(w) for w in temp]
 
+    if english_dictionary_words:
+        d = enchant.Dict("en_US")
+        temp = [w for w in temp if d.check(w)]
     return temp
 
 def textNetworkPlot(textList, wordFreqThreshold = 10):

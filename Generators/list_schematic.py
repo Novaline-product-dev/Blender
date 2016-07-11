@@ -47,6 +47,9 @@ header_trim = ' '.join(header_trim)
 header_blob = TextBlob(header_trim, pos_tagger = PerceptronTagger())
 header_tags = list(set(header_blob.tags))
 baseline = ksEvaluator(header, verbose = True)
+
+
+# Brute force-----------
 idea_list = []
 for item in candidates:
     if item[1] == 'NN':
@@ -92,16 +95,16 @@ for i, item in enumerate(candidate_words):
     if candidate_word_tags[i][1] in ok_tags:
         candidates.append(item)
 
-for item in candidates:
-    if item in mod.vocab:
+for candidate in candidates:
+    if candidate in mod.vocab:
         sims = []
         for target in header_tags:
             if target[1] == 'NN' and target[0] in mod.vocab:
-                temp_tuple = (mod.similarity(target[0], item), target[0])
+                temp_tuple = (mod.similarity(target[0], candidate), target[0])
                 sims.append(temp_tuple)
                 if sims:
                     best_tuple = min(sims, key = lambda t: t[0])
-                    new_idea = header.replace(best_tuple[1], item, 1)
+                    new_idea = header.replace(best_tuple[1], candidate, 1)
                     idea_score = ksEvaluator(new_idea)
                     if idea_score < baseline:
                         pair = (new_idea, idea_score)

@@ -22,7 +22,7 @@ ksEvaluator = ksmirnov_fun.ksFunctionGenerator(textList)
 header = wikipedia.summary(seed_term)
 header = header[0:header.find('\n')]
 print(ksEvaluator(header))
-print(ksEvaluator(header.replace('additive', 'subtractive')))
+print(ksEvaluator(header.replace('sports', 'recreation')))
 
 candidates = []
 for item in googleList:

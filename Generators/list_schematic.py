@@ -7,13 +7,11 @@ import ksmirnov_fun
 import wikipedia
 import gensim
 import nltk
-import wordnik
 from collections import Counter
 from nltk import word_tokenize
 from nltk.corpus import stopwords
 from textblob import TextBlob
 from textblob_aptagger import PerceptronTagger
-
 
 googleList = pickle.load( open('../fulltext.p', 'rb'))
 seed_term = pickle.load( open('../search_text.p', 'rb'))

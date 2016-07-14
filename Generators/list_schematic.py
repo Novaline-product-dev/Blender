@@ -95,7 +95,7 @@ for i, item in enumerate(candidate_words):
         if candidate_word_tags[i][1] in ok_tags:
             candidates.append(item)
 
-for candidate in candidates[0:999]:
+for candidate in candidates:
     if candidate in mod.vocab:
         sims = []
         for target in header_tags:
@@ -105,15 +105,34 @@ for candidate in candidates[0:999]:
         if sims:
             best_tuple = max(sims, key = lambda t: t[0])
             if best_tuple[1] not in seed_term and '-' not in candidate:
-                new_idea = header.replace(best_tuple[1], candidate)
+                new_idea = header.replace(best_tuple[1], candidate, 1)
                 idea_score = ksEvaluator(new_idea)
                 if idea_score < baseline:
-                    pair = (new_idea, idea_score)
-                    idea_list.append(pair)
+                    quad = (new_idea, idea_score, candidate, best_tuple[1])
+                    idea_list.append(quad)
                     print(idea_score)
 
 ideas = list(set(idea_list))
 sorted_ideas = sorted(ideas, key = lambda tup: tup[1])
 
+type_num = 1
+new_ideas = []
+targets = [item[3] for item in sorted_ideas]
+for target in set(targets):
+    for i in range(0, type_num):
+        try:
+            index = targets.index(target)
+        except ValueError:
+            continue
+        new_ideas.append(sorted_ideas[index])
+        del(sorted_ideas[index])
+        del(targets[index])
+
+# could get similar words to the seed term, then for each target word, use an anology with the similar concept to replace the target.  So, you find that skateboard is similar to surfboard.  Then to replace polyurethane, you do "___ is to surfboard as polyurethane is to skateboard."  For gensim syntax, that looks like this:  
+# mod.most_similar(positive = ['polyurethane', 'surfboard'], negative = ['skateboard'])
+# That will return a list of good matches.  All of them might work.  In this particular example it returns these:
+# [('neoprene', 0.8313905596733093), ('dacron', 0.8303178548812866), ('gauze', 0.8275730609893799), ('fiberboard', 0.826744556427002), ('silicone', 0.8266098499298096), ('polystyrene', 0.8250176906585693), ('horsehair', 0.8227001428604126), ('elastomer', 0.8209028244018555), ('polypropylene', 0.8173956871032715), ('epoxy', 0.8171824216842651)]
+
+# Then the quesiton is: can you replace polyurethane with neoprene?  That would be nuts.  A skateboard with a neoprene cover might be awesome.  
 
 

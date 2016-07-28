@@ -128,11 +128,28 @@ for target in set(targets):
         del(sorted_ideas[index])
         del(targets[index])
 
-# could get similar words to the seed term, then for each target word, use an anology with the similar concept to replace the target.  So, you find that skateboard is similar to surfboard.  Then to replace polyurethane, you do "___ is to surfboard as polyurethane is to skateboard."  For gensim syntax, that looks like this:  
-# mod.most_similar(positive = ['polyurethane', 'surfboard'], negative = ['skateboard'])
-# That will return a list of good matches.  All of them might work.  In this particular example it returns these:
-# [('neoprene', 0.8313905596733093), ('dacron', 0.8303178548812866), ('gauze', 0.8275730609893799), ('fiberboard', 0.826744556427002), ('silicone', 0.8266098499298096), ('polystyrene', 0.8250176906585693), ('horsehair', 0.8227001428604126), ('elastomer', 0.8209028244018555), ('polypropylene', 0.8173956871032715), ('epoxy', 0.8171824216842651)]
 
-# Then the quesiton is: can you replace polyurethane with neoprene?  That would be nuts.  A skateboard with a neoprene cover might be awesome.  
+
+mod = gensim.models.Word2Vec.load_word2vec_format('../Aux/freebase-vectors-skipgram1000.bin.gz', 
+												  binary=True)
+mod.init_sims(replace = True)
+# could get similar words to the seed term, then for each target word, 
+# use an anology with the similar concept to replace the target.  
+# So, you find that skateboard is similar to surfboard.  
+# Then to replace polyurethane, you do "___ is to surfboard as 
+# polyurethane is to skateboard."  For gensim syntax, that looks like this:  
+#
+# mod.most_similar(positive = ['polyurethane', 'surfboard'], negative = ['skateboard'])
+#
+# That will return a list of good matches.  All of them might work.  
+# In this particular example it returns these:
+# [('neoprene', 0.8313905596733093), ('dacron', 0.8303178548812866), 
+# ('gauze', 0.8275730609893799), ('fiberboard', 0.826744556427002), 
+# ('silicone', 0.8266098499298096), ('polystyrene', 0.8250176906585693), 
+# ('horsehair', 0.8227001428604126), ('elastomer', 0.8209028244018555), 
+# ('polypropylene', 0.8173956871032715), ('epoxy', 0.8171824216842651)]
+
+# Then the quesiton is: can you replace polyurethane with neoprene?  
+# That would be nuts.  A skateboard with a neoprene cover might be awesome.  
 
 

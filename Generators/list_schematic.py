@@ -7,6 +7,7 @@ import ksmirnov_fun
 import wikipedia
 import gensim
 import nltk
+import bz2
 from collections import Counter
 from nltk import word_tokenize
 from nltk.corpus import stopwords
@@ -45,29 +46,6 @@ header_trim = ' '.join(header_trim)
 header_blob = TextBlob(header_trim, pos_tagger = PerceptronTagger())
 header_tags = list(set(header_blob.tags))
 baseline = ksEvaluator(header, verbose = True)
-
-
-# Brute force-----------
-#idea_list = []
-#for item in candidates:
-#    if item[1] == 'NN':
-#        for target in header_tags:
-#            if target[1] == 'NN':
-#                #new_idea = item[0] + ' ' + target[0]
-#                #new_idea = item[0] + ' ' + header 
-#                new_idea = header.replace(target[0], item[0], 1)
-#                idea_score = ksEvaluator(new_idea)
-#                if idea_score < baseline:
-#                    #new_idea_full = header.replace(target[0], item[0])
-#                    new_idea_full = '%s is related to %s.  What if you #replaced the idea of %s in %s with %s?' % (seed_term, #target[0], target[0], seed_term, item[0]) 
-#                    pair = (new_idea_full, idea_score)
-#                    idea_list.append(pair)
-#                    print(idea_score)
-#
-#ideas = list(set(idea_list))
-#sorted_ideas = sorted(ideas, key = lambda tup: tup[1])
-#ideas = [i for i in ideas if i[1] == sorted_ideas[0][1]]
-
 
 
 # Word2Vec beginnings-----
@@ -115,7 +93,7 @@ for candidate in candidates:
 ideas = list(set(idea_list))
 sorted_ideas = sorted(ideas, key = lambda tup: tup[1])
 
-type_num = 1
+type_num = 3
 new_ideas = []
 targets = [item[3] for item in sorted_ideas]
 for target in set(targets):
@@ -129,10 +107,6 @@ for target in set(targets):
         del(targets[index])
 
 
-
-mod = gensim.models.Word2Vec.load_word2vec_format('../Aux/freebase-vectors-skipgram1000.bin.gz', 
-												  binary=True)
-mod.init_sims(replace = True)
 # could get similar words to the seed term, then for each target word, 
 # use an anology with the similar concept to replace the target.  
 # So, you find that skateboard is similar to surfboard.  
@@ -151,5 +125,20 @@ mod.init_sims(replace = True)
 
 # Then the quesiton is: can you replace polyurethane with neoprene?  
 # That would be nuts.  A skateboard with a neoprene cover might be awesome.  
+
+
+# bz2 example, I don't know programming well.  Ugh.
+files = os.listdir('../Aux/extracted/AA')
+files = [file for file in files if file.endswith('.bz2')]
+dirpath = '../Aux/extracted/AA'
+for filename in files:
+    filepath = os.path.join(dirpath, filename)
+    newfilepath = os.path.join(dirpath, filename + '.decompressed')
+    with open(newfilepath, 'wb') as new_file, bz2.BZ2File(filepath, 'rb') as file:
+        for data in iter(lambda : file.read(100 * 1024), b''):
+            new_file.write(data)
+
+
+
 
 

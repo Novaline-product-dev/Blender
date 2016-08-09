@@ -7,7 +7,6 @@ import ksmirnov_fun
 import wikipedia
 import gensim
 import nltk
-import bz2
 from collections import Counter
 from nltk import word_tokenize
 from nltk.corpus import stopwords
@@ -58,7 +57,8 @@ for i, sentence in enumerate(sentences):
 mod = gensim.models.Word2Vec(sentences)
 
 
-mod = gensim.models.Word2Vec.load_word2vec_format(BlenderPath + '/Aux/deps.words.vector', binary = False)
+mod = gensim.models.Word2Vec.load_word2vec_format(BlenderPath + 
+	'/Aux/deps.words.vector', binary = False)
 
 # If you're finished training the model
 mod.init_sims(replace = True)
@@ -124,21 +124,3 @@ for target in set(targets):
 # ('polypropylene', 0.8173956871032715), ('epoxy', 0.8171824216842651)]
 
 # Then the quesiton is: can you replace polyurethane with neoprene?  
-# That would be nuts.  A skateboard with a neoprene cover might be awesome.  
-
-
-# bz2 example, I don't know programming well.  Ugh.
-files = os.listdir('../Aux/extracted/AA')
-files = [file for file in files if file.endswith('.bz2')]
-dirpath = '../Aux/extracted/AA'
-for filename in files:
-    filepath = os.path.join(dirpath, filename)
-    newfilepath = os.path.join(dirpath, filename + '.decompressed')
-    with open(newfilepath, 'wb') as new_file, bz2.BZ2File(filepath, 'rb') as file:
-        for data in iter(lambda : file.read(100 * 1024), b''):
-            new_file.write(data)
-
-
-
-
-

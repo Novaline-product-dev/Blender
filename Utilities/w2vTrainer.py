@@ -1,32 +1,61 @@
-import bz2
+import os, bz2
+import nltk
 
-# First step is just handling files.  I haven't trained a thing yet.  
-# I think the thing to do is add the punkt sentence tokenizer, then 
-# iterate through the .txt files to produce 1-per-line sentences?  
-# Not sure yet.  Baby steps for a while.
 
+sentenceDetector = nltk.data.load('tokenizers/punkt/english.pickle')
+# Now the script converts the files from bz2 to txt and then trains on the 
+# txt files.  However, it would be good to write sentenceFactory to use
+# bz2 files instead.  Just do it later.
+
+#### Step 1: convert bz2 files to txt files
 # Directory with the files
+os.chdir(os.getenv('HOME') + '/Documents/Blender/Aux')
 dirpath = './extracted/AA'
-
-# Gets the list of files in the specified directory
 files = os.listdir(dirpath)
-
-# gets only the ones that end with .bz2
 files = [file for file in files if file.endswith('.bz2')]
-
-# loop over files ending in .bz2
 for filename in files:
-
-	# creates a string with joined paths, handles any forward slashes
     filepath = os.path.join(dirpath, filename) # to get compressed file
-    newfilepath = os.path.join(dirpath, filename[:-4] + '.txt') # for output file
-
-    # opens two files, one is blank and the other is a bz2 file opened with the
-    # bz2 module 
+    newfilepath = os.path.join(dirpath, filename[:-4] + '.txt') # for output files
+    
     with open(newfilepath, 'wb') as new_file, bz2.BZ2File(filepath, 'rb') as file:
-        
-    	# iterates over the opened file, reading it in pieces
         for data in iter(lambda : file.read(), b''):
-
-        	# sequentially writes pieces to the new file
             new_file.write(data)
+
+
+
+##### Processing and training for one file
+
+with open('./extracted/AA/wiki_00.txt', 'r', encoding = 'utf-8') as f:
+	stringList = f.readlines()
+
+docInd = 0
+for i, item in enumerate(stringList):
+	if docInd:
+		stringList.remove(item)
+	docInd = item.startswith('<doc id')
+	if docInd:
+		stringList.remove(item)
+
+stringList = [el for el in stringList if ' ' in el]
+
+# This currently leaves periods at the end of the sentence
+stringList = [sentenceDetector.tokenize(el) for el in stringList]
+
+
+
+
+# Build the sentence generator
+
+#class sentenceFactory(object):
+#    def __init__(self, dirname):
+#        self.dirname = dirname
+# 
+#    def __iter__(self):
+#    	fnames = os.listdir(self.dirname)
+#        for fname in fnames:
+#            
+#            for line in open(os.path.join(self.dirname, fname)):
+#                yield line.split()
+
+#sentences = sentenceFactory('/some/directory') # a memory-friendly iterator
+#model = gensim.models.Word2Vec(sentences)

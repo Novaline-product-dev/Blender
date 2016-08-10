@@ -55,13 +55,14 @@ for i, sentence in enumerate(sentences):
     temp = ''.join(ch for ch in sentence if ch not in exclude)
     sentences[i] = text_fun.prune(temp, stem = False)
 mod = gensim.models.Word2Vec(sentences)
-
-
-mod = gensim.models.Word2Vec.load_word2vec_format(BlenderPath + 
-	'/Aux/deps.words.vector', binary = False)
-
 # If you're finished training the model
 mod.init_sims(replace = True)
+
+#mod = gensim.models.Word2Vec.load_word2vec_format(BlenderPath + 
+#	'/Aux/deps.words.vector', binary = False)
+
+mod = gensim.models.Word2Vec.load_word2vec_format(BlenderPath + 
+    '/Aux/freebase-vectors-skipgram1000-en.bin.gz', binary = True)
 
 idea_list = []
 candidates = []

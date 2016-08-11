@@ -61,9 +61,6 @@ mod.init_sims(replace = True)
 #mod = gensim.models.Word2Vec.load_word2vec_format(BlenderPath + 
 #	'/Aux/deps.words.vector', binary = False)
 
-mod = gensim.models.Word2Vec.load_word2vec_format(BlenderPath + 
-    '/Aux/freebase-vectors-skipgram1000-en.bin.gz', binary = True)
-
 idea_list = []
 candidates = []
 candidate_words = list(mod.vocab)
@@ -125,3 +122,7 @@ for target in set(targets):
 # ('polypropylene', 0.8173956871032715), ('epoxy', 0.8171824216842651)]
 
 # Then the quesiton is: can you replace polyurethane with neoprene?  
+
+mod = gensim.models.Word2Vec.load('../Aux/w2vFreebase')
+
+

@@ -60,6 +60,8 @@ mod.init_sims(replace = True)
 
 #mod = gensim.models.Word2Vec.load_word2vec_format(BlenderPath + 
 #	'/Aux/deps.words.vector', binary = False)
+mod = gensim.models.Word2Vec.load(BlenderPath + '/Aux/w2vFreebase')
+mod.init_sims(replace = True)
 
 idea_list = []
 candidates = []

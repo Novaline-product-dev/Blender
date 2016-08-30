@@ -16,7 +16,7 @@ from textblob_aptagger import PerceptronTagger
 googleList = pickle.load( open('../fulltext.p', 'rb'))
 seed_term = pickle.load( open('../search_text.p', 'rb'))
 textList = [text_fun.prune(doc) for doc in googleList]
-article = wikipedia.page('3D printing').content
+article = wikipedia.page(seed_term).content
 ksEvaluator = ksmirnov_fun.ksFunctionGenerator(textList)
 
 header = wikipedia.summary(seed_term)
@@ -46,73 +46,21 @@ header_blob = TextBlob(header_trim, pos_tagger = PerceptronTagger())
 header_tags = list(set(header_blob.tags))
 baseline = ksEvaluator(header, verbose = True)
 
+mod = gensim.models.Word2Vec.load_word2vec_format(BlenderPath + 
+	'/Aux/deps.words.vector', binary = False)
+mod.init_sims(replace = True)
 
-# Word2Vec beginnings-----
+ref_concepts = mod.most_similar(seed_term) # get reference concepts for seed_term
 sent_detector = nltk.data.load('tokenizers/punkt/english.pickle')
-sentences = sent_detector.tokenize(article)
-exclude = set(string.punctuation)
-for i, sentence in enumerate(sentences):
-    temp = ''.join(ch for ch in sentence if ch not in exclude)
-    sentences[i] = text_fun.prune(temp, stem = False)
-mod = gensim.models.Word2Vec(sentences)
-# If you're finished training the model
-mod.init_sims(replace = True)
 
-#mod = gensim.models.Word2Vec.load_word2vec_format(BlenderPath + 
-#	'/Aux/deps.words.vector', binary = False)
-mod = gensim.models.Word2Vec.load(BlenderPath + '/Aux/w2vFreebase')
-mod.init_sims(replace = True)
-
-idea_list = []
-candidates = []
-candidate_words = list(mod.vocab)
-cblob = TextBlob(' '.join(candidate_words), pos_tagger = PerceptronTagger())
-candidate_word_tags = cblob.tags
-for i, item in enumerate(candidate_words):
-    if i < len(candidate_word_tags):
-        if candidate_word_tags[i][1] in ok_tags:
-            candidates.append(item)
-
-for candidate in candidates:
-    if candidate in mod.vocab:
-        sims = []
-        for target in header_tags:
-            if target[1] == 'NN' and target[0] in mod.vocab:
-                temp_tuple = (mod.similarity(target[0], candidate), target[0])
-                sims.append(temp_tuple)
-        if sims:
-            best_tuple = max(sims, key = lambda t: t[0])
-            if best_tuple[1] not in seed_term and '-' not in candidate:
-                new_idea = header.replace(best_tuple[1], candidate, 1)
-                idea_score = ksEvaluator(new_idea)
-                if idea_score < baseline:
-                    quad = (new_idea, idea_score, candidate, best_tuple[1])
-                    idea_list.append(quad)
-                    print(idea_score)
-
-ideas = list(set(idea_list))
-sorted_ideas = sorted(ideas, key = lambda tup: tup[1])
-
-type_num = 3
 new_ideas = []
-targets = [item[3] for item in sorted_ideas]
-for target in set(targets):
-    for i in range(0, type_num):
-        try:
-            index = targets.index(target)
-        except ValueError:
-            continue
-        new_ideas.append(sorted_ideas[index])
-        del(sorted_ideas[index])
-        del(targets[index])
+targets = [element[0] for element in header_tags if element[1] in ok_tags]
+for target in targets:
+    target_article = wikipedia.page(target).seed_term
+    for i in range(0, len(ref_concepts)):
+        new_idea_i = header.replace(target, new_word)
+  
 
-
-# could get similar words to the seed term, then for each target word, 
-# use an anology with the similar concept to replace the target.  
-# So, you find that skateboard is similar to surfboard.  
-# Then to replace polyurethane, you do "___ is to surfboard as 
-# polyurethane is to skateboard."  For gensim syntax, that looks like this:  
-#
 # mod.most_similar(positive = ['polyurethane', 'surfboard'], negative = ['skateboard'])
 #
 # That will return a list of good matches.  All of them might work.  
@@ -125,6 +73,15 @@ for target in set(targets):
 
 # Then the quesiton is: can you replace polyurethane with neoprene?  
 
-mod = gensim.models.Word2Vec.load('../Aux/w2vFreebase')
+
+# Following is to train a word2vec model on a particular wikipedia article
+
+#sentences = sent_detector.tokenize(article)
+#exclude = set(string.punctuation)
+#for i, sentence in enumerate(sentences):
+#    temp = ''.join(ch for ch in sentence if ch not in exclude)
+#    sentences[i] = text_fun.prune(temp, stem = False)
+#mod = gensim.models.Word2Vec(sentences)
+#mod.init_sims(replace = True)
 
 

@@ -53,6 +53,13 @@ def prune(doc, stoplist = None, stem = True, english_dictionary_words = False):
         temp = [w for w in temp if d.check(w)]
     return temp
 
+def w2v_sent_prep(article, sent_detector):
+    sentences = sent_detector.tokenize(article)
+    exclude = set(string.punctuation)
+    for i, sentence in enumerate(sentences):
+        temp = ''.join(ch for ch in sentence if ch not in exclude)
+        sentences[i] = prune(temp, stem = False)
+
 def textNetworkPlot(textList, wordFreqThreshold = 10):
     """ Plots a pared-down word-word connection network.  If you increase wordFreqThreshold, it pares down the network.  wordFreqThreshold will depend on the size of textList. 
 

@@ -59,6 +59,7 @@ def w2v_sent_prep(article, sent_detector):
     for i, sentence in enumerate(sentences):
         temp = ''.join(ch for ch in sentence if ch not in exclude)
         sentences[i] = prune(temp, stem = False)
+    return sentences
 
 def textNetworkPlot(textList, wordFreqThreshold = 10):
     """ Plots a pared-down word-word connection network.  If you increase wordFreqThreshold, it pares down the network.  wordFreqThreshold will depend on the size of textList. 

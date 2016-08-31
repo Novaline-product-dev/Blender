@@ -22,7 +22,7 @@ ksEvaluator = ksmirnov_fun.ksFunctionGenerator(textList)
 header = wikipedia.summary(seed_term)
 header = header[0:header.find('\n')]
 print(ksEvaluator(header))
-print(ksEvaluator(header.replace('sports', 'recreation')))
+print(ksEvaluator(header.replace('polyurethane', 'neoprene')))
 
 candidates = []
 for item in googleList:
@@ -47,18 +47,36 @@ header_tags = list(set(header_blob.tags))
 baseline = ksEvaluator(header, verbose = True)
 
 mod = gensim.models.Word2Vec.load_word2vec_format(BlenderPath + 
-	'/Aux/deps.words.vector', binary = False)
+    '/Aux/deps.words.vector', binary = False)
 mod.init_sims(replace = True)
 
 ref_concepts = mod.most_similar(seed_term) # get reference concepts for seed_term
 sent_detector = nltk.data.load('tokenizers/punkt/english.pickle')
 
+
+# First crack at it, not working.  Need to fix disambiguation errors.
+sentences = text_fun.w2v_sent_prep(article, sent_detector)
 new_ideas = []
 targets = [element[0] for element in header_tags if element[1] in ok_tags]
 for target in targets:
-    target_article = wikipedia.page(target).seed_term
-    for i in range(0, len(ref_concepts)):
-        new_idea_i = header.replace(target, new_word)
+    for ref_concept in ref_concepts:
+        if seed_term != target:
+            temp_sentences = sentences
+            target_article = wikipedia.page(target).content
+            ref_article = wikipedia.page(ref_concept[0]).content
+            temp_sentences.extend(text_fun.w2v_sent_prep(target_article, sent_detector))
+            temp_sentences.extend(text_fun.w2v_sent_prep(ref_article, sent_detector))
+            temp_model = gensim.models.Word2Vec(temp_sentences)
+        else:
+            temp_sentences = sentences
+            ref_article = wikipedia.page(ref_concept[0]).content
+            temp_sentences.extend(text_fun.w2v_sent_prep(ref_article, sent_detector))
+            temp_model = gensim.models.Word2Vec(temp_sentences)
+        if ref_concept in temp_model.vocab:
+            candidate = temp_model.most_similar(positive = [target, ref_concept], 
+                negative = [seed_term])
+            new_ideas.extend(header.replace(str(target), candidate[0][0]))
+            print(target, ref_concept)
   
 
 # mod.most_similar(positive = ['polyurethane', 'surfboard'], negative = ['skateboard'])

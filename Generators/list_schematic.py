@@ -54,30 +54,40 @@ ref_concepts = mod.most_similar(seed_term) # get reference concepts for seed_ter
 sent_detector = nltk.data.load('tokenizers/punkt/english.pickle')
 
 
-# First crack at it, not working.  Need to fix disambiguation errors.
+# Need to move the reference article download out of the loop.
+ref_arts = []
+for ref_concept in ref_concepts:
+    ref_article = wikipedia.page(ref_concept[0]).content
+    ref_tup = (text_fun.w2v_sent_prep(ref_article, sent_detector), ref_concept[0])
+    ref_arts.append(text_fun.w2v_sent_prep(ref_article, sent_detector))
+
+
 sentences = text_fun.w2v_sent_prep(article, sent_detector)
 new_ideas = []
 targets = [element[0] for element in header_tags if element[1] in ok_tags]
 for target in targets:
-    for ref_concept in ref_concepts:
-        if seed_term != target:
-            temp_sentences = sentences
-            target_article = wikipedia.page(target).content
+    try:
+        target_article = wikipedia.page(target).content
+        print('Got a target article for %s' % target)
+        for ref_concept in ref_concepts:
+            temp_sentences = list(sentences)
             ref_article = wikipedia.page(ref_concept[0]).content
-            temp_sentences.extend(text_fun.w2v_sent_prep(target_article, sent_detector))
+            print('Got a ref article for %s' % str(ref_concept[0]))
             temp_sentences.extend(text_fun.w2v_sent_prep(ref_article, sent_detector))
-            temp_model = gensim.models.Word2Vec(temp_sentences)
-        else:
-            temp_sentences = sentences
-            ref_article = wikipedia.page(ref_concept[0]).content
-            temp_sentences.extend(text_fun.w2v_sent_prep(ref_article, sent_detector))
-            temp_model = gensim.models.Word2Vec(temp_sentences)
-        if ref_concept in temp_model.vocab:
-            candidate = temp_model.most_similar(positive = [target, ref_concept], 
-                negative = [seed_term])
-            new_ideas.extend(header.replace(str(target), candidate[0][0]))
-            print(target, ref_concept)
-  
+            if seed_term != target:
+                temp_sentences.extend(text_fun.w2v_sent_prep(target_article, sent_detector))
+                temp_model = gensim.models.Word2Vec(temp_sentences)
+            else:
+                temp_model = gensim.models.Word2Vec(temp_sentences)
+            if ref_concept[0] in temp_model.vocab:
+                print('Ref concept: %s is in the model vocab' % str(ref_concept[0]))
+                candidate = temp_model.most_similar(positive = [target, ref_concept], 
+                    negative = [seed_term])
+                next_idea = header.replace(str(target), candidate[0][0])
+                new_ideas.append(next_idea)
+                print(target, ref_concept[0], ksEvaluator(next_idea))
+    except wikipedia.exceptions.DisambiguationError:
+        pass
 
 # mod.most_similar(positive = ['polyurethane', 'surfboard'], negative = ['skateboard'])
 #

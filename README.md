@@ -1,4 +1,4 @@
-![alt text](https://github.com/jtraffic/jtraffic.github.io/blob/master/img/blend.png =100x20 "Blender Logo")
+![alt text](https://github.com/jtraffic/jtraffic.github.io/blob/master/img/blend.png "Blender Logo")
 
 ## <span style = "color:#002699">What is Blender? </span>
 Blender is a system that combines artificial and human intelligence to increase creativity.  

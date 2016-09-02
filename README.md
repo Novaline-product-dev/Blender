@@ -1,6 +1,6 @@
-## <span style = "color:#002699">What is Blender? </span>
 ![alt text][logo]
 
+## <span style = "color:#002699">What is Blender? </span>
 Blender is a system that combines artificial and human intelligence to increase creativity.  
 
 The current version is preliminary and merely produces stimulus words associated with a particular concept.  The stimulus words are meant to strike a balance between relevance and novelty.

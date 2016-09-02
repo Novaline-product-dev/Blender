@@ -1,4 +1,6 @@
 ## <span style = "color:#002699">What is Blender? </span>
+![alt text][logo]
+
 Blender is a system that combines artificial and human intelligence to increase creativity.  
 
 The current version is preliminary and merely produces stimulus words associated with a particular concept.  The stimulus words are meant to strike a balance between relevance and novelty.
@@ -26,3 +28,5 @@ In no particular order, we hope to accomplish the following with Blender:
   1. An automated domain selection tool.  That is, something that would aid users in their choice of seed term, and would likely make use of financial data, patents, and Google trends to aim the seed term at a promising domain.
   2. An automated, domain-specific idea evaluator, in order to process a large volume of new ideas quickly.  The evaluator would need to attempt to predict the feasibility of the idea, whether something similar exists, and whether the idea is likely to succeed.  Blender may need to rely on human expertise for some of this, but we intend to use machine intelligence as much as possible.
   3. A loop mechanism whereby Blender iterates and improves upon its original suggestions in response to user feedback and validation results from previous ideas.
+
+[logo]: https://github.com/jtraffic/jtraffic.github.io/blob/master/img/blend.png "Blender Logo"

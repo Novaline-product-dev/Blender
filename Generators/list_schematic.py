@@ -54,13 +54,14 @@ ref_concepts = mod.most_similar(seed_term) # get reference concepts for seed_ter
 sent_detector = nltk.data.load('tokenizers/punkt/english.pickle')
 
 
-# Need to move the reference article download out of the loop.
 ref_arts = []
 for ref_concept in ref_concepts:
-    ref_article = wikipedia.page(ref_concept[0]).content
-    ref_tup = (text_fun.w2v_sent_prep(ref_article, sent_detector), ref_concept[0])
-    ref_arts.append(text_fun.w2v_sent_prep(ref_article, sent_detector))
-
+    try:
+        ref_article = wikipedia.page(ref_concept[0]).content
+        ref_arts.append(text_fun.w2v_sent_prep(ref_article, sent_detector)) 
+        print('Got article for %s' % ref_concept[0]) 
+    except wikipedia.exceptions.DisambiguationError:
+        ref_arts.append(ref_concept[0])
 
 sentences = text_fun.w2v_sent_prep(article, sent_detector)
 new_ideas = []
@@ -69,13 +70,16 @@ for target in targets:
     try:
         target_article = wikipedia.page(target).content
         print('Got a target article for %s' % target)
-        for ref_concept in ref_concepts:
+        for i, ref_concept in enumerate(ref_concepts):
+            if ref_concept[0] == ref_arts[i]:
+                print('skipping %s as a reference concept.' 
+                    % ref_concept[0])
+                continue
             temp_sentences = list(sentences)
-            ref_article = wikipedia.page(ref_concept[0]).content
-            print('Got a ref article for %s' % str(ref_concept[0]))
-            temp_sentences.extend(text_fun.w2v_sent_prep(ref_article, sent_detector))
+            temp_sentences.extend(ref_arts[i])
             if seed_term != target:
-                temp_sentences.extend(text_fun.w2v_sent_prep(target_article, sent_detector))
+                temp_sentences.extend(text_fun.w2v_sent_prep(target_article, 
+                    sent_detector))
                 temp_model = gensim.models.Word2Vec(temp_sentences)
             else:
                 temp_model = gensim.models.Word2Vec(temp_sentences)
@@ -83,9 +87,10 @@ for target in targets:
                 print('Ref concept: %s is in the model vocab' % str(ref_concept[0]))
                 candidate = temp_model.most_similar(positive = [target, ref_concept], 
                     negative = [seed_term])
-                next_idea = header.replace(str(target), candidate[0][0])
+                score = ksEvaluator(article.replace(str(target), candidate[0][0]))
+                next_idea = 'Try using %s from %s to make a new kind of %s.' % (candidate[0][0], ref_concept[0], seed_term)
                 new_ideas.append(next_idea)
-                print(target, ref_concept[0], ksEvaluator(next_idea))
+                print(target, ref_concept[0], score)
     except wikipedia.exceptions.DisambiguationError:
         pass
 

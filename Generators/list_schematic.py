@@ -51,49 +51,64 @@ mod = gensim.models.Word2Vec.load_word2vec_format(BlenderPath +
 mod.init_sims(replace = True)
 
 ref_concepts = mod.most_similar(seed_term) # get reference concepts for seed_term
+ref_concepts = [item[0] for item in ref_concepts]
 sent_detector = nltk.data.load('tokenizers/punkt/english.pickle')
 
-
+sentences = text_fun.w2v_sent_prep(article, sent_detector)
 ref_arts = []
 for ref_concept in ref_concepts:
     try:
-        ref_article = wikipedia.page(ref_concept[0]).content
-        ref_arts.append(text_fun.w2v_sent_prep(ref_article, sent_detector)) 
-        print('Got article for %s' % ref_concept[0]) 
-    except wikipedia.exceptions.DisambiguationError:
-        ref_arts.append(ref_concept[0])
-
-sentences = text_fun.w2v_sent_prep(article, sent_detector)
-new_ideas = []
-targets = [element[0] for element in header_tags if element[1] in ok_tags]
-for target in targets:
-    try:
-        target_article = wikipedia.page(target).content
-        print('Got a target article for %s' % target)
-        for i, ref_concept in enumerate(ref_concepts):
-            if ref_concept[0] == ref_arts[i]:
-                print('skipping %s as a reference concept.' 
-                    % ref_concept[0])
-                continue
-            temp_sentences = list(sentences)
-            temp_sentences.extend(ref_arts[i])
-            if seed_term != target:
-                temp_sentences.extend(text_fun.w2v_sent_prep(target_article, 
-                    sent_detector))
-                temp_model = gensim.models.Word2Vec(temp_sentences)
-            else:
-                temp_model = gensim.models.Word2Vec(temp_sentences)
-            if ref_concept[0] in temp_model.vocab:
-                print('Ref concept: %s is in the model vocab' % str(ref_concept[0]))
-                candidate = temp_model.most_similar(positive = [target, ref_concept], 
-                    negative = [seed_term])
-                score = ksEvaluator(article.replace(str(target), candidate[0][0]))
-                next_idea = 'Try using %s from %s to make a new kind of %s.' % (candidate[0][0], ref_concept[0], seed_term)
-                new_ideas.append(next_idea)
-                print(target, ref_concept[0], score)
+        ref_article = wikipedia.page(ref_concept).content
+        ref_sentences = text_fun.w2v_sent_prep(ref_article, sent_detector)
+        ref_arts.append(ref_sentences) 
+        sentences.extend(ref_sentences)
+        print('Got article for %s' % ref_concept) 
     except wikipedia.exceptions.DisambiguationError:
         pass
 
+targets = [element[0] for element in header_tags if element[1] in ok_tags]
+target_arts = []
+for target in targets:
+    try:
+        if seed_term != target:
+            target_article = wikipedia.page(target).content
+            print('Got a target article for %s' % target)
+            target_sentences = text_fun.w2v_sent_prep(target_article, sent_detector)
+            target_arts.append(target_sentences) 
+            sentences.extend(target_sentences)
+    except wikipedia.exceptions.DisambiguationError:
+        pass
+
+flat_sentences = [word for sublist in sentences for word in sublist]
+blob_sentences = ' '.join(flat_sentences)
+blob = TextBlob(blob_sentences, pos_tagger = PerceptronTagger())
+sentences_tags = list(set(blob.tags))
+ok_words = [element[0] for element in sentences_tags \
+    if element[1] in ok_tags]
+
+model = gensim.models.Word2Vec(sentences)
+new_ideas = []
+for target in targets:
+    if target in model.vocab:
+        for ref_concept in ref_concepts:
+            if ref_concept in model.vocab:
+                print('Ref concept: %s in vocab' % str(ref_concept))
+                candidate = model.most_similar(positive = 
+                    [target, ref_concept], 
+                    negative = [seed_term])
+                if candidate[0][0] in ok_words:
+                    score = ksEvaluator(article.replace(str(target), 
+                        candidate[0][0]))
+                    next_idea = \
+                    'Try using %s from %s to make a new kind of %s.' % \
+                        (candidate[0][0], ref_concept, seed_term)
+                    out = (next_idea, target, ref_concept, score)
+                    new_ideas.append(out)
+
+new_ideas.sort(key = lambda tuple: tuple[3])
+seen = set()
+new_ideas = [item for item in new_ideas if item[0] \
+    not in seen and not seen.add(item[0])]
 # mod.most_similar(positive = ['polyurethane', 'surfboard'], negative = ['skateboard'])
 #
 # That will return a list of good matches.  All of them might work.  

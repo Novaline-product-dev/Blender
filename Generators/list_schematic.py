@@ -87,28 +87,34 @@ ok_words = [element[0] for element in sentences_tags \
     if element[1] in ok_tags]
 
 model = gensim.models.Word2Vec(sentences)
+targets = [target for target in targets if target in model.vocab]
+ref_concepts = [rc for rc in ref_concepts if rc in model.vocab]
 new_ideas = []
 for target in targets:
-    if target in model.vocab:
-        for ref_concept in ref_concepts:
-            if ref_concept in model.vocab:
-                print('Ref concept: %s in vocab' % str(ref_concept))
-                candidate = model.most_similar(positive = 
-                    [target, ref_concept], 
-                    negative = [seed_term])
-                if candidate[0][0] in ok_words:
-                    score = ksEvaluator(article.replace(str(target), 
-                        candidate[0][0]))
-                    next_idea = \
-                    'Try using %s from %s to make a new kind of %s.' % \
-                        (candidate[0][0], ref_concept, seed_term)
-                    out = (next_idea, target, ref_concept, score)
-                    new_ideas.append(out)
+	print('Target: %s' % target)
+    for ref_concept in ref_concepts:
+        candidates = model.most_similar(positive = 
+            [target, ref_concept], 
+            negative = [seed_term])
+        candidates = [el[0] for el in candidates]
+        for candidate in candidates:
+        	if candidate in ok_words:
+                score = ksEvaluator(article.replace(str(target), 
+                    candidate))
+                next_idea = \
+                'Try using the %s from a %s to make a new kind of %s.' % \
+                    (candidate, ref_concept, seed_term)
+                out = (next_idea, target, ref_concept, score)
+                new_ideas.append(out)
 
 new_ideas.sort(key = lambda tuple: tuple[3])
 seen = set()
 new_ideas = [item for item in new_ideas if item[0] \
     not in seen and not seen.add(item[0])]
+
+ni = [el[0] for el in new_ideas]
+with open("new_ideas.txt", 'w') as f:
+    f.write('\n'.join(map(str, ni)))
 # mod.most_similar(positive = ['polyurethane', 'surfboard'], negative = ['skateboard'])
 #
 # That will return a list of good matches.  All of them might work.  

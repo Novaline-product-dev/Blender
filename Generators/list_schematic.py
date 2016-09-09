@@ -91,15 +91,16 @@ targets = [target for target in targets if target in model.vocab]
 ref_concepts = [rc for rc in ref_concepts if rc in model.vocab]
 new_ideas = []
 for target in targets:
-	print('Target: %s' % target)
+    print('Target: %s' % target)
     for ref_concept in ref_concepts:
         candidates = model.most_similar(positive = 
             [target, ref_concept], 
             negative = [seed_term])
         candidates = [el[0] for el in candidates]
         for candidate in candidates:
-        	if candidate in ok_words:
-                score = ksEvaluator(article.replace(str(target), 
+            if candidate in ok_words:
+                evalArticle = article.replace(target, ref_concept + candidate)
+                score = ksEvaluator(article.replace(target, 
                     candidate))
                 next_idea = \
                 'Try using the %s from a %s to make a new kind of %s.' % \

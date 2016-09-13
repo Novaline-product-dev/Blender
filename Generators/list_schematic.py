@@ -22,7 +22,7 @@ ksEvaluator = ksmirnov_fun.ksFunctionGenerator(textList)
 header = wikipedia.summary(seed_term)
 header = header[0:header.find('\n')]
 print(ksEvaluator(header))
-print(ksEvaluator(header.replace('polyurethane', 'neoprene')))
+print(ksEvaluator(header.replace('ink', 'paint')))
 
 candidates = []
 for item in googleList:
@@ -66,6 +66,8 @@ for ref_concept in ref_concepts:
     except wikipedia.exceptions.DisambiguationError:
         pass
 
+# May want to remove targets for which no article is found, since
+# the model won't be great on the analogies there, although, maybe not
 targets = [element[0] for element in header_tags if element[1] in ok_tags]
 target_arts = []
 for target in targets:
@@ -90,6 +92,7 @@ model = gensim.models.Word2Vec(sentences)
 targets = [target for target in targets if target in model.vocab]
 ref_concepts = [rc for rc in ref_concepts if rc in model.vocab]
 new_ideas = []
+seen_list = []
 for target in targets:
     print('Target: %s' % target)
     for ref_concept in ref_concepts:
@@ -99,14 +102,16 @@ for target in targets:
         candidates = [el[0] for el in candidates]
         for candidate in candidates:
             if candidate in ok_words:
-                evalArticle = article.replace(target, ref_concept + candidate)
-                score = ksEvaluator(article.replace(target, 
-                    candidate))
-                next_idea = \
-                'Try using the %s from a %s to make a new kind of %s.' % \
-                    (candidate, ref_concept, seed_term)
-                out = (next_idea, target, ref_concept, score)
-                new_ideas.append(out)
+                if candidate not in seen_list:
+                    seen_list.append(candidate)
+                    score = ksEvaluator(article.replace(target, 
+                        candidate))
+                    next_idea = \
+                    'Try using the %s from a %s to make a new kind of %s.' % \
+                        (candidate, ref_concept, seed_term)
+                    out = (next_idea, target, ref_concept, score)
+                    print(score)
+                    new_ideas.append(out)
 
 new_ideas.sort(key = lambda tuple: tuple[3])
 seen = set()
@@ -114,7 +119,7 @@ new_ideas = [item for item in new_ideas if item[0] \
     not in seen and not seen.add(item[0])]
 
 ni = [el[0] for el in new_ideas]
-with open("new_ideas.txt", 'w') as f:
+with open("../new_ideas.txt", 'w') as f:
     f.write('\n'.join(map(str, ni)))
 # mod.most_similar(positive = ['polyurethane', 'surfboard'], negative = ['skateboard'])
 #

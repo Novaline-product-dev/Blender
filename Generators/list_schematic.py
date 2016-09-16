@@ -22,7 +22,7 @@ ksEvaluator = ksmirnov_fun.ksFunctionGenerator(textList)
 header = wikipedia.summary(seed_term)
 header = header[0:header.find('\n')]
 print(ksEvaluator(header))
-print(ksEvaluator(header.replace('ink', 'paint')))
+print(ksEvaluator(header.replace('consumption', 'processing')))
 
 candidates = []
 for item in googleList:
@@ -88,22 +88,23 @@ sentences_tags = list(set(blob.tags))
 ok_words = [element[0] for element in sentences_tags \
     if element[1] in ok_tags]
 
-model = gensim.models.Word2Vec(sentences)
+# Could pre-load a model and add this training to it, but
+# currently I'm loading using load_word2vec_format, which doesn't
+# admit extra training.  
+model = gensim.models.Word2Vec(sentences, sg = 1, negative = 10)
 targets = [target for target in targets if target in model.vocab]
 ref_concepts = [rc for rc in ref_concepts if rc in model.vocab]
 new_ideas = []
-seen_list = []
 for target in targets:
-    print('Target: %s' % target)
-    for ref_concept in ref_concepts:
-        candidates = model.most_similar(positive = 
-            [target, ref_concept], 
-            negative = [seed_term])
-        candidates = [el[0] for el in candidates]
-        for candidate in candidates:
-            if candidate in ok_words:
-                if candidate not in seen_list:
-                    seen_list.append(candidate)
+    if target != seed_term:
+        print('Target: %s' % target)
+        for ref_concept in ref_concepts:
+            candidates = model.most_similar(positive = 
+                [target, ref_concept], 
+                negative = [seed_term])
+            candidates = [el[0] for el in candidates]
+            for candidate in candidates:
+                if candidate in ok_words:
                     score = ksEvaluator(article.replace(target, 
                         candidate))
                     next_idea = \
@@ -121,27 +122,7 @@ new_ideas = [item for item in new_ideas if item[0] \
 ni = [el[0] for el in new_ideas]
 with open("../new_ideas.txt", 'w') as f:
     f.write('\n'.join(map(str, ni)))
-# mod.most_similar(positive = ['polyurethane', 'surfboard'], negative = ['skateboard'])
-#
-# That will return a list of good matches.  All of them might work.  
-# In this particular example it returns these:
-# [('neoprene', 0.8313905596733093), ('dacron', 0.8303178548812866), 
-# ('gauze', 0.8275730609893799), ('fiberboard', 0.826744556427002), 
-# ('silicone', 0.8266098499298096), ('polystyrene', 0.8250176906585693), 
-# ('horsehair', 0.8227001428604126), ('elastomer', 0.8209028244018555), 
-# ('polypropylene', 0.8173956871032715), ('epoxy', 0.8171824216842651)]
-
-# Then the quesiton is: can you replace polyurethane with neoprene?  
 
 
-# Following is to train a word2vec model on a particular wikipedia article
-
-#sentences = sent_detector.tokenize(article)
-#exclude = set(string.punctuation)
-#for i, sentence in enumerate(sentences):
-#    temp = ''.join(ch for ch in sentence if ch not in exclude)
-#    sentences[i] = text_fun.prune(temp, stem = False)
-#mod = gensim.models.Word2Vec(sentences)
-#mod.init_sims(replace = True)
 
 

@@ -110,10 +110,17 @@ for target in targets:
                     next_idea = \
                     'Try using the %s from a %s to make a new kind of %s.' % \
                         (candidate, ref_concept, seed_term)
-                    out = (next_idea, target, ref_concept, score)
+                    out = (next_idea, target, ref_concept, score, candidate)
                     print(score)
                     new_ideas.append(out)
 
+chosen_candidates = set([el[4] for el in new_ideas])
+new_ideas2 = []
+for cc in chosen_candidates:
+    sub_ideas = [el for el in new_ideas if el[4] == cc]
+    new_ideas2.append(min(sub_ideas, key = lambda x: x[3]))
+
+new_ideas = new_ideas2
 new_ideas.sort(key = lambda tuple: tuple[3])
 seen = set()
 new_ideas = [item for item in new_ideas if item[0] \

@@ -15,6 +15,7 @@ from textblob_aptagger import PerceptronTagger
 
 googleList = pickle.load( open('../fulltext.p', 'rb'))
 seed_term = pickle.load( open('../search_text.p', 'rb'))
+seed_term = seed_term.lower()
 textList = [text_fun.prune(doc) for doc in googleList]
 article = wikipedia.page(seed_term).content
 ksEvaluator = ksmirnov_fun.ksFunctionGenerator(textList)
@@ -123,8 +124,11 @@ for cc in chosen_candidates:
 new_ideas = new_ideas2
 new_ideas.sort(key = lambda tuple: tuple[3])
 seen = set()
+
+# sneaks a computation into list comprehension using
+# the last condition
 new_ideas = [item for item in new_ideas if item[0] \
-    not in seen and not seen.add(item[0])]
+    not in seen and not seen.add(item[0])] 
 
 ni = [el[0] for el in new_ideas]
 with open("../new_ideas.txt", 'w') as f:

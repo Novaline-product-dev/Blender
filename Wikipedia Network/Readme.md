@@ -13,6 +13,8 @@
  source activate python2.7
  python wikiextractor/WikiExtractor.py -o wiki_html --no-templates enwiki-latest-pages-articles.xml.bz2
  ```
+ This will make a folder called `wiki_html` and inside will be many folders starting with `AA` and `AB` that have Wikipedia articles in an HTML-like format.  
+ 
 3. Use `filename_list_generator.py`
 
 4. Clean the text > Form a dictionary > Change each article to BOW > Convert from BOW to TF-IDF > Convert from TF-IDF to LSI > Peform similarity analysis

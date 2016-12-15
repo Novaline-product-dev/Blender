@@ -1,6 +1,6 @@
 #Usage Notes
 
-1. Download the [latest Wikipedia dump](https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2).
+1. Download the [latest Wikipedia dump](https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2). (This is around 14 GB.)
 
 2. Use Attardi's wikiextractor to get from the .xml.bz2 format to HTML.  First, get it:
  

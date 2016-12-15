@@ -1,13 +1,14 @@
 ## Processes the HTML-format file of all Wikipedia articles
 ## Line 42 needs to be changed to access your articles in HTML form
 
-import sys
-sys.path.append("..")
+
 import os
-import textFunctions as tf
+os.chdir(os.getenv('HOME') + '/Documents/Blender/Utilities')
+import text_fun as tf
 from gensim import corpora, models
 from lxml import html
 from datetime import datetime
+os.chdir('../Aux/wiki_html')
 
 def time():
     return str(datetime.now())[5:19]
@@ -15,8 +16,10 @@ def time():
 def textractor(file_name):
     """Accesses the text of documents in an html file (returns a list)."""
     raw_text = []
-    with open(file_name) as f:
-        soup = html.fromstring(f.read())
+    with open(file_name, 'rb') as f:
+        temp = f.read().decode('utf8', 'ignore')
+        soup = html.fromstring(temp)
+        #soup = html.fromstring(f.read())
         for doc in soup.xpath('//doc'):
             raw_text.append(doc.text)
     return raw_text
@@ -32,15 +35,13 @@ def titlextractor(file_name):
 
 print(time(), 'Start.')
 # Provide a route by which to access all the files
-os.chdir(os.environ['HOME'])
+
 files = []
 # Make sure you have already generated a list of files with
 # filename_list_generator.py
-with open('Documents/Blender/Wikipedia Network/filenames.txt', 'r') as f:
+with open('../../Wikipedia Network/filenames.txt', 'r') as f:
     for line in f:
         files.append(line.strip('\n'))
-os.chdir('Documents/BlenderTester')  ### THIS IS HARDCODED FOR FSL.byu.edu -
-# You can change this to your directory that houses the AA,AB,AC files
 
 
 # Run through each file at a time, collecting stats about tokens
@@ -57,6 +58,12 @@ print(time(), 'Dictionary loaded. Filtering extremes.')
 dictionary.filter_extremes()
 dictionary.compactify()
 dictionary.save('dictionary.dict')
+
+
+#!!!!!!!  Dec 15, 2016
+# Probably will throw an ascii error here because of titleextractor and python3
+#!!!!!!!!
+
 
 # Create a corpus using the previous dictionary and all the files
 # This only holds one file in memory at a time.

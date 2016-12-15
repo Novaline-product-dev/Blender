@@ -24,8 +24,7 @@ for directory in directory_list:
 
 # Write the list of files to a text file
 os.chdir(os.environ['HOME'])
-os.chdir('Documents/Blender')
-os.chdir('Wikipedia Network')
+os.chdir('Documents/Blender/Wikipedia Network')
 with open('filenames.txt', 'w') as f:
     for filename in filenames:
         f.write(filename + '\n')

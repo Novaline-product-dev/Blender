@@ -1,9 +1,9 @@
 ## Processes the HTML-format file of all Wikipedia articles
 ## Line 42 needs to be changed to access your articles in HTML form
 
-
+import sys
+sys.path.append('../Utilities')
 import os
-os.chdir(os.getenv('HOME') + '/Documents/Blender/Utilities')
 import text_fun as tf
 from gensim import corpora, models
 from lxml import html
@@ -40,7 +40,8 @@ files = []
 with open('../../Wikipedia Network/filenames.txt', 'r') as f:
     for line in f:
         files.append(line.strip('\n'))
-
+print(time(), 'Filenames Read.  For example, the first file is:', files[0])
+print('The current working directory is', os.getcwd())
 
 # Run through each file at a time, collecting stats about tokens
 # Weird list comprehension: http://stackoverflow.com/ ...

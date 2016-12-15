@@ -17,9 +17,7 @@ def textractor(file_name):
     """Accesses the text of documents in an html file (returns a list)."""
     raw_text = []
     with open(file_name, 'rb') as f:
-        temp = f.read().decode('utf8', 'ignore')
-        soup = html.fromstring(temp)
-        #soup = html.fromstring(f.read())
+        soup = html.fromstring(f.read().decode('utf8', 'ignore'))
         for doc in soup.xpath('//doc'):
             raw_text.append(doc.text)
     return raw_text
@@ -27,8 +25,8 @@ def textractor(file_name):
 def titlextractor(file_name):
     """Accesses the title of documents in an html file (returns a list)."""
     titles=[]
-    with open(file_name) as f:
-        soup = html.fromstring(f.read())
+    with open(file_name, 'rb') as f:
+        soup = html.fromstring(f.read().decode('utf8', 'ignore'))
         for title in soup.xpath('//@title'):
             titles.append(title)
     return titles

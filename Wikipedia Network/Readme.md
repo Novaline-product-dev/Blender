@@ -19,4 +19,4 @@
 
 4. Clean the text > Form a dictionary > Change each article to BOW > Convert from BOW to TF-IDF > Convert from TF-IDF to LSI > Peform similarity analysis
 
-Blender/Wikipedia Newtork/wikiScript.py gives a nice summary.  So doeas HTML_2_Corpus.py at the end.
+Blender/Wikipedia Newtork/wikiScript.py gives a nice summary.  So doeas `HTML_2_Corpus.py` at the end.

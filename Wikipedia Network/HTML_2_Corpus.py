@@ -122,7 +122,7 @@ print('Wikipedia Corpus Loaded')
 print('Creating LSI Model...')
 #### Create the lsi model object
 dictionary=corpora.Dictionary.load('wiki_dictionary.dict')
-lsi = models.LsiModel(mmcorpus, id2word=dictionary, num_terms=100000, num_topics=400, decay=1.0, chunksize=20000)
+lsi = models.LsiModel(mmcorpus, id2word=dictionary, num_topics=400, decay=1.0, chunksize=20000)
 lsi.print_topics(2)
 lsi.save('wiki_lsi')
 

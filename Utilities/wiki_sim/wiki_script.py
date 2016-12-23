@@ -38,7 +38,7 @@ lsi = gensim.models.LsiModel.load('wiki_lsi')
 index = gensim.similarities.docsim.Similarity.load('./index_shards/lsi_wiki_index.index')
 
 
-doc = wikipedia.page('skateboard').content
+doc = wikipedia.page('spatula').content
 doc = text_fun.prune(doc)
 # Split doc, change to BOW (bag of words) and translate to lsi space 
 lsiString = lsi[id2word.doc2bow(doc)]

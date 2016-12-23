@@ -2,7 +2,7 @@
 
 1. Download the [latest Wikipedia dump](https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2). (This is around 14 GB.)
 
-2. Use Attardi's wikiextractor to get from the .xml.bz2 format to HTML.  First, get it:
+2. Use Attardi's `wikiextractor` to get from the .xml.bz2 format to HTML.  First, get the script:
  
  `git clone https://github.com/attardi/wikiextractor.git`, 
 	
@@ -17,6 +17,8 @@
  
 3. Use `filename_list_generator.py`
 
-4. Clean the text > Form a dictionary > Change each article to BOW > Convert from BOW to TF-IDF > Convert from TF-IDF to LSI > Peform similarity analysis
+4. Run `HTML_2_Corpus.py`, which will create a dictionary, a corpus, and an LSI model.  This will take days.
 
-Blender/Wikipedia Newtork/wikiScript.py gives a nice summary.  So doeas `HTML_2_Corpus.py` at the end.
+5. Run `wiki_script.py`, but change the target term.  Right now, the creation of the index is in `wiki_script.py`, which takes a while to run.  Several hours. Once the index is created, comment out the index code block and you can run queries.  (This is a terrible approach, obviously, and it will change very soon.  High priority.)
+ 
+

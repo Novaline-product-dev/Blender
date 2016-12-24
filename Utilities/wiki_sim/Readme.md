@@ -2,13 +2,13 @@
 
 This process will help you set up similarity queries on the Wikipedia corpus using `gensim`.
 
-1. Download the [latest Wikipedia dump](https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2). (This is around 14 GB.)
+1. Download the [latest Wikipedia dump](https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2). (This is around 14 GB.)  Create a folder with path `/Blender/Aux` to store the data.  Navigate to `Aux`.
 
 2. Use Attardi's `wikiextractor` to get from the `.xml.bz2` format to HTML.  First, get the script:
  
  `git clone https://github.com/attardi/wikiextractor.git`, 
 	
-	then make an environment that runs python 2.7 
+	then make an environment that runs Python 2.7 
 	
  ```
  conda create --name python2.7 python=2.7

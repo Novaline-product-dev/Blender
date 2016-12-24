@@ -1,11 +1,11 @@
 import sys
-sys.path.append('../Utilities')
+sys.path.append('../../Utilities')
 import os
 import text_fun as tf
 from gensim import corpora, models
 from lxml import html
 from datetime import datetime
-os.chdir('../Aux/wiki_html')
+os.chdir('../../Aux/wiki_html')
 
 def time():
     return str(datetime.now())[5:19]

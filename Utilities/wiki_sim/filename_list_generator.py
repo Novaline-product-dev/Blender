@@ -6,9 +6,7 @@ import os
 
 # Provide the path to the master directory, containing all the HTML format articles.
 # This is the one that contains AA, AB, AC, AD and so on
-print('Please enter the full path of the master directory --')
-print('ex: /fslhome/cbell75/wikidump/wiki_to_html2')
-path = input('This is the one that contains AA, AB, AC, AD, and so on.\n')
+path = os.getenv('HOME') + '/Documents/Blender/Aux/wiki_html'
 
 # Move to the master directory
 os.chdir(path)
@@ -23,8 +21,12 @@ for directory in directory_list:
         filenames.append(directory + '/' + file)
 
 # Write the list of files to a text file
-os.chdir(os.environ['HOME'])
-os.chdir('Documents/Blender/Wikipedia Network')
+path = os.getenv('HOME') + '/Documents/Blender/Aux/wiki_model'
+if not os.path.isdir(path):
+    os.makedirs(path)
+os.chdir(path)
+
 with open('filenames.txt', 'w') as f:
     for filename in filenames:
         f.write(filename + '\n')
+

@@ -88,16 +88,7 @@ mmcorpus = corpora.MmCorpus(corpus_path)
 print('Wikipedia Corpus Loaded')
 # end corpus..................................................
 
-
-#print('Creating TFIDF model...')
-#tfidf = models.TfidfModel(mmcorpus) 
-#print('TFIDF model created')
-
-#print('Transforming corpus to TFIDF...')
-#mmcorpus_tfidf = tfidf[mmcorpus]
-#corpora.MmCorpus.serialize('corpus_tfidf.mm', mmcorpus_tfidf)
-#print('TFIDF corpus saved')
-
+os.chdir('../wiki_model')
 print('Creating LSI Model...')
 dictionary=corpora.Dictionary.load('wiki_dictionary.dict')
 lsi = models.LsiModel(mmcorpus, id2word=dictionary, num_topics=400, decay=1.0, chunksize=20000)

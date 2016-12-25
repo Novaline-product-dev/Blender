@@ -1,7 +1,7 @@
 import sys
 sys.path.append('../../Utilities')
 import os
-import text_fun as tf
+import text_fun 
 from gensim import corpora, models
 from lxml import html
 from datetime import datetime
@@ -37,19 +37,30 @@ with open('../../Utilities/wiki_sim/filenames.txt', 'r') as f:
 print(time(), 'Filenames Read.  For example, the first file is:', files[0])
 print('The current working directory is', os.getcwd())
 
-print(time(), 'Beginning to load dictionary.')
-dictionary = corpora.Dictionary(
-    tf.prune(doc)
-        for file_name in files
-            for doc in textractor(file_name))
-print(time(), 'Dictionary loaded. Filtering extremes.')
 
-## Remove frequent and infrequent words, and limit tokens to 100,000
-dictionary.filter_extremes()
-dictionary.compactify()
-os.chdir('../wiki_model')
-dictionary.save('wiki_dictionary.dict')
+# dictionary .............................................
+dict_path = '../wiki_model/wiki_dictionary.dict'
+if not os.path.isfile(dict_path):
+    print('Dictionary not found.')
+    print(time(), 'Beginning to create dictionary.')
+    dictionary = corpora.Dictionary(
+        text_fun.prune(doc)
+            for file_name in files
+                for doc in textractor(file_name))
+    print(time(), 'Dictionary loaded. Filtering extremes.')
 
+    ## Remove frequent and infrequent words, and limit tokens to 100,000
+    dictionary.filter_extremes()
+    dictionary.compactify()
+    dictionary.save(dict_path)
+
+print('Loading dictionary from disk.')
+dictionary = corpora.Dictionary.load(dict_path)
+print('Dictionary loaded.')
+# end dictionary .............................................
+
+
+# corpus......................................................
 class MyCorpus(object):
     def __iter__(self):
         for i, file_name in enumerate(files):
@@ -60,19 +71,23 @@ class MyCorpus(object):
             for title, doc in zip(titles, docs):
                 with open('titles.txt', 'a') as f:
                     f.write(''.join((title, '\n')))
-                yield dictionary.doc2bow(tf.prune(doc))
+                yield dictionary.doc2bow(text_fun.prune(doc))
 
-print(time(), 'Building corpus.')
-corpus = MyCorpus() 
+corpus_path = '../wiki_model/wiki_corpus.mm'
+if not os.path.isfile(corpus_path):
+    print('Corpus not found.')
+    print(time(), 'Building corpus.')
+    corpus = MyCorpus() 
     
-print(time(), 'Corpus built. Converting to Market Matrix format.')
-corpora.MmCorpus.serialize('wiki_corpus.mm', corpus)
-print(time(), 'Market Matrix format saved. Process finished.')
-
+    print(time(), 'Corpus built. Saving in Market Matrix format.')
+    corpora.MmCorpus.serialize(corpus_path, corpus)
+    print(time(), 'Corpus saved in Market Matrix format.')
 
 print('Loading corpus...')
-mmcorpus = corpora.MmCorpus('wiki_corpus.mm')
+mmcorpus = corpora.MmCorpus(corpus_path)
 print('Wikipedia Corpus Loaded')
+# end corpus..................................................
+
 
 #print('Creating TFIDF model...')
 #tfidf = models.TfidfModel(mmcorpus) 

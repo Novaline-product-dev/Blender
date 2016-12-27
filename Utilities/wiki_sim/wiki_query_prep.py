@@ -28,7 +28,6 @@ def titlextractor(file_name):
             titles.append(title)
     return titles
 
-print(time(), 'Start.')
 files = []
 # filenames.txt is output of filename_list_generator.py
 with open('../../Utilities/wiki_sim/filenames.txt', 'r') as f:
@@ -61,23 +60,32 @@ print('Dictionary loaded.')
 
 
 # corpus......................................................
-class MyCorpus(object):
+class MyCorpus(object, gensim_dictionary):
+    def __init__(self, files):
+        self.titles = []
+        for file_name in enumerate(files):
+            self.titles.extend(titlextractor(file_name))
+
     def __iter__(self):
-        for i, file_name in enumerate(files):
-            if i%10000 == 0 and i != 0:
-                print(time(), '%i files added to corpus.' %i)
-            titles = titlextractor(file_name)
-            docs = textractor(file_name)
-            for title, doc in zip(titles, docs):
-                with open('titles.txt', 'a') as f:
-                    f.write(''.join((title, '\n')))
-                yield dictionary.doc2bow(text_fun.prune(doc))
+    for i, file_name in enumerate(files):
+        docs = textractor(file_name)
+        for doc in docs:
+            yield gensim_dictionary.doc2bow(text_fun.prune(doc))
+        if i%1000 == 0 and i != 0:
+            print(time(), '%i files added to corpus.' %i)
+
+    def save_titles(self, path):
+        with open(path, 'w') as f:
+        for title in self.titles:
+            f.write(''.join((title, '\n')))
+
 
 corpus_path = '../wiki_model/wiki_corpus.mm'
 if not os.path.isfile(corpus_path):
     print('Corpus not found.')
     print(time(), 'Building corpus.')
-    corpus = MyCorpus() 
+    corpus = MyCorpus(dictionary) 
+    corpus.save_titles('../wiki_model/titles.txt')
     
     print(time(), 'Corpus built. Saving in Market Matrix format.')
     corpora.MmCorpus.serialize(corpus_path, corpus)

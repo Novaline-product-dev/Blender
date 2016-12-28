@@ -61,18 +61,24 @@ print('Dictionary loaded.')
 
 # corpus......................................................
 class WikiCorpus(object):
-    def __init__(self, files):
+    def __init__(self, titles_path, files):
         self.titles = []
-        for file_name in files:
-            print(file_name)
-            self.titles.extend(titlextractor(file_name))
+        if os.path.isfile(titles_path):
+            with open(titles_path, 'r') as f:
+                for line in f:
+                    self.titles.extend(line.strip('\n'))
+            print('Corpus titles loaded from titles.txt')
+        else: 
+            for file_name in files:
+                print(file_name)
+                self.titles.extend(titlextractor(file_name))
 
     def __iter__(self):
         for i, file_name in enumerate(files):
             docs = textractor(file_name)
             for doc in docs:
                 yield gensim_dictionary.doc2bow(text_fun.prune(doc))
-            print(time(), '%i files added to corpus.' %i + 1)
+            print(time(), '%i files added to corpus.' %(i + 1))
 
     def save_titles(self, path):
         with open(path, 'wb') as f:
@@ -85,8 +91,10 @@ corpus_path = '../wiki_model/wiki_corpus.mm'
 if not os.path.isfile(corpus_path):
     print('Corpus not found.')
     print(time(), 'Building corpus.')
-    corpus = WikiCorpus(files) 
-    corpus.save_titles('../wiki_model/titles.txt')
+    titles_path = '../wiki_model/titles.txt'
+    corpus = WikiCorpus(titles_path, files) 
+    if not os.path.isfile(titles_path):
+        corpus.save_titles(titles_path)
     
     print(time(), 'Corpus built. Saving in Market Matrix format.')
     corpora.MmCorpus.serialize(corpus_path, corpus)

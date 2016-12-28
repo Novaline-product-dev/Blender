@@ -7,17 +7,22 @@ from lxml import html
 from datetime import datetime
 os.chdir('../../Aux/wiki_html')
 
+
 def time():
     return str(datetime.now())[5:19]
 
 files = []
-# filenames.txt is output of filename_list_generator.py
-with open('../../Aux/wiki_model/filenames.txt', 'r') as f:
-    for line in f:
-        files.append(line.strip('\n'))
-print(time(), 'Filenames Read.  For example, the first file is:', files[0])
+directory_list = os.listdir()
+for directory in directory_list:
+    for file in os.listdir(directory):
+        files.append(directory + '/' + file)
+print(time(), 'Filenames Read.  First file is:', files[0])
 print('The current working directory is', os.getcwd())
 
+model_path = '../wiki_model'
+if not os.path.isdir(model_path):
+    os.makedirs(model_path)
+os.chdir(model_path)
 
 # dictionary .............................................
 dict_path = '../wiki_model/wiki_dictionary.dict'
@@ -30,7 +35,7 @@ if not os.path.isfile(dict_path):
                 for doc in textractor(file_name))
     print(time(), 'Dictionary loaded. Filtering extremes.')
 
-    ## Remove frequent and infrequent words, and limit tokens to 100,000
+    # Remove freq. and infreq. words, limit tokens to 100K
     gensim_dictionary.filter_extremes()
     gensim_dictionary.compactify()
     gensim_dictionary.save(dict_path)
@@ -63,7 +68,8 @@ print('Wikipedia Corpus Loaded')
 os.chdir('../wiki_model')
 print('Creating LSI Model...')
 dictionary=corpora.Dictionary.load('wiki_dictionary.dict')
-lsi = models.LsiModel(mmcorpus, id2word=dictionary, num_topics=400, decay=1.0, chunksize=20000)
+lsi = models.LsiModel(mmcorpus, id2word=dictionary, num_topics=400, 
+                      decay=1.0, chunksize=20000)
 lsi.print_topics(2)
 lsi.save('wiki_lsi')
 
@@ -74,6 +80,6 @@ print('Corpus transformed to LSI space.')
 
 print('Creating index...')
 index = gensim.similarities.docsim.Similarity('./index_shards/wiki_index',
-        lsiCorpus, num_features = lsi.num_topics, num_best = 30)
+        lsiCorpus, num_features=lsi.num_topics, num_best=30)
 index.save('./index_shards/lsi_wiki_index.index')
 print('Done!')

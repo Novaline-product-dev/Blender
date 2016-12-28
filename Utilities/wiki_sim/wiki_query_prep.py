@@ -30,7 +30,7 @@ def titlextractor(file_name):
 
 files = []
 # filenames.txt is output of filename_list_generator.py
-with open('../../Utilities/wiki_sim/filenames.txt', 'r') as f:
+with open('../../Aux/wiki_model/filenames.txt', 'r') as f:
     for line in f:
         files.append(line.strip('\n'))
 print(time(), 'Filenames Read.  For example, the first file is:', files[0])
@@ -42,49 +42,50 @@ dict_path = '../wiki_model/wiki_dictionary.dict'
 if not os.path.isfile(dict_path):
     print('Dictionary not found.')
     print(time(), 'Beginning to create dictionary.')
-    dictionary = corpora.Dictionary(
+    gensim_dictionary = corpora.Dictionary(
         text_fun.prune(doc)
             for file_name in files
                 for doc in textractor(file_name))
     print(time(), 'Dictionary loaded. Filtering extremes.')
 
     ## Remove frequent and infrequent words, and limit tokens to 100,000
-    dictionary.filter_extremes()
-    dictionary.compactify()
-    dictionary.save(dict_path)
+    gensim_dictionary.filter_extremes()
+    gensim_dictionary.compactify()
+    gensim_dictionary.save(dict_path)
 
 print('Loading dictionary from disk.')
-dictionary = corpora.Dictionary.load(dict_path)
+gensim_dictionary = corpora.Dictionary.load(dict_path)
 print('Dictionary loaded.')
 # end dictionary .............................................
 
 
 # corpus......................................................
-class MyCorpus(object, gensim_dictionary):
+class WikiCorpus(object):
     def __init__(self, files):
         self.titles = []
-        for file_name in enumerate(files):
+        for file_name in files:
+            print(file_name)
             self.titles.extend(titlextractor(file_name))
 
     def __iter__(self):
-    for i, file_name in enumerate(files):
-        docs = textractor(file_name)
-        for doc in docs:
-            yield gensim_dictionary.doc2bow(text_fun.prune(doc))
-        if i%10 == 0 and i != 0:
-            print(time(), '%i files added to corpus.' %i)
+        for i, file_name in enumerate(files):
+            docs = textractor(file_name)
+            for doc in docs:
+                yield gensim_dictionary.doc2bow(text_fun.prune(doc))
+            print(time(), '%i files added to corpus.' %i + 1)
 
     def save_titles(self, path):
-        with open(path, 'w') as f:
-        for title in self.titles:
-            f.write(''.join((title, '\n')))
+        with open(path, 'wb') as f:
+            for title in self.titles:
+                to_write = ''.join((title, '\n'))
+                f.write(to_write.encode('utf8'))
 
 
 corpus_path = '../wiki_model/wiki_corpus.mm'
 if not os.path.isfile(corpus_path):
     print('Corpus not found.')
     print(time(), 'Building corpus.')
-    corpus = MyCorpus(dictionary) 
+    corpus = WikiCorpus(files) 
     corpus.save_titles('../wiki_model/titles.txt')
     
     print(time(), 'Corpus built. Saving in Market Matrix format.')

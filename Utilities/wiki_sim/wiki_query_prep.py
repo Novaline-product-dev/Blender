@@ -8,64 +8,54 @@ from datetime import datetime
 os.chdir('../../Aux/wiki_html')
 
 
-def time():
-    return str(datetime.now())[5:19]
-
 files = []
 directory_list = os.listdir()
 for directory in directory_list:
     for file in os.listdir(directory):
         files.append(directory + '/' + file)
-print(time(), 'Filenames Read.  First file is:', files[0])
-print('The current working directory is', os.getcwd())
 
 model_path = '../wiki_model'
 if not os.path.isdir(model_path):
     os.makedirs(model_path)
-os.chdir(model_path)
 
 # dictionary .............................................
 dict_path = '../wiki_model/wiki_dictionary.dict'
 if not os.path.isfile(dict_path):
-    print('Dictionary not found.')
-    print(time(), 'Beginning to create dictionary.')
+    print('Dictionary not found.  Creating one...')
     gensim_dictionary = corpora.Dictionary(
         text_fun.prune(doc)
             for file_name in files
                 for doc in textractor(file_name))
-    print(time(), 'Dictionary loaded. Filtering extremes.')
+    print('Dictionary created. Filtering extremes.')
 
     # Remove freq. and infreq. words, limit tokens to 100K
     gensim_dictionary.filter_extremes()
     gensim_dictionary.compactify()
     gensim_dictionary.save(dict_path)
+    print('Dictionary saved.')
 
-print('Loading dictionary from disk.')
+print('Loading dictionary from disk...')
 gensim_dictionary = corpora.Dictionary.load(dict_path)
 print('Dictionary loaded.')
 # end dictionary .............................................
-
-
 # corpus......................................................
 corpus_path = '../wiki_model/wiki_corpus.mm'
 if not os.path.isfile(corpus_path):
-    print('Corpus not found.')
-    print(time(), 'Building corpus.')
+    print('Corpus not found.  Creating one...')
     titles_path = '../wiki_model/titles.txt'
     corpus = WikiCorpus(titles_path, files) 
     if not os.path.isfile(titles_path):
         corpus.save_titles(titles_path)
     
-    print(time(), 'Corpus built. Saving in Market Matrix format.')
+    print('Corpus created. Saving to Market Matrix format.')
     corpora.MmCorpus.serialize(corpus_path, corpus)
-    print(time(), 'Corpus saved in Market Matrix format.')
+    print('Corpus saved to disk.')
 
 print('Loading corpus...')
 mmcorpus = corpora.MmCorpus(corpus_path)
-print('Wikipedia Corpus Loaded')
 # end corpus..................................................
 
-os.chdir('../wiki_model')
+os.chdir(model_path)
 print('Creating LSI Model...')
 dictionary=corpora.Dictionary.load('wiki_dictionary.dict')
 lsi = models.LsiModel(mmcorpus, id2word=dictionary, num_topics=400, 
@@ -76,7 +66,6 @@ lsi.save('wiki_lsi')
 print('Transforming Wikipedia Corpus to LSI')
 mmcorpus_lsi = lsi[mmcorpus]
 corpora.MmCorpus.serialize('wiki_corpus_lsi.mm', mmcorpus_lsi)
-print('Corpus transformed to LSI space.')
 
 print('Creating index...')
 index = gensim.similarities.docsim.Similarity('./index_shards/wiki_index',

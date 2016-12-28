@@ -16,11 +16,9 @@ This process will help you set up similarity queries on the Wikipedia corpus usi
  python wikiextractor/WikiExtractor.py -o wiki_html --no-templates enwiki-latest-pages-articles.xml.bz2
  ```
  This takes a _long time_.  This will make a folder called `wiki_html` and inside will be many folders, with names starting with `AA` and `AB` and so forth.  Those folders have the text of Wikipedia articles in an HTML-like format.  
- 
-3. Use `filename_list_generator.py`.  This simply runs through the folders and creates a list of the filenames so the next script can read them.
 
-4. Run `wiki_query_prep.py`, which will create a dictionary, a corpus, a model, and an index.  This will take several days.
+3. Run `wiki_query_prep.py`, which will create a dictionary, a corpus, a model, and an index.  This will take several days.
 
-5. Run `wiki_query.py`, but change `query_term` to whatever you want.
+4. Run `wiki_query.py`, but change `query_term` to whatever you want.
  
 

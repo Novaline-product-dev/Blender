@@ -10,4 +10,4 @@ print(' '.join(medword.median_words('..')))
 
 # Plot.  Comment if you don't care.
 #--------------------------------------------------------------------
-text_fun.textNetworkPlot(textList)
+text_fun.text_network_plot(textList)

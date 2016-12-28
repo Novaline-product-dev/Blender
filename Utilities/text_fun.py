@@ -12,11 +12,11 @@ from nltk.stem.snowball import SnowballStemmer
 from nltk.corpus import stopwords
 from sklearn import feature_extraction 
 
-def hasNumber(stringToCheck):
+def has_number(stringToCheck):
     """Checks string for numbers, returns a boolean."""
     return bool(re.search(r'\d', stringToCheck))
 
-def rmPunct(dirtyStr):
+def rm_punct(dirtyStr):
     """Removes punctuation, returns resulting string"""
     splitCleanStr = [ch for ch in dirtyStr if ch not in string.punctuation]
     cleanStr = ''.join(splitCleanStr)
@@ -31,7 +31,7 @@ def prune(doc, stoplist = None, stem = True, english_dictionary_words = False):
 
     # Remove freestanding punctuation and punctuation in words
     temp = [w for w in temp if w not in string.punctuation]
-    temp = [rmPunct(w) for w in temp]
+    temp = [rm_punct(w) for w in temp]
 
     # Remove words in passed stoplist
     if stoplist:
@@ -61,7 +61,25 @@ def w2v_sent_prep(article, sent_detector):
         sentences[i] = prune(temp, stem = False)
     return sentences
 
-def textNetworkPlot(textList, wordFreqThreshold = 10):
+def text_extractor(file_name):
+    """Accesses the text of documents in an html file (returns a list)."""
+    raw_text = []
+    with open(file_name, 'rb') as f:
+        soup = html.fromstring(f.read().decode('utf8', 'ignore'))
+        for doc in soup.xpath('//doc'):
+            raw_text.append(doc.text)
+    return raw_text
+
+def title_extractor(file_name):
+    """Accesses the title of documents in an html file (returns a list)."""
+    titles=[]
+    with open(file_name, 'rb') as f:
+        soup = html.fromstring(f.read().decode('utf8', 'ignore'))
+        for title in soup.xpath('//@title'):
+            titles.append(title)
+    return titles
+
+def text_network_plot(textList, wordFreqThreshold = 10):
     """ Plots a pared-down word-word connection network.  If you increase wordFreqThreshold, it pares down the network.  wordFreqThreshold will depend on the size of textList. 
 
         textList should be a list of unordered lists of words. 
@@ -100,3 +118,29 @@ def textNetworkPlot(textList, wordFreqThreshold = 10):
     nx.draw(G, node_size = 0, pos = pos, alpha = 0.04)  
     nx.draw_networkx_labels(G, pos = pos, font_color = '#2ca25f')
     plt.show() 
+
+class WikiCorpus(object):
+    def __init__(self, titles_path, files):
+        self.titles = []
+        if os.path.isfile(titles_path):
+            with open(titles_path, 'r') as f:
+                for line in f:
+                    self.titles.extend(line.strip('\n'))
+            print('Corpus titles loaded from titles.txt')
+        else: 
+            for file_name in files:
+                print(file_name)
+                self.titles.extend(titlextractor(file_name))
+
+    def __iter__(self):
+        for i, file_name in enumerate(files):
+            docs = textractor(file_name)
+            for doc in docs:
+                yield gensim_dictionary.doc2bow(text_fun.prune(doc))
+            print(time(), '%i files added to corpus.' %(i + 1))
+
+    def save_titles(self, path):
+        with open(path, 'wb') as f:
+            for title in self.titles:
+                to_write = ''.join((title, '\n'))
+                f.write(to_write.encode('utf8'))

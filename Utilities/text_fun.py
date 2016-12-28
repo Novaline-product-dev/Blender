@@ -1,9 +1,7 @@
 import string
 import re
-from scipy import stats
 import numpy as np
 import enchant
-from numpy import *
 import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -12,42 +10,28 @@ from nltk.stem.snowball import SnowballStemmer
 from nltk.corpus import stopwords
 from sklearn import feature_extraction 
 
-def has_number(stringToCheck):
-    """Checks string for numbers, returns a boolean."""
-    return bool(re.search(r'\d', stringToCheck))
 
-def rm_punct(dirtyStr):
+def rm_punct(in_string):
     """Removes punctuation, returns resulting string"""
-    splitCleanStr = [ch for ch in dirtyStr if ch not in string.punctuation]
-    cleanStr = ''.join(splitCleanStr)
-    return(cleanStr)
+    split_string = [ch for ch in in_string if ch not in string.punctuation]
+    out_string = ''.join(split_string)
+    return(out_string)
 
-def prune(doc, stoplist = None, stem = True, english_dictionary_words = False):
+def prune(doc, stoplist = None, stem = True, 
+          english_dictionary_words = False):
     """This takes a single document and tokenizes the words, removes
     undesirable elements, and prepares it to be loaded into a dictionary.
     """
-    # Tokenize the document and make it lowercase
     temp = utils.simple_preprocess(doc.lower())
-
-    # Remove freestanding punctuation and punctuation in words
     temp = [w for w in temp if w not in string.punctuation]
     temp = [rm_punct(w) for w in temp]
-
-    # Remove words in passed stoplist
     if stoplist:
         temp = [w for w in temp if w not in stoplist]
-
-    # Remove specific tokens
     temp = [w for w in temp if w not in set(['[', ']', "'", '\n', 'com'])]
-
-    # Remove stopwords
     temp = [w for w in temp if w not in stopwords.words('english')]
-
-    # Stem the remaining words
     if stem:
         stemmer = SnowballStemmer('english')
         temp = [stemmer.stem(w) for w in temp]
-
     if english_dictionary_words:
         d = enchant.Dict("en_US")
         temp = [w for w in temp if d.check(w)]
@@ -87,7 +71,6 @@ def text_network_plot(textList, wordFreqThreshold = 10):
     for i, text in enumerate(textList):
         textList[i] = ' '.join(text)
 
-    # initializes a counter from sklearn
     vectorizer = feature_extraction.text.CountVectorizer() 
     dtm = vectorizer.fit_transform(textList) 
     dtm = dtm.toarray()
@@ -120,7 +103,8 @@ def text_network_plot(textList, wordFreqThreshold = 10):
     plt.show() 
 
 class WikiCorpus(object):
-    def __init__(self, titles_path, files):
+    def __init__(self, titles_path, files, gensim_dictionary):
+        self.dictionary = gensim_dictionary
         self.titles = []
         if os.path.isfile(titles_path):
             with open(titles_path, 'r') as f:
@@ -130,13 +114,13 @@ class WikiCorpus(object):
         else: 
             for file_name in files:
                 print(file_name)
-                self.titles.extend(titlextractor(file_name))
+                self.titles.extend(title_extractor(file_name))
 
     def __iter__(self):
         for i, file_name in enumerate(files):
-            docs = textractor(file_name)
+            docs = text_extractor(file_name)
             for doc in docs:
-                yield gensim_dictionary.doc2bow(text_fun.prune(doc))
+                yield self.dictionary.doc2bow(prune(doc))
             print(time(), '%i files added to corpus.' %(i + 1))
 
     def save_titles(self, path):

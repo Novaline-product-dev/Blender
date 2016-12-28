@@ -22,20 +22,20 @@ if not os.path.isdir(model_path):
 dict_path = '../wiki_model/wiki_dictionary.dict'
 if not os.path.isfile(dict_path):
     print('Dictionary not found.  Creating one...')
-    gensim_dictionary = corpora.Dictionary(
+    id2word = corpora.Dictionary(
         text_fun.prune(doc)
             for file_name in files
-                for doc in textractor(file_name))
+                for doc in text_fun.text_extractor(file_name))
     print('Dictionary created. Filtering extremes.')
 
     # Remove freq. and infreq. words, limit tokens to 100K
-    gensim_dictionary.filter_extremes()
-    gensim_dictionary.compactify()
-    gensim_dictionary.save(dict_path)
+    id2word.filter_extremes()
+    id2word.compactify()
+    id2word.save(dict_path)
     print('Dictionary saved.')
 
 print('Loading dictionary from disk...')
-gensim_dictionary = corpora.Dictionary.load(dict_path)
+id2word = corpora.Dictionary.load(dict_path)
 print('Dictionary loaded.')
 # end dictionary .............................................
 # corpus......................................................
@@ -43,7 +43,7 @@ corpus_path = '../wiki_model/wiki_corpus.mm'
 if not os.path.isfile(corpus_path):
     print('Corpus not found.  Creating one...')
     titles_path = '../wiki_model/titles.txt'
-    corpus = WikiCorpus(titles_path, files) 
+    corpus = text_fun.WikiCorpus(titles_path, files, id2word) 
     if not os.path.isfile(titles_path):
         corpus.save_titles(titles_path)
     

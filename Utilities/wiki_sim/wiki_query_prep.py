@@ -71,7 +71,7 @@ class MyCorpus(object, gensim_dictionary):
         docs = textractor(file_name)
         for doc in docs:
             yield gensim_dictionary.doc2bow(text_fun.prune(doc))
-        if i%1000 == 0 and i != 0:
+        if i%10 == 0 and i != 0:
             print(time(), '%i files added to corpus.' %i)
 
     def save_titles(self, path):

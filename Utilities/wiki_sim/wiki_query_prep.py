@@ -7,12 +7,21 @@ from lxml import html
 from datetime import datetime
 os.chdir('../../Aux/wiki_html')
 
-
 files = []
 directory_list = os.listdir()
 for directory in directory_list:
-    for file in os.listdir(directory):
-        files.append(directory + '/' + file)
+    if not directory.startswith('.') and \
+    not directory.endswith('.txt'):
+        dir_files = os.listdir(directory)
+        dir_holder = directory + '.txt'
+        files.append(dir_holder)
+        if not os.path.isfile(dir_holder):
+            with open(dir_holder, 'w') as outfile:
+                for fname in dir_files:
+                    with open(directory + '/' + fname) \
+                    as infile:
+                        for line in infile:
+                            outfile.write(line)
 
 model_path = '../wiki_model'
 if not os.path.isdir(model_path):

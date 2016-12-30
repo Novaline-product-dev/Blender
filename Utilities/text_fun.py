@@ -1,4 +1,4 @@
-import string
+import os, string
 import re
 import numpy as np
 import enchant
@@ -6,6 +6,7 @@ import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
 from gensim import utils
+from lxml import html
 from nltk.stem.snowball import SnowballStemmer
 from nltk.corpus import stopwords
 from sklearn import feature_extraction 
@@ -106,6 +107,7 @@ class WikiCorpus(object):
     def __init__(self, titles_path, files, gensim_dictionary):
         self.dictionary = gensim_dictionary
         self.titles = []
+        self.files = files
         if os.path.isfile(titles_path):
             with open(titles_path, 'r') as f:
                 for line in f:
@@ -117,11 +119,12 @@ class WikiCorpus(object):
                 self.titles.extend(title_extractor(file_name))
 
     def __iter__(self):
-        for i, file_name in enumerate(files):
+        for i, file_name in enumerate(self.files):
             docs = text_extractor(file_name)
             for doc in docs:
                 yield self.dictionary.doc2bow(prune(doc))
-            print(time(), '%i files added to corpus.' %(i + 1))
+            print(time(), '%i files added to corpus of %i.' \
+            %((i + 1), len(self.files)))
 
     def save_titles(self, path):
         with open(path, 'wb') as f:

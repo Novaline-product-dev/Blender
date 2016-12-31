@@ -1,43 +1,35 @@
 import sys
 sys.path.append('..')
-import os
+import os, shutil
 import text_fun 
 from gensim import corpora, models
 from lxml import html
 from datetime import datetime
-os.chdir('../../Aux/wiki_html')
 
-files = []
-directory_list = os.listdir()
-for directory in directory_list:
-    if not directory.startswith('.') and \
-    not directory.endswith('.txt'):
-        dir_files = os.listdir(directory)
-        dir_holder = directory + '.txt'
-        files.append(dir_holder)
-        if not os.path.isfile(dir_holder):
-            with open(dir_holder, 'w') as outfile:
-                for fname in dir_files:
-                    with open(directory + '/' + fname) \
-                    as infile:
-                        for line in infile:
-                            outfile.write(line)
 
-model_path = '../wiki_model'
-if not os.path.isdir(model_path):
-    os.makedirs(model_path)
+if not os.path.isdir('../../Aux/wiki_model'):
+    os.makedirs('../../Aux/wiki_model')
+os.chdir('../../Aux/wiki_model')
+titles_path = 'titles.txt'
+articles_path = 'articles.txt'
+dict_path = 'wiki_dictionary.dict'
+corpus_path = 'wiki_corpus.mm'
+corpus_lsi_path = 'wiki_corpus_lsi.mm'
+lsi_path = 'wiki_lsi.lsi'
+index_prefix = 'index_shards/wiki_index'
+index_path = 'index_shards/lsi_wiki_index.index'
+
+folders = ['../wiki_html/' + f for f in os.listdir() \
+    if os.path.isdir(f)]
+
+text_fun.save_titles(folders, titles_path)
+text_fun.save_articles(folders, articles_path)
 
 # dictionary .............................................
-dict_path = '../wiki_model/wiki_dictionary.dict'
 if not os.path.isfile(dict_path):
     print('Dictionary not found.  Creating one...')
-    id2word = corpora.Dictionary(
-        text_fun.prune(doc)
-            for file_name in files
-                for doc in text_fun.text_extractor(file_name))
+    id2word = corpora.Dictionary(line_streamer(articles_path))
     print('Dictionary created. Filtering extremes.')
-
-    # Remove freq. and infreq. words, limit tokens to 100K
     id2word.filter_extremes()
     id2word.compactify()
     id2word.save(dict_path)
@@ -47,15 +39,11 @@ print('Loading dictionary from disk...')
 id2word = corpora.Dictionary.load(dict_path)
 print('Dictionary loaded.')
 # end dictionary .............................................
+
 # corpus......................................................
-corpus_path = '../wiki_model/wiki_corpus.mm'
 if not os.path.isfile(corpus_path):
     print('Corpus not found.  Creating one...')
-    titles_path = '../wiki_model/titles.txt'
-    corpus = text_fun.WikiCorpus(titles_path, files, id2word) 
-    if not os.path.isfile(titles_path):
-        corpus.save_titles(titles_path)
-    
+    corpus = text_fun.WikiCorpus(articles_path, id2word) 
     print('Corpus created. Saving to Market Matrix format.')
     corpora.MmCorpus.serialize(corpus_path, corpus)
     print('Corpus saved to disk.')
@@ -64,20 +52,20 @@ print('Loading corpus...')
 mmcorpus = corpora.MmCorpus(corpus_path)
 # end corpus..................................................
 
-os.chdir(model_path)
 print('Creating LSI Model...')
-dictionary=corpora.Dictionary.load('wiki_dictionary.dict')
+dictionary=corpora.Dictionary.load(dict_path)
 lsi = models.LsiModel(mmcorpus, id2word=dictionary, num_topics=400, 
                       decay=1.0, chunksize=20000)
+print('LSI model created. First two topics:')
 lsi.print_topics(2)
-lsi.save('wiki_lsi')
+lsi.save(lsi_path)
 
 print('Transforming Wikipedia Corpus to LSI')
 mmcorpus_lsi = lsi[mmcorpus]
-corpora.MmCorpus.serialize('wiki_corpus_lsi.mm', mmcorpus_lsi)
+corpora.MmCorpus.serialize(corpus_lsi_path, mmcorpus_lsi)
 
 print('Creating index...')
-index = gensim.similarities.docsim.Similarity('./index_shards/wiki_index',
+index = gensim.similarities.docsim.Similarity(index_prefix,
         lsiCorpus, num_features=lsi.num_topics, num_best=30)
-index.save('./index_shards/lsi_wiki_index.index')
+index.save(index_path)
 print('Done!')

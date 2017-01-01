@@ -61,7 +61,10 @@ def get_avg_margin(tickers):
             value = float(margin.replace('%', ''))
             running_total += value
             n_valid += 1
-    return running_total / n_valid
+    if n_valid >= 1:
+        return running_total / n_valid
+    else:
+        return -9999
 
 inds = get_industries()
 for i, ind in enumerate(inds):

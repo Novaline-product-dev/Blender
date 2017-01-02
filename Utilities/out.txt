@@ -1,0 +1,215 @@
+closedendfunddebt Closed-End Fund - Debt 82.0 
+investmentbrokerageregional Investment Brokerage - Regional 78.11666666666667 
+publishingnewspapers Publishing - Newspapers 75.88749999999999 
+reithealthcarefacilities REIT - Healthcare Facilities 72.79166666666667 
+reitindustrial REIT - Industrial 72.05294117647058 
+generalentertainment General Entertainment 71.98 
+publishingperiodicals Publishing - Periodicals 71.55 
+reitretail REIT - Retail 70.64444444444445 
+mortgageinvestment Mortgage Investment 68.93571428571428 
+closedendfundforeign Closed-End Fund - Foreign 67.0 
+investmentbrokeragenational Investment Brokerage - National 66.6875 
+drugdelivery Drug Delivery 65.57142857142858 
+biotechnology Biotechnology 64.86666666666666 
+diversifiedinvestments Diversified Investments 64.78 
+propertymanagement Property Management 64.05000000000001 
+reitdiversified REIT - Diversified 63.915000000000006 
+reitoffice REIT - Office 63.872222222222234 
+publishingbooks Publishing - Books 63.224999999999994 
+drugmanufacturersmajor Drug Manufacturers - Major 62.857142857142854 
+telecomservicesforeign Telecom Services - Foreign 62.26666666666667 
+electricutilities Electric Utilities 62.247058823529414 
+businesssoftwareservices Business Software & Services 62.03333333333334 
+technicalsystemsoftware Technical & System Software 60.775 
+independentoilgas Independent Oil & Gas 60.543749999999996 
+personalproducts Personal Products 60.4 
+applicationsoftware Application Software 59.478947368421046 
+oilgasdrillingexploration Oil & Gas Drilling & Exploration 59.41333333333333 
+internetserviceproviders Internet Service Providers 59.17999999999999 
+healthcareinformationservices Healthcare Information Services 59.01052631578946 
+rentalleasingservices Rental & Leasing Services 58.9125 
+waterutilities Water Utilities 58.75714285714286 
+securitysoftwareservices Security Software & Services 58.372727272727275 
+hospitals Hospitals 58.23636363636364 
+drugmanufacturersother Drug Manufacturers - Other 57.93529411764706 
+diversifiedcommunicationservices Diversified Communication Services 57.705882352941174 
+internetinformationproviders Internet Information Providers 57.70588235294117 
+trucking Trucking 57.69444444444444 
+broadcastingtv Broadcasting - TV 56.77857142857143 
+reitresidential REIT - Residential 56.69 
+diversifiedutilities Diversified Utilities 56.4076923076923 
+oilgaspipelines Oil & Gas Pipelines 56.08461538461539 
+cigarettes Cigarettes 55.92 
+telecomservicesdomestic Telecom Services - Domestic 55.84444444444445 
+airservicesother Air Services, Other 55.6875 
+regionalairlines Regional Airlines 53.68181818181818 
+gasutilities Gas Utilities 53.62777777777778 
+creditservices Credit Services 53.56153846153845 
+educationtrainingservices Education & Training Services 53.13333333333332 
+processingsystemsproducts Processing Systems & Products 52.824999999999996 
+medicalappliancesequipment Medical Appliances & Equipment 52.705263157894734 
+assetmanagement Asset Management 52.31666666666666 
+multimediagraphicssoftware Multimedia & Graphics Software 51.82857142857143 
+catvsystems CATV Systems 51.73 
+researchservices Research Services 51.6 
+specialtyeateries Specialty Eateries 50.5875 
+medicalinstrumentssupplies Medical Instruments & Supplies 50.410000000000004 
+wirelesscommunications Wireless Communications 50.373684210526314 
+restaurants Restaurants 49.99 
+autopartsstores Auto Parts Stores 49.96666666666666 
+networkingcommunicationdevices Networking & Communication Devices 49.48571428571427 
+longtermcarefacilities Long-Term Care Facilities 49.162499999999994 
+sportingactivities Sporting Activities 48.6125 
+reithotelmotel REIT - Hotel/Motel 47.78235294117647 
+railroads Railroads 47.43333333333333 
+lodging Lodging 47.21666666666666 
+toyhobbystores Toy & Hobby Stores 47.2 
+diagnosticsubstances Diagnostic Substances 47.17857142857144 
+toysgames Toys & Games 47.06666666666666 
+beverageswineriesdistillers Beverages - Wineries & Distillers 47.01428571428572 
+informationdeliveryservices Information & Delivery Services 46.86666666666667 
+semiconductorintegratedcircuits Semiconductor - Integrated Circuits 46.81 
+entertainmentdiversified Entertainment - Diversified 46.307142857142864 
+shipping Shipping 46.10526315789473 
+drugsgeneric Drugs - Generic 46.0 
+internetsoftwareservices Internet Software & Services 45.97 
+movieproductiontheaters Movie Production, Theaters 45.42 
+closedendfundequity Closed-End Fund - Equity 45.1 
+medicallaboratoriesresearch Medical Laboratories & Research 44.981249999999996 
+consumerservices Consumer Services 44.95 
+businessservices Business Services 44.777777777777786 
+drugrelatedproducts Drug Related Products 44.42 
+textileapparelfootwearaccessories Textile - Apparel Footwear & Accessories 44.059999999999995 
+datastoragedevices Data Storage Devices 44.02857142857143 
+communicationequipment Communication Equipment 43.38333333333333 
+textileapparelclothing Textile - Apparel Clothing 42.900000000000006 
+scientifictechnicalinstruments Scientific & Technical Instruments 42.44 
+semiconductorbroadline Semiconductor - Broad Line 42.39000000000001 
+apparelstores Apparel Stores 42.24999999999999 
+homeimprovementstores Home Improvement Stores 42.05 
+broadcastingradio Broadcasting - Radio 41.97272727272727 
+resortscasinos Resorts & Casinos 41.87368421052632 
+confectioners Confectioners 41.074999999999996 
+majorairlines Major Airlines 40.85 
+semiconductorspecialized Semiconductor - Specialized 40.825 
+computerperipherals Computer Peripherals 40.38666666666666 
+insurancebrokers Insurance Brokers 40.31666666666667 
+beveragesbrewers Beverages - Brewers 40.15 
+beveragessoftdrinks Beverages - Soft Drinks 40.11764705882353 
+gamingactivities Gaming Activities 39.975 
+semiconductorequipmentmaterials Semiconductor Equipment & Materials 39.93888888888888 
+musicvideostores Music & Video Stores 39.8 
+personalservices Personal Services 39.75000000000001 
+airdeliveryfreightservices Air Delivery & Freight Services 39.66153846153846 
+homefurnishingstores Home Furnishing Stores 39.6 
+realestatedevelopment Real Estate Development 39.56111111111111 
+computerbasedsystems Computer Based Systems 38.675 
+marketingservices Marketing Services 38.654545454545456 
+housewaresaccessories Housewares & Accessories 38.480000000000004 
+specialtyretailother Specialty Retail, Other 38.43333333333333 
+catalogmailorderhouses Catalog & Mail Order Houses 37.65 
+managementservices Management Services 37.56666666666667 
+businessequipment Business Equipment 36.891666666666666 
+staffingoutsourcingservices Staffing & Outsourcing Services 36.77894736842106 
+informationtechnologyservices Information Technology Services 36.67894736842105 
+dairyproducts Dairy Products 36.2 
+majorintegratedoilgas Major Integrated Oil & Gas 36.18888888888889 
+advertisingagencies Advertising Agencies 35.833333333333336 
+sportinggoods Sporting Goods 35.3125 
+homehealthcare Home Health Care 35.283333333333324 
+smalltoolsaccessories Small Tools & Accessories 35.24999999999999 
+foodmajordiversified Food - Major Diversified 34.86842105263158 
+sportinggoodsstores Sporting Goods Stores 34.575 
+specializedhealthservices Specialized Health Services 34.27 
+recreationalgoodsother Recreational Goods, Other 34.13333333333333 
+jewelrystores Jewelry Stores 34.050000000000004 
+cleaningproducts Cleaning Products 33.9 
+cement Cement 33.82000000000001 
+homefurnishingsfixtures Home Furnishings & Fixtures 33.53529411764706 
+synthetics Synthetics 33.5 
+machinetoolsaccessories Machine Tools & Accessories 33.449999999999996 
+securityprotectionservices Security & Protection Services 33.13333333333333 
+diversifiedelectronics Diversified Electronics 33.03157894736842 
+appliances Appliances 32.6 
+nonmetallicmineralmining Nonmetallic Mineral Mining 32.416666666666664 
+processedpackagedgoods Processed & Packaged Goods 32.36470588235294 
+foreignregionalbanks Foreign Regional Banks 32.2 
+pollutiontreatmentcontrols Pollution & Treatment Controls 32.166666666666664 
+electronicsstores Electronics Stores 32.05 
+departmentstores Department Stores 31.825000000000003 
+diversifiedcomputersystems Diversified Computer Systems 31.685714285714283 
+agriculturalchemicals Agricultural Chemicals 31.66875 
+industrialequipmentcomponents Industrial Equipment & Components 30.8375 
+industrialequipmentwholesale Industrial Equipment Wholesale 30.76 
+officesupplies Office Supplies 30.5 
+photographicequipmentsupplies Photographic Equipment & Supplies 30.35 
+discountvarietystores Discount, Variety Stores 29.772727272727266 
+electronicswholesale Electronics Wholesale 29.737499999999997 
+industrialmetalsminerals Industrial Metals & Minerals 28.71666666666667 
+packagingcontainers Packaging & Containers 28.315000000000005 
+specialtychemicals Specialty Chemicals 28.115000000000002 
+textileindustrial Textile Industrial 28.080000000000002 
+silver Silver 28.02857142857143 
+aerospacedefenseproductsservices Aerospace/Defense Products & Services 27.361111111111107 
+copper Copper 27.3 
+tobaccoproductsother Tobacco Products, Other 26.633333333333336 
+diversifiedmachinery Diversified Machinery 26.495000000000005 
+drugstores Drug Stores 26.424999999999997 
+gold Gold 25.97142857142857 
+generalbuildingmaterials General Building Materials 25.755000000000003 
+lumberwoodproduction Lumber, Wood Production 25.236363636363638 
+meatproducts Meat Products 24.925 
+grocerystores Grocery Stores 24.690909090909088 
+conglomerates Conglomerates 24.65 
+autoparts Auto Parts 24.474999999999998 
+propertycasualtyinsurance Property & Casualty Insurance 24.1 
+wastemanagement Waste Management 23.96470588235294 
+industrialelectricalequipment Industrial Electrical Equipment 23.904999999999994 
+longdistancecarriers Long Distance Carriers 23.15 
+farmconstructionmachinery Farm & Construction Machinery 23.13571428571429 
+recreationalvehicles Recreational Vehicles 22.9 
+semiconductormemorychips Semiconductor- Memory Chips 22.575000000000003 
+automanufacturersmajor Auto Manufacturers - Major 22.366666666666664 
+electronicequipment Electronic Equipment 22.08181818181818 
+rubberplastics Rubber & Plastics 21.641666666666666 
+aerospacedefensemajordiversified Aerospace/Defense - Major Diversified 21.28333333333333 
+paperpaperproducts Paper & Paper Products 21.027272727272727 
+foreignutilities Foreign Utilities 20.95 
+chemicalsmajordiversified Chemicals - Major Diversified 20.231578947368423 
+medicalequipmentwholesale Medical Equipment Wholesale 19.999999999999996 
+technicalservices Technical Services 18.80909090909091 
+autodealerships Auto Dealerships 18.627272727272725 
+buildingmaterialswholesale Building Materials Wholesale 17.966666666666665 
+residentialconstruction Residential Construction 17.865 
+accidenthealthinsurance Accident & Health Insurance 17.7 
+trucksothervehicles Trucks & Other Vehicles 17.214285714285715 
+metalfabrication Metal Fabrication 16.906249999999996 
+healthcareplans Health Care Plans 16.88 
+farmproducts Farm Products 16.38 
+steeliron Steel & Iron 15.666666666666664 
+foodwholesale Food Wholesale 15.625 
+generalcontractors General Contractors 14.733333333333334 
+heavyconstruction Heavy Construction 14.476923076923079 
+autopartswholesale Auto Parts Wholesale 13.95 
+computerswholesale Computers Wholesale 13.45 
+printedcircuitboards Printed Circuit Boards 12.272727272727273 
+oilgasequipmentservices Oil & Gas Equipment & Services 11.683333333333334 
+oilgasrefiningmarketing Oil & Gas Refining & Marketing 11.605882352941174 
+manufacturedhousing Manufactured Housing 11.3 
+aluminum Aluminum 10.999999999999998 
+basicmaterialswholesale Basic Materials Wholesale 5.6 
+drugswholesale Drugs Wholesale 4.7 
+foreignmoneycenterbanks Foreign Money Center Banks -9999 
+lifeinsurance Life Insurance -9999 
+medicalpractitioners Medical Practitioners -9999 
+moneycenterbanks Money Center Banks -9999 
+personalcomputers Personal Computers -9999 
+regionalmidatlanticbanks Regional - Mid-Atlantic Banks -9999 
+regionalmidwestbanks Regional - Midwest Banks -9999 
+regionalnortheastbanks Regional - Northeast Banks -9999 
+regionalpacificbanks Regional - Pacific Banks -9999 
+regionalsoutheastbanks Regional - Southeast Banks -9999 
+regionalsouthwestbanks Regional - Southwest  Banks -9999 
+savingsloans Savings & Loans -9999 
+suretytitleinsurance Surety & Title Insurance -9999 
+wholesaleother Wholesale, Other -9999 

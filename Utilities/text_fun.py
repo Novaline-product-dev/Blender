@@ -5,6 +5,7 @@ import enchant
 import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
+import math
 from gensim import utils
 from lxml import html
 from nltk.stem.snowball import SnowballStemmer
@@ -142,23 +143,37 @@ def save_articles(folders, articles_path):
                             to_write = ''.join((tokens_string, '\n'))
                             outfile.write(to_write.encode('utf8'))
 
-def line_streamer(path):
-    with open(path, 'r') as f:
+def line_streamer(path, N=None):
+    i = 0
+    with open(path, 'rb') as f:
         for line in f:
-            yield line.split() 
+            if N:
+                i += 1
+                if i%10000:
+                    pct_complete = round(i / N * 100, 2)
+                    print('\r %d%% finished' %pct_complete, 
+                        end="", flush=True) 
+            yield line.decode('utf8', 'ignore').split() 
 
 class WikiCorpus(object):
-    def __init__(self, articles_path, gensim_dictionary):
+    def __init__(self, articles_path, gensim_dictionary, N=None):
         self.dictionary = gensim_dictionary
         self.articles_path = articles_path
+        if N:
+            self.N = N
 
     def __iter__(self):
         with open(self.articles_path, 'r') as f:
             i = 0
             for line in f:
-                i += 1 
-                print(i, ' lines streamed to corpus.')
-                yield self.dictionary.doc2bow(line)
+                i += 1
+                if self.N:
+                    if i%10000:
+                        pct_complete = round(i / self.N * 100, 2)
+                        print('\r %d%% finished' %pct_complete, 
+                            end="", flush=True) 
+                tokens = line.split()
+                yield self.dictionary.doc2bow(tokens)
 
 
                 

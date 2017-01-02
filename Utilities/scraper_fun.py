@@ -27,7 +27,10 @@ def gather_urls(search_term, page_count): # Gathers page_count urls from Google
         blue_links = soup('h3', class_ = 'r')
         for link in blue_links:
             if link.text not in stop_list:
-                href = link.a['href']
+                try:
+                    href = link.a['href']
+                except:
+                    continue
                 url = href.replace('/url?q=', '')
                 url = re.sub('&sa=.*', '', url)
                 if not re.search('/search\\?q=', url):

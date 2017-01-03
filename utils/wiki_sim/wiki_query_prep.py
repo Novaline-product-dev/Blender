@@ -1,7 +1,6 @@
-import sys
-sys.path.append('..')
 import os
-import text_fun 
+os.chdir(os.getenv('HOME') + '/Documents/Blender')
+from utils import text_fun 
 from gensim import corpora, models
 
 

@@ -1,24 +1,17 @@
 import os
+os.chdir(os.getenv('HOME') + '/Documents/Blender')
 import gensim
 import sys
 import wikipedia
-os.chdir(os.getenv('HOME') + '/Documents/Blender/Utilities')
-import text_fun
-os.chdir(os.getenv('HOME') + '/Documents/Blender/Aux/wiki_model')
+from utils import text_fun
 
 
 query_term = 'spatula'
 
-# Load a previously created corpus in lsi format
+os.chdir('aux/wiki_model')
 lsiCorpus = gensim.corpora.MmCorpus('wiki_corpus_lsi.mm')
-
-# Loads a previously created dictionary 
 id2word = gensim.corpora.Dictionary.load('wiki_dictionary.dict')
-
-# Loads a pre-computed lsi model named 'wiki_lsi'.  
 lsi = gensim.models.LsiModel.load('wiki_lsi')
-
-# Load the index
 index = gensim.similarities.docsim.Similarity.load('./index_shards/lsi_wiki_index.index')
 
 def similar(query_term):
@@ -36,4 +29,5 @@ def similar(query_term):
 	os.chdir(dir_on_leave)
 	return(out)
 
+os.chdir(os.getenv('HOME') + '/Documents/Blender')
 #test = similar(query_term)

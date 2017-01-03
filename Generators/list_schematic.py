@@ -1,9 +1,8 @@
 import os, string, pickle
-BlenderPath = os.getenv('HOME') + '/Documents/Blender'
-os.chdir(BlenderPath + '/Utilities')
-import text_fun
-os.chdir(BlenderPath + '/Evaluators')
-import ksmirnov_fun
+os.chdir(os.getenv('HOME') + '/Documents/Blender')
+from utils import text_fun
+from utils.wiki_sim import wiki_query
+from evaluators import ksmirnov_fun
 import wikipedia
 import gensim
 import nltk
@@ -47,14 +46,20 @@ header_blob = TextBlob(header_trim, pos_tagger = PerceptronTagger())
 header_tags = list(set(header_blob.tags))
 baseline = ksEvaluator(header, verbose = True)
 
-mod = gensim.models.Word2Vec.load_word2vec_format(BlenderPath + 
-    '/Aux/deps.words.vector', binary = False)
-mod.init_sims(replace = True)
+def get_ref_concepts(seed_term, method='quick'):
+	if method == 'quick':
+		mod = gensim.models.Word2Vec.load_word2vec_format(BlenderPath + 
+    		'/Aux/deps.words.vector', binary = False)
+		mod.init_sims(replace = True)
+		ref_concepts = mod.most_similar(seed_term) # get reference concepts for seed_term
+		ref_concepts = [item[0] for item in ref_concepts]
+		return ref_concepts
+	else:
+		return wiki_query.similar(seed_term)
 
-ref_concepts = mod.most_similar(seed_term) # get reference concepts for seed_term
-ref_concepts = [item[0] for item in ref_concepts]
+
+ref_concepts = get_ref_concepts(seed_term, method='LSI')
 sent_detector = nltk.data.load('tokenizers/punkt/english.pickle')
-
 sentences = text_fun.w2v_sent_prep(article, sent_detector)
 ref_arts = []
 for ref_concept in ref_concepts:
@@ -94,7 +99,7 @@ ok_words = [element[0] for element in sentences_tags \
 # admit extra training.  
 model = gensim.models.Word2Vec(sentences, sg = 1, negative = 10)
 targets = [target for target in targets if target in model.vocab]
-ref_concepts = [rc for rc in ref_concepts if rc in model.vocab]
+ref_concepts = [rc.lower() for rc in ref_concepts if rc.lower() in model.vocab]
 new_ideas = []
 for target in targets:
     if target != seed_term:

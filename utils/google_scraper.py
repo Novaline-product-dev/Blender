@@ -1,11 +1,9 @@
 import os
-UtilPath = os.getenv('HOME') + '/Documents/Blender/Utilities'
-os.chdir(UtilPath)
-import scraper_fun
+os.chdir(os.getenv('HOME') + '/Documents/Blender')
+from utils import scraper_fun
 import pickle
 import time
 
-BlenderPath = os.getenv('HOME') + '/Documents/Blender'
 
 start_time = time.time() # For timing 
 search_text = input("What do you seek? ") 

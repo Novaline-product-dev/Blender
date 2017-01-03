@@ -1,13 +1,13 @@
 import pickle, os, string, random
+os.chdir(os.getenv('HOME') + '/Documents/Blender') 
+from utils import text_fun
 import numpy as np 
 import pandas as pd
 import nltk
 import enchant
 from gensim import corpora, models, similarities, utils
-os.chdir(os.getenv('HOME') + '/Documents/Blender/Utilities')
-import text_fun
 
-def median_words(path_to_inputs, num_ideas = 30):
+def median_words(num_ideas = 30):
     textList = pickle.load( open("fulltext.p", "rb"))
     textList = [text_fun.prune(doc) for doc in textList]
 

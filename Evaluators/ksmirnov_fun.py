@@ -1,4 +1,5 @@
 import pickle, os, sys, string
+os.chdir(os.getenv('HOME') + '/Documents/Blender')
 import numpy as np 
 from numpy import matlib 
 from scipy import stats
@@ -6,8 +7,7 @@ import pandas as pd
 from gensim import utils
 from sklearn import feature_extraction
 from statsmodels.distributions import empirical_distribution as ed 
-sys.path.append("..")
-import text_fun
+from utils import text_fun
 
 
 def ks(cdfVec1, cdfVec2):

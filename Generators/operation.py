@@ -1,7 +1,5 @@
-import pickle, os, string, random, statistics
-BlenderPath = os.getenv('HOME') + '/Documents/Blender'
-AuxPath = os.getenv('HOME') + '/Documents/Blender/Aux'
-os.chdir(BlenderPath + '/Generators')
+import os
+os.chdir(os.getenv('HOME') + '/Documents/Blender')
 
 transformationList = [
     'flip',
@@ -25,4 +23,3 @@ transformationList = [
     'symmetric vs. asymmetric',
     'conjunctive vs. disjunctive vs. compensatory',
     'reorder']
-

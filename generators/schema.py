@@ -1,6 +1,5 @@
 import os, string, pickle
 os.chdir(os.getenv('HOME') + '/Documents/Blender')
-from generators import schema_fun
 from utils import text_fun
 from utils.wiki_sim import wiki_query
 from evaluators import ksmirnov_fun
@@ -45,8 +44,31 @@ header_blob = TextBlob(header_trim, pos_tagger=PerceptronTagger())
 header_tags = list(set(header_blob.tags))
 baseline = ksEvaluator(header, verbose=True)
 
-ref_concepts = schema_fun.get_ref_concepts(seed_term, method='slow')
+def get_ref_concepts(seed_term, method='quick'):
+    if method == 'quick':
+        mod = gensim.models.Word2Vec.load_word2vec_format( 
+            'aux/deps.words.vector', binary=False)
+        mod.init_sims(replace=True)
+        out = mod.most_similar(seed_term) 
+        out = [item[0] for item in out]
+        return out
+    elif method == 'LSI':
+        out = wiki_query.similar(seed_term)
+        out = [el for el in out if el.lower() != seed_term]
+        return out
+    else:
+        mod = gensim.models.Word2Vec.load_word2vec_format( 
+            'aux/deps.words.vector', binary=False)
+        mod.init_sims(replace=True)
+        out1 = mod.most_similar(seed_term) 
+        out1 = [item[0] for item in out1]
+        out2 = wiki_query.similar(seed_term)
+        print('out2 looks like:', out2)
+        print(type(out2))
+        out1.extend(out2)
+        return out1
 
+ref_concepts = get_ref_concepts(seed_term, method='slow')
 sent_detector = nltk.data.load('tokenizers/punkt/english.pickle')
 sentences = text_fun.w2v_sent_prep(article, sent_detector)
 ref_arts = []
@@ -107,10 +129,14 @@ for target in targets:
                     print(score)
                     new_ideas.append(out)
 
-new_ideas = schema_fun.limit_filter(4, new_ideas, max_num=3)
-new_ideas = schema_fun.limit_filter(2, new_ideas, max_num=5)
+chosen_candidates = set([el[4] for el in new_ideas])
+new_ideas2 = []
+for cc in chosen_candidates:
+    sub_ideas = [el for el in new_ideas if el[4] == cc]
+    new_ideas2.append(min(sub_ideas, key=lambda x: x[3]))
 
-new_ideas.sort(key=lambda x: x[3])
+new_ideas = new_ideas2
+new_ideas.sort(key=lambda tuple: tuple[3])
 seen = set()
 
 # sneaks a computation into list comprehension using

@@ -6,8 +6,6 @@ import wikipedia
 from utils import text_fun
 
 
-query_term = 'spatula'
-
 os.chdir('aux/wiki_model')
 lsiCorpus = gensim.corpora.MmCorpus('wiki_corpus_lsi.mm')
 id2word = gensim.corpora.Dictionary.load('wiki_dictionary.dict')
@@ -26,8 +24,9 @@ def similar(query_term):
 		titles = f.readlines()
 	for element in similar:
 		out.append(titles[element[0]].decode().strip('\n'))
+	out = [el.lower() for el in out]
+	out = out[1:]
 	os.chdir(dir_on_leave)
 	return(out)
 
 os.chdir(os.getenv('HOME') + '/Documents/Blender')
-#test = similar(query_term)

@@ -9,7 +9,7 @@ start_time = time.time() # For timing
 search_text = input("What do you seek? ") 
 pages = int(input("How many pages of results would you like? "))
 
-with open(BlenderPath + "/search_text.p", "wb") as f:
+with open('search_text.p', 'wb') as f:
     pickle.dump(search_text, f)
 
 scraper_fun.google_scrape(search_text, pages, True)

@@ -20,7 +20,7 @@ def rm_punct(in_string):
     return(out_string)
 
 def prune(doc, stoplist = None, stem = True, 
-          english_dictionary_words = False):
+          english_dict = False):
     """This takes a single document and tokenizes the words, removes
     undesirable elements, and prepares it to be loaded into a dictionary.
     """
@@ -34,7 +34,7 @@ def prune(doc, stoplist = None, stem = True,
     if stem:
         stemmer = SnowballStemmer('english')
         temp = [stemmer.stem(w) for w in temp]
-    if english_dictionary_words:
+    if english_dict:
         d = enchant.Dict("en_US")
         temp = [w for w in temp if d.check(w)]
     return temp

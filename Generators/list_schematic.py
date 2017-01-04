@@ -17,19 +17,18 @@ article = wikipedia.page(seed_term).content
 goog_list = pickle.load( open('fulltext.p', 'rb'))
 text_list = [text_fun.prune(doc) for doc in goog_list]
 ksEvaluator = ksmirnov_fun.ksFunctionGenerator(text_list)
+ok_tags = ['NN']
+candidates = schema_fun.get_candidates(goog_list, ok_tags) #list of tuples
+ref_concepts = schema_fun.get_ref_concepts(seed_term, method='slow')
 
 header = wikipedia.summary(seed_term)
 header = header[0:header.find('\n')]
-
-candidates = schema_fun.get_candidates(goog_list) #list of tuples
 header_trim = [w for w in header.split() if w not in 
     stopwords.words('english')]
 header_trim = ' '.join(header_trim)
 header_blob = TextBlob(header_trim, pos_tagger=PerceptronTagger())
 header_tags = list(set(header_blob.tags))
 baseline = ksEvaluator(header, verbose=True)
-
-ref_concepts = schema_fun.get_ref_concepts(seed_term, method='slow')
 
 sent_detector = nltk.data.load('tokenizers/punkt/english.pickle')
 sentences = text_fun.w2v_sent_prep(article, sent_detector)

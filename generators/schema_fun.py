@@ -46,7 +46,7 @@ def limit_filter(tuple_index, new_ideas, max_num=3, score_index=3):
                 out.extend(ranked_sub[0:(max_num - 1)])
     return out
 
-def get_candidates(goog_list):
+def get_candidates(goog_list, ok_tags):
     candidates1 = []
     for item in goog_list:
         item = text_fun.prune(item, stem=False, english_dict=True)
@@ -54,8 +54,6 @@ def get_candidates(goog_list):
     candidates1 = list(set(candidates1))
     candidates_blob = TextBlob(' '.join(candidates1), 
                                pos_tagger=PerceptronTagger())
-
-    ok_tags = ['NN']
     candidates2 = []
     for item in candidates_blob.tags:
         if item[1] in ok_tags:

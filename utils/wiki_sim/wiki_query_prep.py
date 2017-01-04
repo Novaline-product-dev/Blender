@@ -3,10 +3,9 @@ os.chdir(os.getenv('HOME') + '/Documents/Blender')
 from utils import text_fun 
 from gensim import corpora, models
 
-
-if not os.path.isdir('../../Aux/wiki_model'):
-    os.makedirs('../../Aux/wiki_model')
-os.chdir('../../Aux/wiki_model')
+if not os.path.isdir('aux/wiki_model'):
+    os.makedirs('aux/wiki_model')
+os.chdir('aux/wiki_model')
 print(os.getcwd())
 titles_path = 'titles.txt'
 articles_path = 'articles.txt'
@@ -17,17 +16,21 @@ lsi_path = 'wiki_lsi.lsi'
 index_prefix = 'index_shards/wiki_index'
 index_path = 'index_shards/lsi_wiki_index.index'
 
-folders = ['../wiki_html/' + f for f in os.listdir() \
-    if os.path.isdir(f)]
+folders = os.listdir('../wiki_html')
+folders = ['../wiki_html/' + f for f in \
+    folders if os.path.isdir('../wiki_html/' + f)]
 
-text_fun.save_titles(folders, titles_path)
-titles = []
-with open('titles.txt', 'rb') as f:
-    for line in f:
-        titles.append(line.decode('utf8', 'ignore').split())
-N = len(titles)
-text_fun.save_articles(folders, articles_path)
-
+# process files 
+for folder in folders:
+    folder_files = os.listdir(folder)
+    folder_files = [f for f in folder_files if not f.startswith('.')]
+    for file in folder_files:
+        if file.startswith('wiki'):
+            input_path = folder + '/' + file
+            titles_path = folder + '/' + 'titles_' + file
+            articles_path = folder + '/' + 'articles_' + file
+            text_fun.prep_save(input_path, titles_path, articles_path)
+            print('%s/%s processed.' %(folder, file))
 # dictionary .............................................
 if not os.path.isfile(dict_path):
     print('Dictionary not found.  Creating one...')

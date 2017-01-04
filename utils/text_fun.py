@@ -67,12 +67,10 @@ def title_extractor(file_name):
 
 def text_network_plot(textList, wordFreqThreshold = 10):
     """ Plots a pared-down word-word connection network.  If you increase wordFreqThreshold, it pares down the network.  wordFreqThreshold will depend on the size of textList. 
-
         textList should be a list of unordered lists of words. 
     """
     for i, text in enumerate(textList):
         textList[i] = ' '.join(text)
-
     vectorizer = feature_extraction.text.CountVectorizer() 
     dtm = vectorizer.fit_transform(textList) 
     dtm = dtm.toarray()
@@ -80,68 +78,47 @@ def text_network_plot(textList, wordFreqThreshold = 10):
     ranks = ['Rank %d' %(i + 1) for i in range(dtm.shape[0])] # just labeling
     dtm = pd.DataFrame(dtm, index = ranks, columns = vocab) 
     tdm = dtm.transpose() # term-doc mat = transpose of doc-term mat
-
-    # get the vocab ordered by frequency across all pages
     idx = tdm.sum(axis = 1).sort_values(ascending = False).index 
     tdm = tdm.ix[idx] # sort the term-doc mat by word frequency
     totals = tdm.sum(axis = 1)
-
-    # Remove infrequent words.
-    tdm = tdm[totals > wordFreqThreshold] # remove rows for infrequent words
+    tdm = tdm[totals > wordFreqThreshold] 
     totals = totals[totals > wordFreqThreshold]
-
-    # Crossproduct of term-doc matrix with itself
-    ttm = np.dot(tdm, tdm.transpose()) # term-term matrix, or adjacency matrix
+    ttm = np.dot(tdm, tdm.transpose()) 
     ttm = np.matrix(ttm)
     np.fill_diagonal(ttm, 0)
-
-    # Plot the word network
     G = nx.from_numpy_matrix(ttm)
     labelMap = dict(zip(G.nodes(), list(totals.index)))
     G = nx.relabel_nodes(G, labelMap)
     pos = nx.spring_layout(G)
-    nx.draw(G, node_size = 0, pos = pos, alpha = 0.04)  
-    nx.draw_networkx_labels(G, pos = pos, font_color = '#2ca25f')
+    nx.draw(G, node_size=0, pos=pos, alpha=0.04)  
+    nx.draw_networkx_labels(G, pos=pos, font_color='#2ca25f')
     plt.show() 
 
-def save_titles(folders, titles_path):
-    if os.path.isfile(titles_path):
-        print('Titles already on disk at', titles_path)
+def prep_save(input_path, titles_path, articles_path, token_min=5):
+    if os.path.isfile(titles_path) and os.path.isfile(articles_path):
+        print('Prepped files already on disk at', titles_path,
+            ' and ', articles_path)
     else:
-        with open(titles_path, 'wb') as outfile:
-            for folder in folders:
-                print('Getting titles from', folder)
-                folder_files = os.listdir(folder)
-                folder_files = [f for f in folder_files \
-                    if not f.startswith('.')]
-                for fname in folder_files:
-                    fname2 = folder + '/' + fname
-                    f_titles = text_fun.title_extractor(fname2)
-                    with open(fname2) as infile:
-                        for title in f_titles:
-                            print(title)
-                            to_write = ''.join((title, '\n'))
-                            outfile.write(to_write.encode('utf8'))
+        articles = text_extractor(input_path)
+        titles = title_extractor(input_path)
+        titles_out = []
+        articles_out = []
+        for title, article in zip(titles, articles):
+            prepped_title = ''.join((title, '\n'))
+            article_tokens = prune(article)
+            if len(article_tokens) >= token_min:
+                tokens_string = ' '.join(article_tokens)
+                prepped_art = ''.join((tokens_string, '\n'))
+                titles_out.append(prepped_title)
+                articles_out.append(prepped_art)
+        assert len(articles_out) == len(titles_out)
+        with open(titles_path, 'wb') as f:
+            for title in titles_out:
+                f.write(title.encode('utf8'))
+        with open(articles_path, 'wb') as f:
+            for article in articles_out:
+                f.write(article.encode('utf8'))
 
-def save_articles(folders, articles_path):
-    if os.path.isfile(articles_path):
-        print('Articles already on disk at', articles_path)
-    else:
-        with open(articles_path, 'wb') as outfile:
-            for folder in folders:
-                folder_files = os.listdir(folder)
-                folder_files = [f for f in folder_files \
-                    if not f.startswith('.')]
-                for fname in folder_files:
-                    fname2 = folder + '/' + fname
-                    print('Adding', fname2)
-                    f_articles = text_fun.text_extractor(fname2)
-                    with open(fname2) as infile:
-                        for article in f_articles:
-                            article_tokens = text_fun.prune(article)
-                            tokens_string = ' '.join(article_tokens)
-                            to_write = ''.join((tokens_string, '\n'))
-                            outfile.write(to_write.encode('utf8'))
 
 def line_streamer(path, N=None):
     i = 0

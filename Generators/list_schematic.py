@@ -89,6 +89,8 @@ model = gensim.models.Word2Vec(sentences, sg=1, negative=10)
 targets = [target for target in targets if target in model.vocab]
 ref_concepts = [rc.lower() for rc in ref_concepts if rc.lower() in model.vocab]
 new_ideas = []
+seed_term = seed_term.split()
+seed_term = seed_term[len(seed_term) - 1]
 for target in targets:
     if target != seed_term:
         print('Target: %s' % target)
@@ -104,21 +106,20 @@ for target in targets:
                     'Try using the %s from a %s to make a new kind of %s.' % \
                         (candidate, ref_concept, seed_term)
                     out = (next_idea, target, ref_concept, score, candidate)
-                    print(score)
                     new_ideas.append(out)
 
-new_ideas = schema_fun.limit_filter(4, new_ideas, max_num=3)
-new_ideas = schema_fun.limit_filter(2, new_ideas, max_num=5)
+new_ideas2 = schema_fun.limit_filter(4, new_ideas, max_num=3)
+new_ideas2 = schema_fun.limit_filter(2, new_ideas2, max_num=5)
 
-new_ideas.sort(key=lambda x: x[3])
+new_ideas2.sort(key=lambda x: x[3])
 seen = set()
 
 # sneaks a computation into list comprehension using
 # the last condition
-new_ideas = [item for item in new_ideas if item[0] \
+new_ideas2 = [item for item in new_ideas2 if item[0] \
     not in seen and not seen.add(item[0])] 
 
-ni = [el[0] for el in new_ideas]
+ni = [el[0] for el in new_ideas2]
 with open('aux/' + seed_term + '_ideas.txt', 'wb') as f:
     f.write('\n'.join(map(str, ni)).encode('utf8'))
 

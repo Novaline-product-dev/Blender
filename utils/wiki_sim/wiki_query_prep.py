@@ -3,6 +3,7 @@ os.chdir(os.getenv('HOME') + '/Documents/Blender')
 from utils import text_fun 
 from gensim import corpora, models
 
+
 if not os.path.isdir('aux/wiki_model'):
     os.makedirs('aux/wiki_model')
 os.chdir('aux/wiki_model')

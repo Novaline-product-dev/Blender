@@ -119,7 +119,6 @@ def prep_save(input_path, titles_path, articles_path, token_min=5):
             for article in articles_out:
                 f.write(article.encode('utf8'))
 
-
 def line_streamer(path, N=None):
     i = 0
     with open(path, 'rb') as f:
@@ -151,6 +150,3 @@ class WikiCorpus(object):
                             end="", flush=True) 
                 tokens = line.split()
                 yield self.dictionary.doc2bow(tokens)
-
-
-                

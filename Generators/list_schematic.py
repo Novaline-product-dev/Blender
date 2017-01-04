@@ -2,13 +2,10 @@ import os, string, pickle
 os.chdir(os.getenv('HOME') + '/Documents/Blender')
 from generators import schema_fun
 from utils import text_fun
-from utils.wiki_sim import wiki_query
 from evaluators import ksmirnov_fun
 import wikipedia
 import gensim
 import nltk
-from collections import Counter
-from nltk import word_tokenize
 from nltk.corpus import stopwords
 from textblob import TextBlob
 from textblob_aptagger import PerceptronTagger
@@ -24,20 +21,7 @@ ksEvaluator = ksmirnov_fun.ksFunctionGenerator(text_list)
 header = wikipedia.summary(seed_term)
 header = header[0:header.find('\n')]
 
-candidates = []
-for item in goog_list:
-    item = text_fun.prune(item, stem=False, english_dict=True)
-    candidates.extend(item)
-candidates = list(set(candidates))
-candidates_blob = TextBlob(' '.join(candidates), 
-                           pos_tagger=PerceptronTagger())
-
-ok_tags = ['NN']
-candidates = []
-for item in candidates_blob.tags:
-    if item[1] in ok_tags:
-        candidates.append(item)
-
+candidates = schema_fun.get_candidates(goog_list) #list of tuples
 header_trim = [w for w in header.split() if w not in 
     stopwords.words('english')]
 header_trim = ' '.join(header_trim)
@@ -49,23 +33,18 @@ ref_concepts = schema_fun.get_ref_concepts(seed_term, method='slow')
 
 sent_detector = nltk.data.load('tokenizers/punkt/english.pickle')
 sentences = text_fun.w2v_sent_prep(article, sent_detector)
-ref_arts = []
 for ref_concept in ref_concepts:
     try:
         ref_article = wikipedia.page(ref_concept).content
         ref_sentences = text_fun.w2v_sent_prep(ref_article, 
             sent_detector)
-        ref_arts.append(ref_sentences) 
         sentences.extend(ref_sentences)
         print('Got article for %s' % ref_concept) 
     except wikipedia.exceptions.DisambiguationError:
         pass
 
-# May want to remove targets for which no article is found, since
-# the model won't be great on the analogies there, although, maybe not
 targets = [element[0] for element in header_tags if element[1] in ok_tags]
 targets = [t for t in targets if t not in set(['==', '===', '(', ')'])]
-target_arts = []
 for target in targets:
     try:
         if seed_term != target:
@@ -73,7 +52,6 @@ for target in targets:
             print('Got a target article for %s' % target)
             target_sentences = text_fun.w2v_sent_prep(target_article, 
                 sent_detector)
-            target_arts.append(target_sentences) 
             sentences.extend(target_sentences)
     except wikipedia.exceptions.DisambiguationError:
         pass

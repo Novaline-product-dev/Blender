@@ -1,6 +1,7 @@
 import os
 os.chdir(os.getenv('HOME') + '/Documents/Blender')
 import wikipedia
+import nltk
 from utils import text_fun
 #from utils.wiki_sim import wiki_query
 from gensim.models import Word2Vec
@@ -71,3 +72,40 @@ def get_header_tags(seed_term):
     header_blob = TextBlob(header_trim, pos_tagger=PerceptronTagger())
     header_tags = list(set(header_blob.tags))
     return header_tags
+
+def build_model(seed_term, ref_concepts, targets, article, ok_tags):
+    sent_detector = nltk.data.load('tokenizers/punkt/english.pickle')
+    sentences = text_fun.w2v_sent_prep(article, sent_detector)
+    for ref_concept in ref_concepts:
+        try:
+            ref_article = wikipedia.page(ref_concept).content
+            ref_sentences = text_fun.w2v_sent_prep(ref_article, 
+                sent_detector)
+            sentences.extend(ref_sentences)
+            print('Got article for %s' % ref_concept) 
+        except:
+            pass
+
+    targets = [t for t in targets if t not in set(['==', '===', '(', ')'])]
+    for target in targets:
+        try:
+            if seed_term != target:
+                target_article = wikipedia.page(target).content
+                print('Got a target article for %s' % target)
+                target_sentences = text_fun.w2v_sent_prep(target_article, 
+                    sent_detector)
+                sentences.extend(target_sentences)
+        except:
+            pass
+
+    flat_sentences = [word for sublist in sentences for word in sublist]
+    blob_sentences = ' '.join(flat_sentences)
+    blob = TextBlob(blob_sentences, pos_tagger=PerceptronTagger())
+    sentences_tags = list(set(blob.tags))
+    ok_words = [el[0] for el in sentences_tags if el[1] in ok_tags]
+    model = Word2Vec(sentences, sg=1, negative=10)
+    return (targets, model, ok_words)
+
+
+
+

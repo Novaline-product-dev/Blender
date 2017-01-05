@@ -5,7 +5,6 @@ from utils import text_fun
 from evaluators import ksmirnov_fun
 import wikipedia
 import gensim
-import nltk
 from textblob import TextBlob
 from textblob_aptagger import PerceptronTagger
 
@@ -18,45 +17,15 @@ goog_list = pickle.load( open('fulltext.p', 'rb'))
 text_list = [text_fun.prune(doc) for doc in goog_list]
 ksEvaluator = ksmirnov_fun.ksFunctionGenerator(text_list)
 ok_tags = ['NN']
+targets = [el[0] for el in header_tags if el[1] in ok_tags]
 candidates = schema_fun.get_candidates(goog_list, ok_tags) #list of tuples
 ref_concepts = schema_fun.get_ref_concepts(seed_term, method='quick')
-
-
-sent_detector = nltk.data.load('tokenizers/punkt/english.pickle')
-sentences = text_fun.w2v_sent_prep(article, sent_detector)
-for ref_concept in ref_concepts:
-    try:
-        ref_article = wikipedia.page(ref_concept).content
-        ref_sentences = text_fun.w2v_sent_prep(ref_article, 
-            sent_detector)
-        sentences.extend(ref_sentences)
-        print('Got article for %s' % ref_concept) 
-    except:
-        pass
-
-targets = [element[0] for element in header_tags if element[1] in ok_tags]
-targets = [t for t in targets if t not in set(['==', '===', '(', ')'])]
-for target in targets:
-    try:
-        if seed_term != target:
-            target_article = wikipedia.page(target).content
-            print('Got a target article for %s' % target)
-            target_sentences = text_fun.w2v_sent_prep(target_article, 
-                sent_detector)
-            sentences.extend(target_sentences)
-    except:
-        pass
-
-flat_sentences = [word for sublist in sentences for word in sublist]
-blob_sentences = ' '.join(flat_sentences)
-blob = TextBlob(blob_sentences, pos_tagger=PerceptronTagger())
-sentences_tags = list(set(blob.tags))
-ok_words = [element[0] for element in sentences_tags \
-    if element[1] in ok_tags]
-
-model = gensim.models.Word2Vec(sentences, sg=1, negative=10)
+targets, model, ok_words = schema_fun.build_model(seed_term, 
+    ref_concepts, targets, article, ok_tags)
+print(model)
 targets = [target for target in targets if target in model.vocab]
 ref_concepts = [rc.lower() for rc in ref_concepts if rc.lower() in model.vocab]
+
 new_ideas = []
 seed_term = seed_term.split()
 seed_term = seed_term[len(seed_term) - 1]

@@ -84,9 +84,9 @@ def build_model(seed_term, ref_concepts, targets, article, ok_tags):
             sentences.extend(ref_sentences)
             print('Got article for %s' % ref_concept) 
         except:
-            pass
-
-    targets = [t for t in targets if t not in set(['==', '===', '(', ')'])]
+            continue
+    exclude = set(['==', '===', '(', ')', 'etc', 'e.g.'])
+    targets = [t for t in targets if t not in exclude]
     for target in targets:
         try:
             if seed_term != target:
@@ -96,8 +96,7 @@ def build_model(seed_term, ref_concepts, targets, article, ok_tags):
                     sent_detector)
                 sentences.extend(target_sentences)
         except:
-            pass
-
+            continue
     flat_sentences = [word for sublist in sentences for word in sublist]
     blob_sentences = ' '.join(flat_sentences)
     blob = TextBlob(blob_sentences, pos_tagger=PerceptronTagger())
@@ -106,6 +105,33 @@ def build_model(seed_term, ref_concepts, targets, article, ok_tags):
     model = Word2Vec(sentences, sg=1, negative=10)
     return (targets, model, ok_words)
 
-
+def schema_framer(seed_term, targets, ref_concepts, model, 
+    ksEvaluator, ok_words, article):
+    new_ideas = []
+    seed_term = seed_term.split()
+    seed_term = seed_term[len(seed_term) - 1]
+    for target in targets:
+        print('Target: %s' % target)
+        for ref_concept in ref_concepts:
+            candidates = model.most_similar(positive=[target, 
+                ref_concept], negative=[seed_term])
+            candidates = [el[0] for el in candidates]
+            for candidate in candidates:
+                if candidate in ok_words:
+                    cand_pos = TextBlob(candidate, 
+                        pos_tagger=PerceptronTagger()).tags[0][1]
+                    score = ksEvaluator(article.replace(target, 
+                            candidate))
+                    if cand_pos == 'JJ':
+                        next_idea = 'Try making %s more %s or less %s.' % \
+                        (seed_term, candidate, candidate)
+                        out = (next_idea, target, ref_concept, score, candidate)
+                        new_ideas.append(out)
+                    elif cand_pos == 'NN':
+                        next_idea = 'Try using the %s from a %s to make a new %s.' % \
+                            (candidate, ref_concept, seed_term)
+                        out = (next_idea, target, ref_concept, score, candidate)
+                        new_ideas.append(out)
+    return new_ideas
 
 

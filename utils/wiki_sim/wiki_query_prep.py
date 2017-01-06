@@ -40,17 +40,18 @@ for folder in folders:
 # save titles.txt
 if os.path.isfile(titles_path):
     print('Titles file found on disk at', titles_path)
-with open('titles.txt', 'wb') as f:
-    for folder in folders:
-        print(folder)
-        folder_files = os.listdir(folder)
-        folder_files = [f for f in folder_files if not \
-            f.startswith('.')]
-        for file in folder_files:
-            if file.startswith('titles_'):
-                input_path = folder + '/' + file
-                with open(input_path, 'rb') as f_sub:
-                    shutil.copyfileobj(f_sub, f) 
+else:
+    with open('titles.txt', 'wb') as f:
+        for folder in folders:
+            print(folder)
+            folder_files = os.listdir(folder)
+            folder_files = [f for f in folder_files if not \
+                f.startswith('.')]
+            for file in folder_files:
+                if file.startswith('titles_'):
+                    input_path = folder + '/' + file
+                    with open(input_path, 'rb') as f_sub:
+                        shutil.copyfileobj(f_sub, f) 
 
 # save articles.txt
 if os.path.isfile(articles_path):

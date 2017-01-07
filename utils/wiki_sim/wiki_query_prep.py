@@ -31,10 +31,10 @@ for folder in folders:
     for file in folder_files:
         if file.startswith('wiki'):
             input_path = folder + '/' + file
-            titles_path = folder + '/' + 'titles_' + file
-            articles_path = folder + '/' + 'articles_' + file
-            text_fun.prep_save(input_path, titles_path, 
-                articles_path)
+            titl_path = folder + '/' + 'titles_' + file
+            articl_path = folder + '/' + 'articles_' + file
+            text_fun.prep_save(input_path, titl_path, 
+                articl_path)
             print('%s/%s processed.' %(folder, file))
 
 # save titles.txt
@@ -68,6 +68,12 @@ else:
                     input_path = folder + '/' + file
                     with open(input_path, 'rb') as f_sub:
                         shutil.copyfileobj(f_sub, f) 
+
+with open(titles_path, 'rb') as f:
+    for i, l in enumerate(f):
+        pass
+    N = i + 1
+
 
 
 # dictionary .............................................

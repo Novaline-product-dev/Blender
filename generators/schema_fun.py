@@ -2,6 +2,7 @@ import os
 os.chdir(os.getenv('HOME') + '/Documents/Blender')
 import wikipedia
 import nltk
+from nltk.corpus import wordnet as wn
 from utils import text_fun
 #from utils.wiki_sim import wiki_query
 from gensim.models import Word2Vec
@@ -22,6 +23,17 @@ def get_ref_concepts(seed_term, method='quick'):
     elif method == 'LSI':
         out = wiki_query.similar(seed_term)
         out = [el for el in out if el.lower() != seed_term]
+        return out
+    elif method == 'wordnet':
+        out = []
+        for term in seed_term.split():
+            hypernyms = wn.synsets(term)[0].hypernyms()
+            for nym in hypernyms:
+                hyponyms = nym.hyponyms()
+                for nym in hyponyms:
+                    name = nym.name()
+                    word = name[0:name.find('.')]
+                    out.append(word)
         return out
     else:
         out2 = wiki_query.similar(seed_term)

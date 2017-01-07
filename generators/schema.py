@@ -15,7 +15,7 @@ text_list = [text_fun.prune(doc) for doc in goog_list]
 ksEvaluator = ksmirnov_fun.ksFunctionGenerator(text_list)
 ok_tags = ['NN', 'JJ']
 targets = [el[0] for el in header_tags if el[1] in ok_tags]
-ref_concepts = schema_fun.get_ref_concepts(seed_term, method='quick')
+ref_concepts = schema_fun.get_ref_concepts(seed_term, method='wordnet')
 targets, model, ok_words = schema_fun.build_model(seed_term, 
     ref_concepts, targets, article, ok_tags)
 targets = [target for target in targets if target in model.vocab]

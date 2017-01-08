@@ -2,7 +2,7 @@ import os
 os.chdir(os.getenv('HOME') + '/Documents/Blender')
 import shutil
 from utils import text_fun 
-from gensim import corpora, models
+from gensim import corpora, models, similarities
 
 
 if not os.path.isdir('aux/wiki_model'):
@@ -15,8 +15,9 @@ dict_path = 'wiki_dictionary.dict'
 corpus_path = 'wiki_corpus.mm'
 corpus_lsi_path = 'wiki_corpus_lsi.mm'
 lsi_path = 'wiki_lsi.lsi'
-index_prefix = 'index_shards/wiki_index'
-index_path = 'index_shards/lsi_wiki_index.index'
+index_dir = 'index_shards'
+index_prefix = index_dir + '/wiki_index'
+index_path = index_dir + '/lsi_wiki_index.index'
 
 
 folders = os.listdir('../wiki_html')
@@ -105,20 +106,31 @@ print('Loading corpus...')
 mmcorpus = corpora.MmCorpus(corpus_path)
 # end corpus..................................................
 
-print('Creating LSI Model...')
 dictionary=corpora.Dictionary.load(dict_path)
-lsi = models.LsiModel(mmcorpus, id2word=dictionary, num_topics=400, 
-                      decay=1.0, chunksize=20000)
-print('LSI model created. First two topics:')
-lsi.print_topics(2)
-lsi.save(lsi_path)
 
-print('Transforming Wikipedia Corpus to LSI')
-mmcorpus_lsi = lsi[mmcorpus]
-corpora.MmCorpus.serialize(corpus_lsi_path, mmcorpus_lsi)
+if not os.path.isfile(lsi_path):
+    print('Creating LSI Model...')
+    lsi = models.LsiModel(mmcorpus, id2word=dictionary, 
+        num_topics=400, decay=1.0, chunksize=20000)
+    print('LSI model created. First two topics:')
+    print(lsi.print_topics(2))
+    lsi.save(lsi_path)
+else:
+    lsi = models.LsiModel.load(lsi_path)
 
-print('Creating index...')
-index = gensim.similarities.docsim.Similarity(index_prefix,
+if not os.path.isfile(corpus_lsi_path):
+    print('Transforming Wikipedia Corpus to LSI')
+    mmcorpus_lsi = lsi[mmcorpus]
+    corpora.MmCorpus.serialize(corpus_lsi_path, mmcorpus_lsi)
+
+print('Loading LSI corpus...')
+lsiCorpus = corpora.MmCorpus(corpus_lsi_path)
+
+if not os.path.isfile(index_path):
+    if not os.path.isdir(index_dir):
+        os.makedirs(index_dir)
+    print('Creating index...')
+    index = similarities.docsim.Similarity(index_prefix,
         lsiCorpus, num_features=lsi.num_topics, num_best=30)
-index.save(index_path)
+    index.save(index_path)
 print('Done!')

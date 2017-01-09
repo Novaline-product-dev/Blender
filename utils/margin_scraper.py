@@ -1,6 +1,7 @@
 import requests, time
 import numpy as np
 from bs4 import BeautifulSoup as BS
+import pickle
 
 def get_industries():
     '''Gets industry names from finviz.'''
@@ -44,7 +45,7 @@ def get_avg_margin(tickers):
     running_total = 0
     for ticker in tickers:
         print('Getting margin for', ticker)
-        time.sleep(5)
+        time.sleep(20)
         margin_url = 'http://finviz.com/quote.ashx?t=' + ticker + \
             '&ty=c&p=d&b=1'
         r = requests.get(margin_url)
@@ -52,7 +53,7 @@ def get_avg_margin(tickers):
         td = soup('td')
         for i, tag in enumerate(td):
             try:
-                if str(tag['title']).find('body=[Gross Margin (ttm)]') > 0:
+                if str(tag['title']).find('body=[Net Profit Margin (ttm)]') > 0:
                     gm_loc = i + 1
             except:
                 continue
@@ -74,5 +75,5 @@ for i, ind in enumerate(inds):
     avg_margin = get_avg_margin(tickers)
     inds[i] = (ind[0], ind[1], avg_margin)
 
-with open("gross_margins.p", "wb") as f:
+with open("operating_margins.p", "wb") as f:
     pickle.dump(inds, f)

@@ -13,7 +13,6 @@ transformationList = [
     'reparameterize',
     'change of material',
     'change of colors',
-    'change the aesthetics',
     'opt in vs. opt out',
     'change the height',
     'flexibility vs. usability',

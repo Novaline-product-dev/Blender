@@ -15,13 +15,14 @@ text_list = [text_fun.prune(doc) for doc in goog_list]
 ksEvaluator = ksmirnov_fun.ksFunctionGenerator(text_list)
 ok_tags = ['NN', 'JJ']
 targets = [el[0] for el in header_tags if el[1] in ok_tags]
-ref_concepts = schema_fun.get_ref_concepts(seed_term, method='wordnet')
+ref_concepts = schema_fun.get_ref_concepts(seed_term, method='all')
 targets, model, ok_words = schema_fun.build_model(seed_term, 
     ref_concepts, targets, article, ok_tags)
 targets = [target for target in targets if target in model.vocab]
 ref_concepts = [rc.lower() for rc in ref_concepts if rc.lower() in model.vocab]
 new_ideas = schema_fun.schema_framer(seed_term, targets, 
     ref_concepts, model, ksEvaluator, ok_words, article)
+# location 4 (first argument) is target, 2 is ref_concept
 new_ideas2 = schema_fun.limit_filter(4, new_ideas, max_num=3)
 new_ideas2 = schema_fun.limit_filter(2, new_ideas2, max_num=5)
 

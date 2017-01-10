@@ -4,7 +4,7 @@ import wikipedia
 import nltk
 from nltk.corpus import wordnet as wn
 from utils import text_fun
-#from utils.wiki_sim import wiki_query
+from utils.wiki_sim import wiki_query
 from gensim.models import Word2Vec
 from textblob import TextBlob
 from textblob_aptagger import PerceptronTagger
@@ -36,6 +36,15 @@ def get_ref_concepts(seed_term, method='quick'):
                     out.append(word)
         return out
     else:
+        out3 = []
+        for term in seed_term.split():
+            hypernyms = wn.synsets(term)[0].hypernyms()
+            for nym in hypernyms:
+                hyponyms = nym.hyponyms()
+                for nym in hyponyms:
+                    name = nym.name()
+                    word = name[0:name.find('.')]
+                    out3.append(word)
         out2 = wiki_query.similar(seed_term)
         out2 = [el for el in out2 if el.lower() != seed_term]
         seed_term = seed_term.split()
@@ -46,6 +55,7 @@ def get_ref_concepts(seed_term, method='quick'):
         out1 = mod.most_similar(seed_term) 
         out1 = [item[0] for item in out1]
         out1.extend(out2)
+        out1.extend(out3)
         return out1
 
 def limit_filter(tuple_index, new_ideas, max_num=3, score_index=3):

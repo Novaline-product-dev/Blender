@@ -20,7 +20,13 @@ def get_industries():
         finviz_inds.append(opt['value'])
         nice_inds.append(opt.text)
         inds.append((opt['value'], opt.text))
-    to_drop = set(['', 'stocksonly', 'exchangetradedfund', 'modal'])
+    to_drop = set(['', 'stocksonly', 'exchangetradedfund', 'modal',
+        'regionalmidatlanticbanks', 'regionalmidwestbanks',
+        'regionalnortheastbanks', 'regionalpacificbanks', 
+        'regionalsoutheastbanks', 'regionalsouthwestbanks', 
+        'reitdiversified', 'reithealthcarefacilities', 
+        'reithotelmotel', 'reitindustrial', 'reitoffice', 
+        'reitresidential', 'reitretail'])
     inds = [el for el in inds if el[0] not in to_drop]
     return inds
 
@@ -44,16 +50,31 @@ def get_avg_margin(tickers):
     n_valid = 0
     running_total = 0
     for ticker in tickers:
-        print('Getting margin for', ticker)
-        time.sleep(20)
-        margin_url = 'http://finviz.com/quote.ashx?t=' + ticker + \
-            '&ty=c&p=d&b=1'
-        r = requests.get(margin_url)
+        print('Attempting to get margin for', ticker)
+        time.sleep(random.randint(0, 8))
+        margin_url = 'http://finviz.com/quote.ashx?t=' + \
+        ticker + '&ty=c&p=d&b=1'
+        try:
+            r = requests.get(margin_url)
+        except Exception as e:
+            print('Reached exception:', e)
+            print('Trying again in 30 seconds...')
+            try:
+                time.sleep(30)
+                r = requests.get(margin_url)
+                print('Second try successful.')
+            except Exception as e2:
+                print('Reached 2nd exception:', e2)
+                print('Second try unsuccessful.')
+                print('Abandoning ticker:', ticker)
+                continue
         soup = BS(r.text, 'lxml')
         td = soup('td')
         for i, tag in enumerate(td):
             try:
-                if str(tag['title']).find('body=[Net Profit Margin (ttm)]') > 0:
+                title_tag = str(tag['title'])
+                text_to_match = 'body=[Operating Margin (ttm)]'
+                if title_tag.find(text_to_match) > 0:
                     gm_loc = i + 1
             except:
                 continue
@@ -69,11 +90,12 @@ def get_avg_margin(tickers):
 
 inds = get_industries()
 for i, ind in enumerate(inds):
-    print('Current industry: ', ind[1])
-    tickers = get_tickers(ind[0])
-    print('Tickers for this industry:', tickers)
-    avg_margin = get_avg_margin(tickers)
-    inds[i] = (ind[0], ind[1], avg_margin)
+    if len(ind) < 3:
+        print('Current industry: ', ind[1])
+        tickers = get_tickers(ind[0])
+        print('Tickers for this industry:', tickers)
+        avg_margin = get_avg_margin(tickers)
+        inds[i] = (ind[0], ind[1], avg_margin)
 
 with open("operating_margins.p", "wb") as f:
     pickle.dump(inds, f)

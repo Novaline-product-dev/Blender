@@ -9,7 +9,7 @@ from utils import text_fun
 os.chdir('aux/wiki_model')
 lsiCorpus = gensim.corpora.MmCorpus('wiki_corpus_lsi.mm')
 id2word = gensim.corpora.Dictionary.load('wiki_dictionary.dict')
-lsi = gensim.models.LsiModel.load('wiki_lsi')
+lsi = gensim.models.LsiModel.load('wiki_lsi.lsi')
 index = gensim.similarities.docsim.Similarity.load('./index_shards/lsi_wiki_index.index')
 
 def similar(query_term):

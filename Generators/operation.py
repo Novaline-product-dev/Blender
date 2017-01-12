@@ -1,12 +1,27 @@
 import os
 os.chdir(os.getenv('HOME') + '/Documents/Blender')
 import random
+from nltk.corpus import wordnet as wn
+
+
+
+def material():
+    choices = ['acrylic', 'alloy', 'aluminum', 'brass',
+        'brick', 'bronze', 'carbon', 'cardboard', 'cast iron',
+        'cement', 'ceramics', 'copper', 'cotton', 'diamond', 'epoxy',
+        'fiber', 'fiberglass', 'glass', 'glue', 'gold', 'iron', 'leather',
+        'linen', 'nylon', 'paper', 'polyester', 'rubber', 'sand', 'silica',
+        'silver', 'skin', 'steel', 'stone', 'titanium', 'vinyl', 'viscose', 
+        'wood', 'wool']
+    return random.choice(choices)
 
 def operation(seed_term):
     operations = [
         'Flip %s vertically, horizontally, or inside out.' %seed_term,
         'Rotate %s in physical or abstract space.' %seed_term,
-        'Resize %s (What about a giant version or a tiny one?)' %seed_term,
+        'Resize %s (A giant version? A tiny one?)' %seed_term,
+        'Scale production of %s way up or way down.' %seed_term,
+        'Change distribution of %s from inventory to made-to-order or vice-versa.' %seed_term,
         'Change %s from analog to digital or vice versa.' %seed_term,
         'Change %s from 3D to 2D or vice-versa.' %seed_term,
         'Change the focal point of %s (perhaps to something that was previously ignored.)' %seed_term,
@@ -26,11 +41,11 @@ def operation(seed_term):
         'Change the source of revenue from %s.' %seed_term,
         'Make %s more social.' %seed_term,
         'Allow consumers to communicate with %s or about %s' %(seed_term, seed_term),
-        'Provide customized business services for the %s industry' %seed_term,
+        'Provide customized business services for the %s industry.' %seed_term,
         'Decrease the production time or increase the production quality of %s.' %seed_term,
         'Change %s from disposable to durable or vice-versa.' %seed_term,
         'Make %s easier to maintain.' %seed_term,
         'Make %s more exclusive or more accessible.' %seed_term,
-        'Change the target audience of %s to one that seeks a different benefit from using %s' %(seed_term, seed_term),
+        'Change the target audience of %s to one that seeks a different benefit.' %(seed_term, seed_term),
         'Remove an attribute from %s' %seed_term]
     return random.choice(operations)

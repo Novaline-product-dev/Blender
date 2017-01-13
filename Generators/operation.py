@@ -4,7 +4,6 @@ import random
 from nltk.corpus import wordnet as wn
 
 
-
 def material():
     choices = ['acrylic', 'alloy', 'aluminum', 'brass',
         'brick', 'bronze', 'carbon', 'cardboard', 'cast iron',
@@ -15,6 +14,10 @@ def material():
         'wood', 'wool']
     return random.choice(choices)
 
+def process():
+    processes = ['design', 'purchase', 'maintenance', 'core function', 'auxilliary functions']
+    return random.choice(processes)
+    
 def operation(seed_term):
     operations = [
         'Flip %s vertically, horizontally, or inside out.' %seed_term,
@@ -46,6 +49,7 @@ def operation(seed_term):
         'Change %s from disposable to durable or vice-versa.' %seed_term,
         'Make %s easier to maintain.' %seed_term,
         'Make %s more exclusive or more accessible.' %seed_term,
-        'Change the target audience of %s to one that seeks a different benefit.' %(seed_term, seed_term),
-        'Remove an attribute from %s' %seed_term]
+        'Change the target audience of %s to one that seeks a different benefit.' %seed_term,
+        'Remove an attribute from %s' %seed_term,
+        'Automate the %s of %s' %(process(), seed_term)]
     return random.choice(operations)

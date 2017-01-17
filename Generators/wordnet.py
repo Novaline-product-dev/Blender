@@ -1,8 +1,19 @@
+import os, string, pickle
+os.chdir(os.getenv('HOME') + '/Documents/Blender')
+import wikipedia
+from utils import text_fun
 from nltk.corpus import wordnet as wn
 from textblob import TextBlob
 from textblob_aptagger import PerceptronTagger
+from evaluators import ksmirnov_fun
 
 
+seed_term = pickle.load( open('search_text.p', 'rb'))
+seed_term = seed_term.lower()
+goog_list = pickle.load(open('fulltext.p', 'rb'))
+text_list = [text_fun.prune(doc) for doc in goog_list]
+ksEvaluator = ksmirnov_fun.ksFunctionGenerator(text_list)
+article = wikipedia.page(seed_term).content
 def get_names(synlist):
     out = []
     for el in synlist:
@@ -12,15 +23,34 @@ def get_names(synlist):
     return out
 
 refs = []
-seed = 'wallet'
-synset = wn.synsets(seed)[0]
-hyper2nyms = synset.hypernyms()[0].hypernyms()
-hyper1nyms = hyper2nyms[0].hyponyms()
-for item in hyper1nyms:
-    refs.extend(get_names(item.hyponyms()))
+seed_term = seed_term.split()[len(seed_term.split()) - 1]
+synset = wn.synsets(seed_term)[0]
+hyper3nyms = synset.hypernyms()[0].hypernyms()[0].hypernyms()[0]
+for el in hyper3nyms.hyponyms():
+    hypernyms = el.hyponyms()
+    for item in hypernyms:
+        refs.extend(get_names(hypernyms))
+print('line 32')
+article = article.replace('\n', ' ')
+article = article.replace('=', '')
+aug = article.split()
+candidates = []
+for text in text_list:
+    candidates.extend(text)
+candidates = set(candidates)
+new_ideas = []
+for candidate in candidates:
+    temp = list(aug)
+    temp.append(candidate)
+    score = ksEvaluator(' '.join(temp))
+    print(score)
+    tup = (candidate, score)
+    new_ideas.append(tup)
 
-for ref in refs:
-    print('Blend a %s and a %s' %(seed, ref))
+new_ideas = sorted(new_ideas, key=lambda x:x[1])    
+for new_idea in new_ideas:
+    print('Blend a %s and a %s.  Score: %d' \
+          %(seed, new_ideas[0], new_ideas[1]))
 #def get_defns(seed):
 #    seed = wn.synsets(seed, pos=wn.NOUN)[0]
 #    defns = []

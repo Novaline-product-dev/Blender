@@ -1,7 +1,6 @@
 import os
 os.chdir(os.getenv('HOME') + '/Documents/Blender')
 import random
-from nltk.corpus import wordnet as wn
 
 def audience():
     alts = [

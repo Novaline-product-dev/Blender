@@ -18,8 +18,35 @@ def process():
     processes = ['design', 'purchase', 'maintenance', 'core function', 'auxilliary functions']
     return random.choice(processes)
     
+def business_model():
+    b_mods = ['Allow customers to name a price (ex: Priceline)',
+    'Use offer aggregation (ex: Kayak, eBay, Amazon)',
+    'Change to just-in-time production, or the pull method (ex: Dell, Toyota)',
+    'Growth first, profit later (ex: Amazon, many startups)',
+    'The modern franchise (ex: Macdonalds)',
+    'Software first, hardware to follow (ex: Microsoft, Google, Amazon)',
+    'Walled-garden product line (ex: Apple, Google)',
+    'The P2P Revolution (ex: Etsy, Kickstarter, Paypal, Craigslist',
+    'Vertical integration (ex: Tesla)',
+    'Advertiser model: if you drive traffic, sell it (ex: Google, FB)', 
+    'Data model: gather info and sell access (ex: Bloomberg)',
+    'Merchant model: resell (ex: TJMaxx)',
+    'Brokerage model: sell knowledge about an activity/service (ex: Goldman Sachs)',
+    'Affiliate/commision model: take a cut of sales you create (ex: Kickstarter)',
+    'Auction model: gather buyers and sellers in your industry (ex: eBay, Amazon)',
+    'Add-on Model: razor and blades or upgrades (ex: Gillette, Super Mario Run)',
+    'Direct Sales, no middle retailer (ex: Warby-Parker)',
+    'Freemium or try-before-you-buy (ex: AWS Free Tier)',
+    'Low-cost + upsell (ex: Ryanair)',
+    'Pay-as-you-go (ex: Utilities, AWS)',
+    'All You Can Use/Eat (ex: Noun Project Pro)',
+    'Crowdsource a new launch (ex: Pebble)',
+    'Price by algorithm (ex: Uber, Logo Pizza, Jet)']
+    return random.choice(b_mods)
+
 def operation(seed_term):
     operations = [
+        'Change %s from rough/bumpy to smooth or vice-versa.' %seed_term,
         'Flip %s vertically, horizontally, or inside out.' %seed_term,
         'Rotate %s in physical or abstract space.' %seed_term,
         'Resize %s (A giant version? A tiny one?)' %seed_term,
@@ -51,5 +78,7 @@ def operation(seed_term):
         'Make %s more exclusive or more accessible.' %seed_term,
         'Change the target audience of %s to one that seeks a different benefit.' %seed_term,
         'Remove an attribute from %s' %seed_term,
-        'Automate the %s of %s' %(process(), seed_term)]
+        'Automate the %s of %s' %(process(), seed_term),
+        'For %s, experiment with this business model: %s' %(seed_term, business_model())
+        ]
     return random.choice(operations)

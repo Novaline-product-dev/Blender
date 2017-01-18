@@ -70,7 +70,8 @@ def ksFunctionGenerator(textList, grid_pts = 500):
 		columns = vocab)
 
 	def jaccard(text):
-		index = [wordToNum[word] for word in text if word in wordToNum.keys()]
+		index = [wordToNum[word] for word in text if \
+			word in wordToNum.keys()]
 		out = jaccardMat.iloc[index, index]
 		return(out)
 
@@ -80,20 +81,17 @@ def ksFunctionGenerator(textList, grid_pts = 500):
 
 	baselineCDF = cdfMat.sum(1) / len(textList)
 		
-	def ksEvaluator(doc, verbose = None):
+	def ksEvaluator(tokenList, verbose = None):
 		if verbose:
-			tokenList = text_fun.prune(doc)
-			print('Token list created')
 			jaccard_mat = jaccard(tokenList)
 			print('Jaccard matrix computed')
 			cdf_vec = cdf(jaccard_mat, grid_pts)
 			print('CDF vector created')
 			return ks(cdf_vec, baselineCDF)
 		else:
-			tokenList = text_fun.prune(doc)
 			return ks(cdf(jaccard(tokenList), grid_pts), 
 				baselineCDF)
-
+			
 	return ksEvaluator
 
 

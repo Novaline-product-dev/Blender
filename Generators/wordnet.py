@@ -37,12 +37,12 @@ aug = article.split()
 candidates = []
 for text in text_list:
     candidates.extend(text)
-candidates = set(candidates)
+candidates = list(set(candidates))
 new_ideas = []
 for candidate in candidates:
     temp = list(aug)
     temp.append(candidate)
-    score = ksEvaluator(' '.join(temp))
+    score = ksEvaluator(temp)
     print(score)
     tup = (candidate, score)
     new_ideas.append(tup)

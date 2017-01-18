@@ -132,6 +132,7 @@ def schema_framer(seed_term, targets, ref_concepts, model,
     new_ideas = []
     seed_term = seed_term.split()
     seed_term = seed_term[len(seed_term) - 1]
+    article_tokens = text_fun.prune(article)
     for target in targets:
         print('Target: %s' % target)
         for ref_concept in ref_concepts:
@@ -142,12 +143,15 @@ def schema_framer(seed_term, targets, ref_concepts, model,
                 if candidate in ok_words:
                     cand_pos = TextBlob(candidate, 
                         pos_tagger=PerceptronTagger()).tags[0][1]
-                    score = ksEvaluator(article.replace(target, 
-                            candidate))
+                    temp = list(article_tokens)
+                    temp.append(candidate)
+                    score = ksEvaluator(temp)
+                    print(score)
                     if cand_pos == 'JJ':
                         next_idea = 'Try making %s more %s or less %s.' % \
                         (seed_term, candidate, candidate)
-                        out = (next_idea, target, ref_concept, score, candidate)
+                        out = (next_idea, target, ref_concept, score, 
+                               candidate)
                         new_ideas.append(out)
                     elif cand_pos == 'NN':
                         next_idea = 'Try using the %s from a %s to make a new %s.' % \

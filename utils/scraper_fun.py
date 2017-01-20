@@ -8,7 +8,6 @@ import pickle
 import os, re
 
 def gather_urls(search_term, page_count): # Gathers page_count urls from Google
-
     r = requests.get('http://www.google.com/search?q=' + search_term)
     soup = BS(r.text, 'lxml')
 
@@ -40,19 +39,10 @@ def gather_urls(search_term, page_count): # Gathers page_count urls from Google
 
     return address_book
 
-def text_clean(text): # Alters the text to a desireable format
-    # The following was found at http://stackoverflow.com/questions/22799990/beatifulsoup4-get-text-still-has-javascript
-    # perhaps not entirely necessary:
-
-    # break into lines and remove leading and trailing spaces
+def text_clean(text): 
     lines = (line.strip() for line in text.splitlines())
-    # break multi-headlines into a line each
     chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
-    # drop blank lines
     text = '\n'.join(chunk for chunk in chunks if chunk)
-    ##    text=text.encode('utf-8') # only if in python 2
-
-    # Other modifications
     text = text.replace(',', '')
 
 def retrieve_text(address_book):  # Scrapes the text from a list of urls
@@ -61,7 +51,6 @@ def retrieve_text(address_book):  # Scrapes the text from a list of urls
     trouble_child = [] # initialize list to find pages that don't work
 
     for x in range(len(address_book)):
-        # Retrieve the html
         proceed = "y"
         try:
             r = requests.get(address_book[x])
@@ -73,17 +62,12 @@ def retrieve_text(address_book):  # Scrapes the text from a list of urls
             pass
 
         if proceed == "y":
-            # Remove style elements
             soup = BS(html, "lxml")
             for script in soup(["script", "style"]):
                 script.extract()
             text = soup.get_text() # get text
-
             text_clean(text) # Puts the text in a useful format
-
             fulltext.append(text) # append element with text from page x
-
-            # To track progress:
             print ("Page: %s, %s to go" %(x + 1, len(address_book) - x - 1))
 
     for i, string in enumerate(fulltext):

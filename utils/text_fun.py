@@ -6,6 +6,7 @@ import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
 import math
+import spacy
 from gensim import utils
 from lxml import html
 from nltk.stem.snowball import SnowballStemmer
@@ -13,31 +14,46 @@ from nltk.corpus import stopwords
 from sklearn import feature_extraction 
 
 
+nlp = spacy.load('en')
+
 def rm_punct(in_string):
     """Removes punctuation, returns resulting string"""
     split_string = [ch for ch in in_string if ch not in string.punctuation]
     out_string = ''.join(split_string)
     return(out_string)
 
-def prune(doc, stoplist = None, stem = True, 
-          english_dict = False):
+def prune(doc, stoplist=None, stem=True, 
+          english_dict=False, use_spacy=False):
     """This takes a single document and tokenizes the words, removes
     undesirable elements, and prepares it to be loaded into a dictionary.
     """
-    temp = utils.simple_preprocess(doc.lower())
-    temp = [w for w in temp if w not in string.punctuation]
-    temp = [rm_punct(w) for w in temp]
-    if stoplist:
-        temp = [w for w in temp if w not in stoplist]
-    temp = [w for w in temp if w not in set(['[', ']', "'", '\n', 'com'])]
-    temp = [w for w in temp if w not in stopwords.words('english')]
-    if stem:
-        stemmer = SnowballStemmer('english')
-        temp = [stemmer.stem(w) for w in temp]
-    if english_dict:
-        d = enchant.Dict("en_US")
-        temp = [w for w in temp if d.check(w)]
-    return temp
+    custom_rm_list = set(['[', ']', "'", '\n', 'com'])
+    if use_spacy:
+        temp = nlp(doc)
+        temp = [w for w in temp if w.pos_ != 'PUNCT']
+        if stoplist:
+            temp = [w for w in temp if w.text not in stoplist]
+        temp = [w for w in temp if w.text not in custom_rm_list]
+        temp = [w for w in temp if not w.is_stop]
+        if english_dict:
+            temp = [w for w in temp if w in nlp.vocab]
+        out = [w.lemma_ for w in temp]
+        return out
+    else:
+        temp = utils.simple_preprocess(doc.lower())
+        temp = [w for w in temp if w not in string.punctuation]
+        temp = [rm_punct(w) for w in temp]
+        if stoplist:
+            temp = [w for w in temp if w not in stoplist]
+        temp = [w for w in temp if w not in custom_rm_list]
+        temp = [w for w in temp if w not in stopwords.words('english')]
+        if stem:
+            stemmer = SnowballStemmer('english')
+            temp = [stemmer.stem(w) for w in temp]
+        if english_dict:
+            d = enchant.Dict("en_US")
+            temp = [w for w in temp if d.check(w)]
+        return temp
 
 def w2v_sent_prep(article, sent_detector):
     sentences = sent_detector.tokenize(article)
@@ -105,7 +121,7 @@ def prep_save(input_path, titles_path, articles_path, token_min=5):
         articles_out = []
         for title, article in zip(titles, articles):
             prepped_title = ''.join((title, '\n'))
-            article_tokens = prune(article)
+            article_tokens = prune(article, use_spacy=True)
             if len(article_tokens) >= token_min:
                 tokens_string = ' '.join(article_tokens)
                 prepped_art = ''.join((tokens_string, '\n'))

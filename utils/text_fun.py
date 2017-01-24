@@ -52,6 +52,7 @@ def title_extractor(file_name):
     return titles
 
 def line_streamer(path, N=None):
+    """Generator function for building the dictionary."""
     i = 0
     with open(path, 'rb') as f:
         for line in f:

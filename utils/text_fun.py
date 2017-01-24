@@ -7,9 +7,9 @@ from lxml import html
 nlp = spacy.load('en')
 
 def prune(doc, stoplist=None, lemmatize=True, english_dict=False):
-    """This takes a single document and tokenizes the words, removes
+    '''This takes a single document and tokenizes the words, removes
     undesirable elements, and prepares it to be loaded into a dictionary.
-    """
+    '''
     custom_rm_list = set(['[', ']', "'", '\n', 'com', '\n\n'])
     temp = nlp(doc)
     temp = [w for w in temp if w.pos_ != 'PUNCT']
@@ -34,7 +34,7 @@ def w2v_sent_prep(article, sent_detector):
     return sentences
 
 def text_extractor(file_name):
-    """Gets body text from html docs produced by wikiextractor."""
+    '''Gets body text from html docs produced by wikiextractor.'''
     raw_text = []
     with open(file_name, 'rb') as f:
         soup = html.fromstring(f.read().decode('utf8', 'ignore'))
@@ -43,7 +43,7 @@ def text_extractor(file_name):
     return raw_text
 
 def title_extractor(file_name):
-    """Gets titles from html docs produced by wikiextractor."""
+    '''Gets titles from html docs produced by wikiextractor.'''
     titles=[]
     with open(file_name, 'rb') as f:
         soup = html.fromstring(f.read().decode('utf8', 'ignore'))
@@ -52,7 +52,7 @@ def title_extractor(file_name):
     return titles
 
 def line_streamer(path, N=None):
-    """Generator function for building the dictionary."""
+    '''Generator function for building the dictionary.'''
     i = 0
     with open(path, 'rb') as f:
         for line in f:

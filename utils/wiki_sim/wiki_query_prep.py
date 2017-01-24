@@ -37,7 +37,6 @@ for folder in folders:
                 articl_path)
             print('%s/%s processed.' %(folder, file))
 
-
 # save titles.txt
 if os.path.isfile(titles_path):
     print('Titles file found on disk at', titles_path)

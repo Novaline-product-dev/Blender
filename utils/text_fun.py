@@ -28,6 +28,8 @@ def prune(doc, stoplist=None, lemmatize=True, english_dict=False):
 def prune_post_parse(doc, stoplist=None, lemmatize=True, english_dict=False):
     '''This takes a single document and tokenizes the words, removes
     undesirable elements, and prepares it to be loaded into a dictionary.
+    The only difference between this and prune is that it expects a parsed
+    spacy document.
     '''
     custom_rm_list = set(['[', ']', "'", '\n', 'com', '\n\n'])
     temp = [w for w in doc if w.pos_ != 'PUNCT']
@@ -91,16 +93,14 @@ def prep_save(input_path, titles_path, articles_path):
         titles = title_extractor(input_path)
         titles_out = []
         articles_out = []
-        for title in titles:
+        for title, article in zip(titles, articles):
             prepped_title = ''.join((title, '\n'))
-            titles_out.append(prepped_title)
-        article_generator = (art for art in articles)
-        for article in nlp.pipe(article_generator, 
-                                batch_size=50, n_threads=1):
             article_tokens = prune_post_parse(article)
-            tokens_string = ' '.join(article_tokens)
-            prepped_art = ''.join((tokens_string, '\n'))
-            articles_out.append(prepped_art)
+            if len(article_tokens) >= 5:
+                titles_out.append(prepped_title)
+                tokens_string = ' '.join(article_tokens)
+                prepped_art = ''.join((tokens_string, '\n'))
+                articles_out.append(prepped_art)
         assert len(articles_out) == len(titles_out)
         with open(titles_path, 'wb') as f:
             for title in titles_out:

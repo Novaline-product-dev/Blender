@@ -4,14 +4,13 @@ from gensim import utils
 from lxml import html
 
 
-nlp = spacy.load('en')
-
+nlp_prune = spacy.load('en', parser=False)
 def prune(doc, stoplist=None, lemmatize=True, english_dict=False):
     '''This takes a single document and tokenizes the words, removes
     undesirable elements, and prepares it to be loaded into a dictionary.
     '''
-    custom_rm_list = set(['[', ']', "'", '\n', 'com', '\n\n'])
-    temp = nlp(doc)
+    custom_rm_list = set(['[', ']', '\'', '\n', 'com', '\n\n', '\'s'])
+    temp = nlp_prune(doc)
     temp = [w for w in temp if w.pos_ != 'PUNCT']
     if stoplist:
         temp = [w for w in temp if w.text not in stoplist]
@@ -95,7 +94,7 @@ def prep_save(input_path, titles_path, articles_path):
         articles_out = []
         for title, article in zip(titles, articles):
             prepped_title = ''.join((title, '\n'))
-            article_tokens = prune_post_parse(article)
+            article_tokens = prune(article)
             if len(article_tokens) >= 5:
                 titles_out.append(prepped_title)
                 tokens_string = ' '.join(article_tokens)

@@ -1,14 +1,7 @@
 import os, string
-import re
-import numpy as np
-import pandas as pd
-import networkx as nx
-import matplotlib.pyplot as plt
-import math
 import spacy
 from gensim import utils
 from lxml import html
-from sklearn import feature_extraction 
 
 
 nlp = spacy.load('en')

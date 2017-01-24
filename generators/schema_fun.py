@@ -2,6 +2,7 @@ import os
 os.chdir(os.getenv('HOME') + '/Documents/Blender')
 import wikipedia
 import nltk
+import spacy
 from nltk.corpus import wordnet as wn
 from utils import text_fun
 from utils.wiki_sim import wiki_query
@@ -9,6 +10,9 @@ from gensim.models import Word2Vec
 from textblob import TextBlob
 from textblob_aptagger import PerceptronTagger
 from nltk.corpus import stopwords
+
+
+nlp = spacy.load('en')
 
 def get_ref_concepts(seed_term, method='quick'):
     if method == 'quick':
@@ -88,11 +92,12 @@ def get_candidates(goog_list, ok_tags):
 def get_header_tags(seed_term):
     header = wikipedia.summary(seed_term)
     header = header[0:header.find('\n')]
-    header_trim = [w for w in header.split() if w not in 
-        stopwords.words('english')]
-    header_trim = ' '.join(header_trim)
-    header_blob = TextBlob(header_trim, pos_tagger=PerceptronTagger())
-    header_tags = list(set(header_blob.tags))
+    header = nlp(header, parse=False)
+    header_tags = []
+    for item in header:
+        if not item.is_stop:
+            if not item.pos_ == 'PUNCT':
+                header_tags.append((item, item.tag_))
     return header_tags
 
 def build_model(seed_term, ref_concepts, targets, article, ok_tags):

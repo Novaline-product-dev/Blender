@@ -1,55 +1,49 @@
 import os, string
 import spacy
-from gensim import utils
 from lxml import html
 
 
 nlp_prune = spacy.load('en', parser=False)
-def prune(doc, stoplist=None, lemmatize=True, english_dict=False):
+nlp = spacy.load('en')
+default_stop_list = set(['[', ']', '\'', '\n', '==', \
+                         'com', '\n\n', '\'s', ' ', '  ',
+                         '===', '\n\n\n'])
+def prune(doc, stoplist=None, english_dict=False):
     '''This takes a single document and tokenizes the words, removes
     undesirable elements, and prepares it to be loaded into a dictionary.
     '''
-    custom_rm_list = set(['[', ']', '\'', '\n', 'com', '\n\n', '\'s'])
+    if not stoplist:
+        stoplist = default_stop_list
     temp = nlp_prune(doc)
     temp = [w for w in temp if w.pos_ != 'PUNCT']
-    if stoplist:
-        temp = [w for w in temp if w.text not in stoplist]
-    temp = [w for w in temp if w.text not in custom_rm_list]
+    temp = [w for w in temp if w.text not in stoplist]
     temp = [w for w in temp if not w.is_stop]
     if english_dict:
         temp = [w for w in temp if w in nlp.vocab]
-    if lemmatize:
-        out = [w.lemma_ for w in temp]
-    else:
-        out = temp
+    out = [w.lemma_ for w in temp]
     return out
 
-def prune_post_parse(doc, stoplist=None, lemmatize=True, english_dict=False):
+def prune_post_parse(doc, stoplist=None, english_dict=False):
     '''This takes a single document and tokenizes the words, removes
     undesirable elements, and prepares it to be loaded into a dictionary.
     The only difference between this and prune is that it expects a parsed
     spacy document.
     '''
-    custom_rm_list = set(['[', ']', "'", '\n', 'com', '\n\n'])
+    if not stoplist:
+        stoplist = default_stop_list
     temp = [w for w in doc if w.pos_ != 'PUNCT']
-    if stoplist:
-        temp = [w for w in temp if w.text not in stoplist]
-    temp = [w for w in temp if w.text not in custom_rm_list]
+    temp = [w for w in temp if w.text not in stoplist]
     temp = [w for w in temp if not w.is_stop]
     if english_dict:
         temp = [w for w in temp if w in nlp.vocab]
-    if lemmatize:
-        out = [w.lemma_ for w in temp]
-    else:
-        out = temp
+    out = [w.lemma_ for w in temp]
     return out
 
-def w2v_sent_prep(article, sent_detector):
-    sentences = sent_detector.tokenize(article)
-    exclude = set(string.punctuation)
-    for i, sentence in enumerate(sentences):
-        temp = ''.join(ch for ch in sentence if ch not in exclude)
-        sentences[i] = prune(temp, lemmatize=False)
+def w2v_sent_prep(article):
+    spacy_art = nlp(article)
+    spacy_sentences = spacy_art.sents
+    sentences = [prune_post_parse(sent) for sent in spacy_sentences]
+    sentences = [el for el in sentences if el]
     return sentences
 
 def text_extractor(file_name):

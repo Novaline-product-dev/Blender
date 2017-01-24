@@ -102,12 +102,11 @@ def get_header_tags(seed_term):
 
 def build_model(seed_term, ref_concepts, targets, article, ok_tags):
     sent_detector = nltk.data.load('tokenizers/punkt/english.pickle')
-    sentences = text_fun.w2v_sent_prep(article, sent_detector)
+    sentences = text_fun.w2v_sent_prep(article)
     for ref_concept in ref_concepts:
         try:
             ref_article = wikipedia.page(ref_concept).content
-            ref_sentences = text_fun.w2v_sent_prep(ref_article, 
-                sent_detector)
+            ref_sentences = text_fun.w2v_sent_prep(ref_article)
             sentences.extend(ref_sentences)
             print('Got article for %s' % ref_concept) 
         except:
@@ -119,8 +118,7 @@ def build_model(seed_term, ref_concepts, targets, article, ok_tags):
             if seed_term != target:
                 target_article = wikipedia.page(target).content
                 print('Got a target article for %s' % target)
-                target_sentences = text_fun.w2v_sent_prep(target_article, 
-                    sent_detector)
+                target_sentences = text_fun.w2v_sent_prep(target_article)
                 sentences.extend(target_sentences)
         except:
             continue

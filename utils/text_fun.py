@@ -44,7 +44,7 @@ def w2v_sent_prep(article, sent_detector):
     exclude = set(string.punctuation)
     for i, sentence in enumerate(sentences):
         temp = ''.join(ch for ch in sentence if ch not in exclude)
-        sentences[i] = prune(temp, stem = False)
+        sentences[i] = prune(temp, lemmatize=False)
     return sentences
 
 def text_extractor(file_name):

@@ -19,7 +19,6 @@ index_dir = 'index_shards'
 index_prefix = index_dir + '/wiki_index'
 index_path = index_dir + '/lsi_wiki_index.index'
 
-
 folders = os.listdir('../wiki_html')
 folders = ['../wiki_html/' + f for f in \
     folders if os.path.isdir('../wiki_html/' + f)]
@@ -37,6 +36,7 @@ for folder in folders:
             text_fun.prep_save(input_path, titl_path, 
                 articl_path)
             print('%s/%s processed.' %(folder, file))
+
 
 # save titles.txt
 if os.path.isfile(titles_path):
@@ -74,8 +74,6 @@ with open(titles_path, 'rb') as f:
     for i, l in enumerate(f):
         pass
     N = i + 1
-
-
 
 # dictionary .............................................
 if not os.path.isfile(dict_path):

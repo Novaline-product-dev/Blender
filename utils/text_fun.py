@@ -25,6 +25,24 @@ def prune(doc, stoplist=None, lemmatize=True, english_dict=False):
         out = temp
     return out
 
+def prune_post_parse(doc, stoplist=None, lemmatize=True, english_dict=False):
+    '''This takes a single document and tokenizes the words, removes
+    undesirable elements, and prepares it to be loaded into a dictionary.
+    '''
+    custom_rm_list = set(['[', ']', "'", '\n', 'com', '\n\n'])
+    temp = [w for w in doc if w.pos_ != 'PUNCT']
+    if stoplist:
+        temp = [w for w in temp if w.text not in stoplist]
+    temp = [w for w in temp if w.text not in custom_rm_list]
+    temp = [w for w in temp if not w.is_stop]
+    if english_dict:
+        temp = [w for w in temp if w in nlp.vocab]
+    if lemmatize:
+        out = [w.lemma_ for w in temp]
+    else:
+        out = temp
+    return out
+
 def w2v_sent_prep(article, sent_detector):
     sentences = sent_detector.tokenize(article)
     exclude = set(string.punctuation)
@@ -63,6 +81,33 @@ def line_streamer(path, N=None):
                     print('\r %d%% finished' %pct_complete, 
                         end="", flush=True) 
             yield line.decode('utf8', 'ignore').split() 
+
+def prep_save(input_path, titles_path, articles_path):
+    if os.path.isfile(titles_path) and os.path.isfile(articles_path):
+        print('Prepped files already on disk at', titles_path,
+            ' and ', articles_path)
+    else:
+        articles = text_extractor(input_path)
+        titles = title_extractor(input_path)
+        titles_out = []
+        articles_out = []
+        for title in titles:
+            prepped_title = ''.join((title, '\n'))
+            titles_out.append(prepped_title)
+        article_generator = (art for art in articles)
+        for article in nlp.pipe(article_generator, 
+                                batch_size=50, n_threads=1):
+            article_tokens = prune_post_parse(article)
+            tokens_string = ' '.join(article_tokens)
+            prepped_art = ''.join((tokens_string, '\n'))
+            articles_out.append(prepped_art)
+        assert len(articles_out) == len(titles_out)
+        with open(titles_path, 'wb') as f:
+            for title in titles_out:
+                f.write(title.encode('utf8'))
+        with open(articles_path, 'wb') as f:
+            for article in articles_out:
+                f.write(article.encode('utf8'))
 
 class WikiCorpus(object):
     def __init__(self, articles_path, gensim_dictionary, N=None):

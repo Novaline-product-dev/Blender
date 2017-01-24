@@ -13,12 +13,6 @@ from sklearn import feature_extraction
 
 nlp = spacy.load('en')
 
-def rm_punct(in_string):
-    """Removes punctuation, returns resulting string"""
-    split_string = [ch for ch in in_string if ch not in string.punctuation]
-    out_string = ''.join(split_string)
-    return(out_string)
-
 def prune(doc, stoplist=None, lemmatize=True, 
           english_dict=False):
     """This takes a single document and tokenizes the words, removes
@@ -64,6 +58,38 @@ def title_extractor(file_name):
         for title in soup.xpath('//@title'):
             titles.append(title)
     return titles
+
+def line_streamer(path, N=None):
+    i = 0
+    with open(path, 'rb') as f:
+        for line in f:
+            if N:
+                i += 1
+                if i%10000:
+                    pct_complete = round(i / N * 100, 2)
+                    print('\r %d%% finished' %pct_complete, 
+                        end="", flush=True) 
+            yield line.decode('utf8', 'ignore').split() 
+
+class WikiCorpus(object):
+    def __init__(self, articles_path, gensim_dictionary, N=None):
+        self.dictionary = gensim_dictionary
+        self.articles_path = articles_path
+        if N:
+            self.N = N
+
+    def __iter__(self):
+        with open(self.articles_path, 'r') as f:
+            i = 0
+            for line in f:
+                i += 1
+                if self.N:
+                    if i%10000:
+                        pct_complete = round(i / self.N * 100, 2)
+                        print('\r %d%% finished' %pct_complete, 
+                            end="", flush=True) 
+                tokens = line.split()
+                yield self.dictionary.doc2bow(tokens)
 
 def text_network_plot(textList, wordFreqThreshold = 10):
     """ Plots a pared-down word-word connection network.  If you increase wordFreqThreshold, it pares down the network.  wordFreqThreshold will depend on the size of textList. 
@@ -118,35 +144,3 @@ def prep_save(input_path, titles_path, articles_path, token_min=5):
         with open(articles_path, 'wb') as f:
             for article in articles_out:
                 f.write(article.encode('utf8'))
-
-def line_streamer(path, N=None):
-    i = 0
-    with open(path, 'rb') as f:
-        for line in f:
-            if N:
-                i += 1
-                if i%10000:
-                    pct_complete = round(i / N * 100, 2)
-                    print('\r %d%% finished' %pct_complete, 
-                        end="", flush=True) 
-            yield line.decode('utf8', 'ignore').split() 
-
-class WikiCorpus(object):
-    def __init__(self, articles_path, gensim_dictionary, N=None):
-        self.dictionary = gensim_dictionary
-        self.articles_path = articles_path
-        if N:
-            self.N = N
-
-    def __iter__(self):
-        with open(self.articles_path, 'r') as f:
-            i = 0
-            for line in f:
-                i += 1
-                if self.N:
-                    if i%10000:
-                        pct_complete = round(i / self.N * 100, 2)
-                        print('\r %d%% finished' %pct_complete, 
-                            end="", flush=True) 
-                tokens = line.split()
-                yield self.dictionary.doc2bow(tokens)

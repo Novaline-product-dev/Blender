@@ -18,6 +18,7 @@ header_tags = schema_fun.get_header_tags(seed_term)
 targets = [str(el[0]) for el in header_tags if el[1] in ok_tags]
 exclude = set(['==', '===', '(', ')', 'etc', 'e.g.'])
 targets = [t for t in targets if t not in exclude]
+targets = list(set(targets))
 
 ref_concepts = schema_fun.get_ref_concepts(seed_term, method='wordnet')
 model = schema_fun.build_model(seed_term, ref_concepts, targets, article)

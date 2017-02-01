@@ -16,12 +16,13 @@ def prune(doc, stoplist=None, english_dict=False, ok_tags=None):
         stoplist = default_stop_list
     temp = nlp_prune(doc)
     temp = [w for w in temp if w.pos_ != 'PUNCT']
+    temp = [w for w in doc if w.pos_ != 'NUM']
     if ok_tags:
         temp = [w for w in temp if w.tag_ in ok_tags]
     temp = [w for w in temp if w.text not in stoplist]
     temp = [w for w in temp if not w.is_stop]
     if english_dict:
-        temp = [w for w in temp if w in nlp.vocab]
+        temp = [w for w in temp if str(w) in nlp.vocab]
     out = [w.lemma_ for w in temp]
     return out
 
@@ -34,10 +35,21 @@ def prune_post_parse(doc, stoplist=None, english_dict=False):
     if not stoplist:
         stoplist = default_stop_list
     temp = [w for w in doc if w.pos_ != 'PUNCT']
+    temp = [w for w in doc if w.pos_ != 'NUM']
     temp = [w for w in temp if w.text not in stoplist]
     temp = [w for w in temp if not w.is_stop]
     if english_dict:
-        temp = [w for w in temp if w in nlp.vocab]
+        temp = [w for w in temp if str(w) in nlp.vocab]
+    out = [w.lemma_ for w in temp]
+    return out
+
+def prune_w2v(doc):
+    stoplist = default_stop_list
+    temp = [w for w in doc if w.pos_ != 'PUNCT']
+    temp = [w for w in temp if w.pos_ != 'NUM']
+    temp = [w for w in temp if w.text not in stoplist]
+    temp = [w for w in temp if not w.is_stop]
+    temp = [w for w in temp if str(w) in nlp.vocab]
     out = [w.lemma_ for w in temp]
     return out
 
@@ -103,6 +115,25 @@ def prep_save(input_path, titles_path, articles_path):
         with open(articles_path, 'wb') as f:
             for article in articles_out:
                 f.write(article.encode('utf8'))
+
+def prep_save_w2v(input_path, sentences_path):
+    if os.path.isfile(sentences_path):
+        print('Prepped files already on disk at', sentences_path)
+    else:
+        articles = text_extractor(input_path)
+        sentences_out = []
+        for article in articles:
+            sents = nlp(article).sents
+            for sent in sents:
+                prepped_sent = prune_w2v(sent)
+                if len(prepped_sent) > 2:
+                    sentences_out.append(prepped_sent)
+        with open(sentences_path, 'wb') as f:
+            for sentence in sentences_out:
+                to_write = ' '.join(sentence)
+                to_write = ' '.join(to_write.split())
+                to_write = ''.join((to_write, '\n'))
+                f.write(to_write.encode('utf8'))
 
 class WikiCorpus(object):
     def __init__(self, articles_path, gensim_dictionary, N=None):

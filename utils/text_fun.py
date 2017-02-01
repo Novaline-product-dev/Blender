@@ -8,7 +8,7 @@ nlp = spacy.load('en')
 default_stop_list = set(['[', ']', '\'', '\n', '==', \
                          'com', '\n\n', '\'s', ' ', '  ',
                          '===', '\n\n\n'])
-def prune(doc, stoplist=None, english_dict=False):
+def prune(doc, stoplist=None, english_dict=False, ok_tags=None):
     '''This takes a single document and tokenizes the words, removes
     undesirable elements, and prepares it to be loaded into a dictionary.
     '''
@@ -16,6 +16,8 @@ def prune(doc, stoplist=None, english_dict=False):
         stoplist = default_stop_list
     temp = nlp_prune(doc)
     temp = [w for w in temp if w.pos_ != 'PUNCT']
+    if ok_tags:
+        temp = [w for w in temp if w.tag_ in ok_tags]
     temp = [w for w in temp if w.text not in stoplist]
     temp = [w for w in temp if not w.is_stop]
     if english_dict:

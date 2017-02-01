@@ -75,20 +75,6 @@ def limit_filter(tuple_index, new_ideas, max_num=3, score_index=3):
                 out.extend(ranked_sub[0:(max_num - 1)])
     return out
 
-def get_candidates(goog_list, ok_tags):
-    candidates1 = []
-    for item in goog_list:
-        item = text_fun.prune(item, stem=False, english_dict=True)
-        candidates1.extend(item)
-    candidates1 = list(set(candidates1))
-    candidates_blob = TextBlob(' '.join(candidates1), 
-                               pos_tagger=PerceptronTagger())
-    candidates2 = []
-    for item in candidates_blob.tags:
-        if item[1] in ok_tags:
-            candidates2.append(item)
-    return candidates2 
-
 def get_header_tags(seed_term):
     header = wikipedia.summary(seed_term)
     header = header[0:header.find('\n')]

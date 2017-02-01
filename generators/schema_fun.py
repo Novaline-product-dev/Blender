@@ -1,15 +1,11 @@
 import os
 os.chdir(os.getenv('HOME') + '/Documents/Blender')
 import wikipedia
-import nltk
 import spacy
 from nltk.corpus import wordnet as wn
 from utils import text_fun
 from utils.wiki_sim import wiki_query
 from gensim.models import Word2Vec
-from textblob import TextBlob
-from textblob_aptagger import PerceptronTagger
-from nltk.corpus import stopwords
 
 
 nlp = spacy.load('en')
@@ -86,8 +82,7 @@ def get_header_tags(seed_term):
                 header_tags.append((item, item.tag_))
     return header_tags
 
-def build_model(seed_term, ref_concepts, targets, article, ok_tags):
-    sent_detector = nltk.data.load('tokenizers/punkt/english.pickle')
+def build_model(seed_term, ref_concepts, targets, article):
     sentences = text_fun.w2v_sent_prep(article)
     for ref_concept in ref_concepts:
         try:
@@ -97,8 +92,6 @@ def build_model(seed_term, ref_concepts, targets, article, ok_tags):
             print('Got article for %s' % ref_concept) 
         except:
             continue
-    exclude = set(['==', '===', '(', ')', 'etc', 'e.g.'])
-    targets = [t for t in targets if t not in exclude]
     for target in targets:
         try:
             if seed_term != target:
@@ -109,15 +102,11 @@ def build_model(seed_term, ref_concepts, targets, article, ok_tags):
         except:
             continue
     flat_sentences = [word for sublist in sentences for word in sublist]
-    blob_sentences = ' '.join(flat_sentences)
-    blob = TextBlob(blob_sentences, pos_tagger=PerceptronTagger())
-    sentences_tags = list(set(blob.tags))
-    ok_words = [el[0] for el in sentences_tags if el[1] in ok_tags]
     model = Word2Vec(sentences, sg=1, negative=10)
-    return (targets, model, ok_words)
+    return model
 
 def schema_framer(seed_term, targets, ref_concepts, model, 
-    ksEvaluator, ok_words, article):
+    ksEvaluator, ok_tags, article):
     new_ideas = []
     seed_term = seed_term.split()
     seed_term = seed_term[len(seed_term) - 1]
@@ -129,16 +118,15 @@ def schema_framer(seed_term, targets, ref_concepts, model,
                 ref_concept], negative=[seed_term])
             candidates = [el[0] for el in candidates]
             for candidate in candidates:
-                if candidate in ok_words:
-                    cand_pos = TextBlob(candidate, 
-                        pos_tagger=PerceptronTagger()).tags[0][1]
+                cand_pos = nlp(candidate, parse=False)[0].tag_
+                if cand_pos in ok_tags:
                     temp = list(article_tokens)
                     temp.append(candidate)
                     score = ksEvaluator(temp)
                     print(score)
                     if cand_pos == 'JJ':
-                        next_idea = 'Try making %s more %s or less %s.' % \
-                        (seed_term, candidate, candidate)
+                        next_idea = 'Try making %s more %s.' % \
+                        (seed_term, candidate)
                         out = (next_idea, target, ref_concept, score, 
                                candidate)
                         new_ideas.append(out)

@@ -5,7 +5,7 @@ from spacy.symbols import amod
 
 
 nlp = English()
-seed = 'skateboard'
+seed = 'spatula'
 page = wikipedia.page(seed)
 seed_word = nlp(seed)[0]
 doc = page.content
@@ -29,24 +29,45 @@ def get_adj_phrases(doc, word):
     out = []
     for el in doc:
         if el.dep_ == 'amod':
-            if el.similarity(word) > 0.2:
-                out.append(str(el) + ' ' + str(el.head))
+            el_str = el.lemma_
+            more_or_less = random.choice(['more', 'less'])
+            if el.similarity(seed_word) > 0.1:
+                out.append('that is %s %s' % (more_or_less, el_str))
+                out.append('+ ' + str(el).lower() + ' ' +  \
+                    str(el.head).lower())
     return out
 
+def get_action_phrases(doc, word):
+    out = []
+    for el in doc:
+        if el.dep_ == 'nsubj':
+            if el.similarity(word) > 0.1:
+                for child in el.head.children:
+                    if child.dep_ == 'dobj':
+                        out.append('where ' + str(el).lower() + ' ' + \
+                        str(el.head).lower() + ' ' + str(child).lower())
+
+    return out
 
 links = [l for l in page.links if seed_word.similarity(nlp(l)[0]) > 0.2]
-links = random.sample(links, min(10, len(links)))
+links = random.sample(links, min(30, len(links)))
 mondo = []
 for l in links:
     try:
         link_doc = wikipedia.page(l).summary
         link_doc = nlp(link_doc)
-        to_add = get_adj_phrases(link_doc, seed_word)
-        mondo.extend(to_add)
-        to_print = 'links from %s added.  Ex: A %s with %s' %(l, seed_word, to_add[0])
+        to_add1 = get_adj_phrases(link_doc, seed_word)
+        to_add2 = get_action_phrases(link_doc, seed_word)
+        mondo.extend(to_add1)
+        mondo.extend(to_add2)
+        to_print = 'links from %s added.' %l
         print(to_print)
     except:
         continue
 
+seen = set()
 for el in mondo:
-    print('A %s with %s' %(seed_word, el))
+    el_idea = 'A %s %s' %(seed_word, el)
+    if el_idea not in seen:
+        print(el_idea)
+        seen.add(el_idea)

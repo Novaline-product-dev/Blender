@@ -15,54 +15,17 @@ folders = os.listdir('../wiki_html')
 folders = ['../wiki_html/' + f for f in \
     folders if os.path.isdir('../wiki_html/' + f)]
 
-text_fun.prep_save_w2v(folders, sentences_path)
-
-
-
-from numpy import dot
-from numpy.linalg import norm
-parser = spacy.load('en')
-allWords = list({w for w in parser.vocab if w.has_vector and w.orth_.islower()})
-def slow_analogy(a, a_star, b):
-    a = parser.vocab[a]
-    a_star = parser.vocab[a_star]
-    b = parser.vocab[b]
-    cosine = lambda v1, v2: dot(v1, v2) / (norm(v1) * norm(v2))
-    result = a.vector - a_star.vector + b.vector
-
-    allWords.sort(key=lambda w: cosine(w.vector, result))
-    allWords.reverse()
-    print("\n----------------------------\nTop 3 closest results for king - man + woman:")
-    for word in allWords[:10]:
-        if word not in [a, a_star, b]:   
-            print(word.orth_)
-
-slow_analogy('Einstein', 'physicist', 'Mozart')
-#def article_gen(folders):
-#    for folder in folders:
-#        folder_files = os.listdir(folder)
-#        folder_files = [f for f in folder_files if not \
-#            f.startswith('.')]
-#        for file in folder_files:
-#            if file.startswith('wiki'):
-#                articles = text_fun.text_extractor(folder + '/' + file)
-#                for article in articles:
-#                    yield article
-
-
-
-
 # process files 
-#for folder in folders:
-#    folder_files = os.listdir(folder)
-#    folder_files = [f for f in folder_files if not \
-#        f.startswith('.')]
-#    for file in folder_files:
-#        if file.startswith('wiki'):
-#            input_path = folder + '/' + file
-#            sentenc_path = folder + '/' + 'sentences_' + file
-#            text_fun.prep_save_w2v(input_path, sentenc_path)
-#            print('%s/%s processed.' %(folder, file))
+for folder in folders:
+    folder_files = os.listdir(folder)
+    folder_files = [f for f in folder_files if not \
+        f.startswith('.')]
+    for file in folder_files:
+        if file.startswith('wiki'):
+            input_path = folder + '/' + file
+            sentenc_path = folder + '/' + 'sentences_' + file
+            text_fun.prep_save_w2v(input_path, sentenc_path)
+            print('%s/%s processed.' %(folder, file))
 
 # save articles.txt
 #if os.path.isfile(articles_path):

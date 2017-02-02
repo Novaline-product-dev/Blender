@@ -116,24 +116,34 @@ def prep_save(input_path, titles_path, articles_path):
             for article in articles_out:
                 f.write(article.encode('utf8'))
 
-def prep_save_w2v(input_path, sentences_path):
+def prep_save_w2v(folders, sentences_path):
     if os.path.isfile(sentences_path):
-        print('Prepped files already on disk at', sentences_path)
+        print('Prepped file already on disk at', sentences_path)
     else:
-        articles = text_extractor(input_path)
-        sentences_out = []
-        for article in articles:
-            sents = nlp(article).sents
-            for sent in sents:
-                prepped_sent = prune_w2v(sent)
-                if len(prepped_sent) > 2:
-                    sentences_out.append(prepped_sent)
-        with open(sentences_path, 'wb') as f:
-            for sentence in sentences_out:
-                to_write = ' '.join(sentence)
-                to_write = ' '.join(to_write.split())
-                to_write = ''.join((to_write, '\n'))
-                f.write(to_write.encode('utf8'))
+        def article_gen():
+            for folder in folders:
+                folder_files = os.listdir(folder)
+                folder_files = [f for f in folder_files if not \
+                    f.startswith('.')]
+                for file in folder_files:
+                    if file.startswith('wiki'):
+                        articles = text_extractor(folder + '/' + file)
+                        for article in articles:
+                            yield article
+        i = 0
+        with open(sentences_path, 'wb') as f:    
+            a_gen = article_gen()
+            for article in nlp.pipe(a_gen, batch_size=50, n_threads=3):
+                sents = article.sents
+                for sent in sents:
+                    prepped_sent = prune_w2v(sent)
+                    if len(prepped_sent) > 1:
+                        to_write = ' '.join(prepped_sent)
+                        to_write = ' '.join(to_write.split())
+                        to_write = ''.join((to_write, '\n'))
+                        f.write(to_write.encode('utf8'))
+                i += 1
+                print('\r', i, ' articles processed.')    
 
 class WikiCorpus(object):
     def __init__(self, articles_path, gensim_dictionary, N=None):

@@ -15,6 +15,17 @@ folders = os.listdir('../wiki_html')
 folders = ['../wiki_html/' + f for f in \
     folders if os.path.isdir('../wiki_html/' + f)]
 
+def article_gen(folders):
+    for folder in folders:
+        folder_files = os.listdir(folder)
+        folder_files = [f for f in folder_files if not \
+            f.startswith('.')]
+        for file in folder_files:
+            if file.startswith('wiki'):
+                articles = text_fun.text_extractor(folder + '/' + file)
+                for article in articles:
+                    yield article
+
 # process files 
 for folder in folders:
     folder_files = os.listdir(folder)

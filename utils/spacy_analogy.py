@@ -1,9 +1,26 @@
+import os, pickle
+os.chdir(os.getenv('HOME') + '/Documents/Blender')
 import spacy
 import math
 from numpy import dot
 from numpy.linalg import norm
+import sense2vec
+
 nlp = spacy.load('en')
-allWords = list({w for w in nlp.vocab if w.has_vector and w.orth_.islower()})
+
+def load_vocab():    
+    all_words = list({w for w in nlp.vocab if w.has_vector and \
+        w.orth_.islower()})
+    all_words = [w for w in all_words if w.prob > -15]
+    unique = set()
+    for w in all_words:
+        w2 = nlp(w.orth_)[0]
+        if not w2.lemma_ in unique:
+            if not w2.tag_ == 'NNS':
+                unique.add(w)
+    all_words = list(unique)
+    return all_words
+all_words = load_vocab()
 
 # example:
 # a is 'man'
@@ -28,8 +45,9 @@ def slow_analogy(a, a_star, b):
     a = nlp.vocab[a]
     a_star = nlp.vocab[a_star]
     b = nlp.vocab[b]
+    clust_mean = (a_star.cluster + b.cluster) / 2
     objective = lambda x: cos3mul(a.vector, a_star.vector, b.vector, x.vector)
-    ranked = sorted(allWords, key = lambda w: objective(w), reverse = True)
+    ranked = sorted(all_words, key = lambda w: objective(w), reverse = True)
     for word in ranked[:10]:
         if word not in [a, a_star, b]:   
             print(word.orth_)
@@ -38,3 +56,11 @@ a = 'snowboard'
 a_star = 'surfboard'
 b = 'snow'
 slow_analogy(a, a_star, b)
+
+
+def pc(string): 
+    word = nlp.vocab[string]
+    [print(w.orth_) for w in all_words if w.cluster == word.cluster]
+
+#def reddit_analogy(a, a_star, b):
+#model = sense2vec.load()

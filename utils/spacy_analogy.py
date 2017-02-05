@@ -4,10 +4,8 @@ import spacy
 import math
 from numpy import dot
 from numpy.linalg import norm
-import sense2vec
 
 nlp = spacy.load('en')
-
 def load_vocab():    
     all_words = list({w for w in nlp.vocab if w.has_vector and \
         w.orth_.islower()})
@@ -61,6 +59,3 @@ slow_analogy(a, a_star, b)
 def pc(string): 
     word = nlp.vocab[string]
     [print(w.orth_) for w in all_words if w.cluster == word.cluster]
-
-#def reddit_analogy(a, a_star, b):
-#model = sense2vec.load()

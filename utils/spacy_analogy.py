@@ -55,7 +55,3 @@ a_star = 'surfboard'
 b = 'snow'
 slow_analogy(a, a_star, b)
 
-
-def pc(string): 
-    word = nlp.vocab[string]
-    [print(w.orth_) for w in all_words if w.cluster == word.cluster]

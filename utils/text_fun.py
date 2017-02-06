@@ -53,6 +53,22 @@ def prune_w2v(doc):
     out = [w.lemma_ for w in temp]
     return out
 
+def prune_sem(doc):
+    stoplist = default_stop_list
+    out = []
+    for w in doc:
+        temp = [w.head]
+        temp.extend(list(w.children))
+        temp = [w for w in temp if w.pos_ != 'PUNCT']
+        temp = [w for w in temp if w.pos_ != 'NUM']
+        temp = [w for w in temp if w.text not in stoplist]
+        temp = [w for w in temp if not w.is_stop]
+        temp = [w for w in temp if str(w) in nlp.vocab]
+        temp = [w.lemma_ for w in temp]
+        if temp:
+            out.append(temp)
+    return out
+
 def w2v_sent_prep(article):
     spacy_art = nlp(article)
     spacy_sentences = spacy_art.sents
@@ -127,6 +143,49 @@ def prep_save_w2v(input_path, sentences_path):
             for sent in sents:
                 prepped_sent = prune_w2v(sent)
                 if len(prepped_sent) > 2:
+                    sentences_out.append(prepped_sent)
+        with open(sentences_path, 'wb') as f:
+            for sentence in sentences_out:
+                to_write = ' '.join(sentence)
+                to_write = ' '.join(to_write.split())
+                to_write = ''.join((to_write, '\n'))
+                f.write(to_write.encode('utf8'))
+
+
+def transform_texts(texts):
+    for doc in nlp.pipe(texts, n_threads=4):
+        # Iterate over base NPs, e.g. "all their good ideas"
+        for np in doc.noun_chunks:
+            # Only keep adjectives and nouns, e.g. "good ideas"
+            while len(np) > 1 and np[0].dep_ not in ('amod', 'compound'):
+                np = np[1:]
+            if len(np) > 1:
+                # Merge the tokens, e.g. good_ideas
+                np.merge(np.root.tag_, np.text, np.root.ent_type_)
+            # Iterate over named entities
+            for ent in doc.ents:
+                if len(ent) > 1:
+                    # Merge them into single tokens
+                    ent.merge(ent.root.tag_, ent.text, ent.label_)
+        token_strings = []
+        for token in tokens:
+            text = token.text.replace(' ', '_')
+            tag = token.ent_type_ or token.pos_
+            token_strings.append('%s|%s' % (text, tag))
+        yield ' '.join(token_strings)
+
+
+def prep_save_sem(input_path, sentences_path):
+    if os.path.isfile(sentences_path):
+        print('Prepped files already on disk at', sentences_path)
+    else:
+        articles = text_extractor(input_path)
+        sentences_out = []
+        for article in articles:
+            sents = nlp(article).sents
+            for sent in sents:
+                prepped_sents = prune_sem(sent)
+                for prepped_sent in prepped_sents:
                     sentences_out.append(prepped_sent)
         with open(sentences_path, 'wb') as f:
             for sentence in sentences_out:

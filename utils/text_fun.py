@@ -188,10 +188,14 @@ def prep_save_sem(input_path, sentences_path):
                 for prepped_sent in prepped_sents:
                     sentences_out.append(prepped_sent)
         with open(sentences_path, 'wb') as f:
+            to_write_old = ''
             for sentence in sentences_out:
                 to_write = ' '.join(sentence)
                 to_write = ' '.join(to_write.split())
                 to_write = ''.join((to_write, '\n'))
+                if to_write == to_write_old:
+                    continue
+                to_write_old = to_write
                 f.write(to_write.encode('utf8'))
 
 class WikiCorpus(object):

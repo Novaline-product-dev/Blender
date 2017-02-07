@@ -3,10 +3,10 @@ os.chdir(os.getenv('HOME') + '/Documents/Blender')
 import wikipedia
 from utils import text_fun
 from nltk.corpus import wordnet as wn
-from textblob import TextBlob
 from evaluators import ksmirnov_fun
 
-nlp = spacy.load('en', parser = False)
+
+nlp = text_fun.nlp_prune
 seed_term = pickle.load( open('search_text.p', 'rb'))
 seed_term = seed_term.lower()
 goog_list = pickle.load(open('fulltext.p', 'rb'))

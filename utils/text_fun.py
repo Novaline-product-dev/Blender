@@ -65,7 +65,7 @@ def prune_sem(doc):
         temp = [w for w in temp if not w.is_stop]
         temp = [w for w in temp if str(w) in nlp.vocab]
         temp = [w.lemma_ for w in temp]
-        if temp:
+        if len(temp) > 1:
             out.append(temp)
     return out
 

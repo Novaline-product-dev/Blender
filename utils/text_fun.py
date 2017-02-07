@@ -16,7 +16,7 @@ def prune(doc, stoplist=None, english_dict=False, ok_tags=None):
         stoplist = default_stop_list
     temp = nlp_prune(doc)
     temp = [w for w in temp if w.pos_ != 'PUNCT']
-    temp = [w for w in doc if w.pos_ != 'NUM']
+    temp = [w for w in temp if w.pos_ != 'NUM']
     if ok_tags:
         temp = [w for w in temp if w.tag_ in ok_tags]
     temp = [w for w in temp if w.text not in stoplist]

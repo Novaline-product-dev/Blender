@@ -1,6 +1,6 @@
 import os
 os.chdir(os.getenv('HOME') + '/Documents/Blender')
-import shutil
+import gzip
 from utils import text_fun 
 from gensim import corpora, models, similarities
 
@@ -21,8 +21,21 @@ for folder in folders:
     folder_files = [f for f in folder_files if not \
         f.startswith('.')]
     for file in folder_files:
-        if file.startswith('wiki'):
-            input_path = folder + '/' + file
-            sentenc_path = folder + '/' + 'dependency_sentences_' + file
-            text_fun.prep_save_sem(input_path, sentenc_path)
-            print('%s/%s processed.' %(folder, file))
+        input_path = folder + '/' + file
+        sentenc_path = folder + '/' + 'dependency_sentences_' + file
+        text_fun.prep_save_sem(input_path, sentenc_path)
+        print('%s/%s processed.' %(folder, file))
+
+if os.path.isfile(sentences_path):
+    print('Dependency sentences file found on disk at', )
+else:
+    with gzip.open(sentences_path + '.gz', 'wb') as f:
+        for folder in folders:
+            print(folder)
+            folder_files = os.listdir(folder)
+            folder_files = [f for f in folder_files if \
+                f.startswith('dependency')]
+            for file in folder_files:
+                to_add = folder + '/' + file
+                with open(to_add, 'rb') as f_sub:
+                    shutil.copyfileobj(f_sub, f) 

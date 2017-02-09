@@ -198,6 +198,7 @@ def prep_save_sem(input_path, sentences_path):
                 to_write_old = to_write
                 f.write(to_write.encode('utf8'))
 
+
 class WikiCorpus(object):
     def __init__(self, articles_path, gensim_dictionary, N=None):
         self.dictionary = gensim_dictionary

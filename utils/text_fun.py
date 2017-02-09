@@ -59,12 +59,14 @@ def prune_sem(doc):
     for w in doc:
         temp = [w.head]
         temp.extend(list(w.children))
+        if w.dep_ == 'pobj':
+            temp.extend([w.head.head])
         temp = [w for w in temp if w.pos_ != 'PUNCT']
         temp = [w for w in temp if w.pos_ != 'NUM']
         temp = [w for w in temp if w.text not in stoplist]
         temp = [w for w in temp if not w.is_stop]
         temp = [w for w in temp if str(w) in nlp.vocab]
-        temp = [w.lemma_ for w in temp]
+        temp = [w.text for w in temp]
         if len(temp) > 1:
             out.append(temp)
     return out

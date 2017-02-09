@@ -42,6 +42,6 @@ else:
                     shutil.copyfileobj(f_sub, f) 
 
 sentences = models.word2vec.LineSentence(sentences_path + '.gz')
-sem_model = models.word2vec.Word2Vec(sentences, size=300, window=5, 
-    min_count=8, workers=3, sg=1, negative=10)
+sem_model = models.word2vec.Word2Vec(sentences, size=300, window=10, 
+    min_count=8, workers=3, sg=1, negative=15)
 sem_model.save('wiki_sem_w2v')

@@ -11,7 +11,7 @@ soup_names = soup.find_all(class_ = 'name')
 names = []
 links = []
 descriptions = []
-for tag in soup_names[0:30]:
+for tag in soup_names:
 	url_end = tag.a['href']
 	spec_page = requests.get('http://www.startupranking.com' + url_end)
 	spec_soup = BS(spec_page.content, 'lxml')

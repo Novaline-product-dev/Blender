@@ -1,6 +1,7 @@
 import pickle, os, sys, string
 os.chdir(os.getenv('HOME') + '/Documents/Blender')
 import numpy as np 
+cimport numpy as np
 from numpy import matlib 
 from scipy import stats
 import pandas as pd

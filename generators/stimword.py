@@ -44,6 +44,7 @@ def stim_words(num_ideas = 40):
     [print(w[1]) for w in stim_words]
     stim_words = [w[0] for w in stim_words]
 
+    
     counter = 0
     ideas = []
     for word in stim_words:

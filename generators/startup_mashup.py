@@ -24,7 +24,7 @@ for tag in soup_names:
 	names.append(name)
 	print('Finished with %s' %name)
 
-locs = random.sample(range(0, 30), 2)
+locs = random.sample(range(0, len(names) - 1), 2)
 print('Combine %s and %s' %(names[locs[0]], names[locs[1]]))
 print('Description for ', names[locs[0]], ': ', descriptions[locs[0]])
 print('Description for ', names[locs[1]], ': ', descriptions[locs[1]])

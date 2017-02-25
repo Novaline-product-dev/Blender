@@ -50,11 +50,6 @@ def slow_analogy(a, a_star, b):
         if word not in [a, a_star, b]:   
             print(word.orth_)
 
-a = 'snowboard'
-a_star = 'surfboard'
-b = 'snow'
-slow_analogy(a, a_star, b)
-
 queries = [w for w in nlp.vocab if w.prob >= -15]
 queries = [w for w in queries if w.is_lower]
 queries = [w for w in queries if nlp(w.orth_)[0].pos_ == 'NOUN']

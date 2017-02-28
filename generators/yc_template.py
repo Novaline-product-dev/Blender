@@ -106,7 +106,9 @@ targets2 = [
 	# education
 	'education', 
 	# human augmentation
-	'human augmentation', 
+	'human augmentation', 'reproductive technology',
+	'plastic surgery', 'orthodontics', 'prosthetics',
+	'medical implants', 'nootropics', 'gene therapy',
 	# virtual/augmented reality
 	'VR/AR',
 	# transportation

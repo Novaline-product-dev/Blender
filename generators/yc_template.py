@@ -1,9 +1,12 @@
-import os
+import os, sys
 os.chdir(os.getenv('HOME') + '/Documents/Blender')
 from utils import spacy_analogy
+from numpy.random import choice
 import spacy
 import requests
+import random
 import pandas as pd
+import urllib
 from bs4 import BeautifulSoup as BS
 
 
@@ -136,7 +139,41 @@ targets2 = [
 	'water storage', 'water transportation'
 ]
 
+def get_alexa_rank(url):
+    url = "http://data.alexa.com/data?cli=10&dat=s&url=" + url
+    r = requests.get(url)
+    soup = BS(r.content, "lxml")
+    reach = soup.find('reach')
+    if reach:
+        rank = reach['rank']
+    else:
+        rank = -1
+    return rank
+
+ranks = []
+for i in range(0, yclist.shape[0]):
+    row = yclist.iloc[i]
+    rank_i = get_alexa_rank(row['URL'])
+    print('Got rank for %s' %row['Name'])
+    ranks.append((row['Name'], rank_i))
+
+ranks = [(r[0], int(r[1])) for r in ranks]
+ranks = [r for r in ranks if r[1] != -1]
+ranks = sorted(ranks, key = lambda x: x[1])
+ranks2 = [r[1] for r in ranks]
+max_rank = max(ranks2) + 1
+ranks2 = [(max_rank - r) for r in ranks2]
+ranks_sum = sum(ranks2)
+ranks2 = [r / ranks_sum for r in ranks2]
+ranks1 = [r[0] for r in ranks]
 targets.extend(targets2)
 def generate():
-	print(random.choice(yclist['Name']), 'for', 
-	random.choice(targets))
+    entity = choice(ranks1, 1, p=ranks2)[0]
+    print(entity, 'for', random.choice(targets))
+    yc_row = yclist[yclist['Name'] == entity]
+    yc_loc = yc_row.index[0]
+    loc = yclist.index.get_loc(yc_loc)
+    print('The description for %s on YClist.com is: %s' % \
+          (entity , yclist.iloc[loc]['Description']))
+
+generate()

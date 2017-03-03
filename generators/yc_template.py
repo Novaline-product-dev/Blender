@@ -14,7 +14,7 @@ from bs4 import BeautifulSoup as BS
 if os.path.isfile('yc_objs.p'):
 	with open('yc_objs.p', 'rb') as f:
 		objs = pickle.load(f)
-	yclist = objs[0]
+	descriptions = objs[0]
 	targets = objs[1]
 	ranks1 = objs[2]
 	ranks2 = objs[3]
@@ -157,12 +157,16 @@ else:
 	        rank = -1
 	    return rank
 
+	names = []
 	ranks = []
+	descriptions = []
 	for i in range(0, yclist.shape[0]):
 	    row = yclist.iloc[i]
 	    rank_i = get_alexa_rank(row['URL'])
 	    print('Got rank for %s' %row['Name'])
 	    ranks.append((row['Name'], rank_i))
+	    descriptions.append((row['Name'], yclist.iloc[i]['Description']))
+	    names.append(yclist['Name'])
 
 	ranks = [(r[0], int(r[1])) for r in ranks]
 	ranks = [r for r in ranks if r[1] != -1]
@@ -176,7 +180,7 @@ else:
 	targets.extend(targets2)
 
 	objs = []
-	objs.append(yclist)
+	objs.append(descriptions)
 	objs.append(targets)
 	objs.append(ranks1)
 	objs.append(ranks2)
@@ -186,10 +190,7 @@ else:
 def generate():
     entity = choice(ranks1, 1, p=ranks2)[0]
     print(entity, 'for', random.choice(targets))
-    yc_row = yclist[yclist['Name'] == entity]
-    yc_loc = yc_row.index[0]
-    loc = yclist.index.get_loc(yc_loc)
-    print('%s: %s' % \
-          (entity , yclist.iloc[loc]['Description']))
+    description = [d[1] for d in descriptions if d[0] == entity]
+    print('%s: %s' % (entity , description[0]))
 
 generate()

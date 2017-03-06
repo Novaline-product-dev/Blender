@@ -22,3 +22,6 @@ for i, el in enumerate(names):
 with open('yc.json', 'w') as f:
     json.dump(yc_list, f)
 
+with open('targets.json', 'w') as f:
+	json.dump(targets, f)
+

@@ -68,7 +68,7 @@ def yc_scrape():
         'parking', 'ordering food', 'rare genetic diseases',
         'athletic events', 'crop insurance', 'insurance', 
         'hygiene', 'groceries', 'apparel', 'furniture',
-        'appliances', 'packagine', 'cloud computing',
+        'appliances', 'packaging', 'cloud computing',
         'parallel processing', 'research labs', 'machine shops',
         'workforce management', 'scheduling', 'resource scheduling',
         'online shopping', 'custom apparel', 'marketplaces',
@@ -147,6 +147,7 @@ def yc_scrape():
 
     names = []
     ranks = []
+    urls = []
     descriptions = []
     for i in range(0, yclist.shape[0]):
         row = yclist.iloc[i]
@@ -154,6 +155,7 @@ def yc_scrape():
         print('Got rank for %s' %row['Name'])
         ranks.append((row['Name'], rank_i))
         descriptions.append((row['Name'], yclist.iloc[i]['Description']))
+        urls.append((row['Name'], yclist.iloc[i]['URL']))
         names.append(yclist['Name'])
 
     ranks = [(r[0], int(r[1])) for r in ranks]
@@ -172,5 +174,8 @@ def yc_scrape():
     objs.append(targets)
     objs.append(ranks1)
     objs.append(ranks2)
+    objs.append(urls)
     with open('yc_objs.p', 'wb') as f:
         pickle.dump(objs, f)
+
+yc_scrape()

@@ -47,3 +47,9 @@ with open('aux/' + seed_term + '_ideas.txt', 'wb') as f:
 
 
 
+for word in words:
+	new_idea = list(idea)
+	new_idea.extend(word)
+	tup = (word, ksEvaluator(new_idea))
+	scores.append(tup)
+scores.sort(key=lambda x: x[1])

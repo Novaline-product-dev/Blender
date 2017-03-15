@@ -1,14 +1,13 @@
-<img src="https://github.com/jtraffic/jtraffic.github.io/blob/master/img/blend.png" width="350" height="200" />
-## <span style = "color:#002699"> What is Blender? 
+## What is Blender? 
 Blender is a system that combines artificial and human intelligence to increase creativity.  
 
 The current version is preliminary and merely produces stimulus phrases associated with a particular concept.  Blender has several methods for generating these phrases, all of which are still under development.  The methods are in the folder `generators`. 
 
 
-## <span style = "color:#002699">Why? </span>
+## Why? 
 We hypothesize that humans and computers working together can create more efficiently and effectively together than separately.  
 
-## <span style = "color:#002699">What is Next for Blender? </span>
+## What is Next for Blender? 
 In no particular order, we hope to accomplish the following with Blender:
 
 * Test our above hypothesis and publish the results in an academic journal, using some version of Blender.

@@ -12,6 +12,7 @@ article = wikipedia.page(seed_term).content
 goog_list = pickle.load( open('fulltext.p', 'rb'))
 text_list = [text_fun.prune(doc) for doc in goog_list]
 ksEvaluator = ksmirnov_fun.ksFunctionGenerator(text_list)
+ks2 = ksmirnov_fun.ks_factory_vec(text_list)
 
 ok_tags = ['NN', 'JJ']
 header_tags = schema_fun.get_header_tags(seed_term)
@@ -44,12 +45,3 @@ ni = [el[0] for el in new_ideas2]
 with open('aux/' + seed_term + '_ideas.txt', 'wb') as f:
     f.write('\n'.join(map(str, ni)).encode('utf8'))
 
-
-
-
-for word in words:
-	new_idea = list(idea)
-	new_idea.extend(word)
-	tup = (word, ksEvaluator(new_idea))
-	scores.append(tup)
-scores.sort(key=lambda x: x[1])

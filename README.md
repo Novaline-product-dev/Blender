@@ -5,7 +5,7 @@ The current version is preliminary and merely produces stimulus phrases associat
 
 
 ## Why? 
-We hypothesize that humans and computers working together can create more efficiently and effectively together than separately.  
+We hypothesize that humans and computers working together can create more efficiently and effectively together than separately.  The main intended application, currently, is in new product development, particularly in the ideation and concept screening phases.
 
 ## What is Next for Blender? 
 In no particular order, we hope to accomplish the following with Blender:

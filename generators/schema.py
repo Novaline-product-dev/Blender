@@ -6,10 +6,12 @@ from evaluators import ksmirnov_fun
 import wikipedia
 
 
-seed_term = pickle.load( open('search_text.p', 'rb'))
+with open('search_text.p', 'rb') as f:
+	seed_term = pickle.load(f)
 seed_term = seed_term.lower()
 article = wikipedia.page(seed_term).content
-goog_list = pickle.load( open('fulltext.p', 'rb'))
+with open('fulltext.p', 'rb') as f:
+	goog_list = pickle.load(f)
 text_list = [text_fun.prune(doc) for doc in goog_list]
 ksEvaluator = ksmirnov_fun.ksFunctionGenerator(text_list)
 ks2 = ksmirnov_fun.ksFunctionGenerator(text_list)

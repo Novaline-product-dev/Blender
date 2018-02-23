@@ -8,7 +8,7 @@ from utils.wiki_sim import wiki_query
 from gensim.models import Word2Vec
 
 
-nlp = spacy.load('en')
+nlp = text_fun.nlp 
 
 def get_ref_concepts(seed_term, method='quick'):
     if method == 'quick':

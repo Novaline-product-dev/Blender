@@ -35,7 +35,7 @@ def stim_words(num_ideas = 40):
                     tup = (word, sim)
                     words.append(tup)
 
-    words = sorted(words, key=lambda x:x[1], reverse=True)
+    #words = sorted(words, key=lambda x:x[1], reverse=True)
     stim_words = [w[0] for w in words]
     for i, stim_word in enumerate(stim_words):
         score = ksEvaluator([seed_term, stim_word])

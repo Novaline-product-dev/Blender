@@ -53,6 +53,7 @@ def slow_analogy(a, a_star, b):
 queries = [w for w in nlp.vocab if w.prob >= -15]
 queries = [w for w in queries if w.is_lower]
 queries = [w for w in queries if nlp(w.orth_)[0].pos_ == 'NOUN']
+
 def get_similar(word):
     by_similarity = sorted(queries, key=lambda w: word.similarity(w), 
                            reverse=True)
@@ -61,3 +62,4 @@ def get_similar(word):
         out.append(el.orth_)
     return out
 
+get_similar(nlp.vocab['woman'])

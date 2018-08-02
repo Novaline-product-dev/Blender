@@ -6,6 +6,34 @@ import time
 import random
 import pickle
 import os, re
+from functools import wraps
+import errno
+import os
+import signal
+
+
+
+class TimeoutError(Exception):
+    pass
+
+def timeout(seconds=10, error_message=os.strerror(errno.ETIME)):
+    def decorator(func):
+        def _handle_timeout(signum, frame):
+            raise TimeoutError(error_message)
+
+        def wrapper(*args, **kwargs):
+            signal.signal(signal.SIGALRM, _handle_timeout)
+            signal.alarm(seconds)
+            try:
+                result = func(*args, **kwargs)
+            finally:
+                signal.alarm(0)
+            return result
+
+        return wraps(func)(wrapper)
+
+    return decorator
+
 
 def gather_urls(search_term, page_count): # Gathers page_count urls from Google
     r = requests.get('http://www.google.com/search?q=' + search_term)
@@ -45,9 +73,10 @@ def text_clean(text):
     text = '\n'.join(chunk for chunk in chunks if chunk)
     text = text.replace(',', '')
 
+
+@timeout(30)
 def retrieve_text(address_book):  # Scrapes the text from a list of urls
     fulltext = [] # initialize empty list
-    global trouble_child
     trouble_child = [] # initialize list to find pages that don't work
 
     for x in range(len(address_book)):

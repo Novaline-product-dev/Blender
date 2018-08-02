@@ -4,7 +4,7 @@ import wikipedia
 import spacy
 from nltk.corpus import wordnet as wn
 from utils import text_fun
-from utils.wiki_sim import wiki_query
+#from utils.wiki_sim import wiki_query
 from gensim.models import Word2Vec
 
 
@@ -20,10 +20,10 @@ def get_ref_concepts(seed_term, method='quick'):
         out = mod.most_similar(seed_term) 
         out = [item[0] for item in out]
         return out
-    elif method == 'LSI':
-        out = wiki_query.similar(seed_term)
-        out = [el for el in out if el.lower() != seed_term]
-        return out
+    #elif method == 'LSI':
+    #    out = wiki_query.similar(seed_term)
+    #    out = [el for el in out if el.lower() != seed_term]
+    #    return out
     elif method == 'wordnet':
         out = []
         for term in seed_term.split():
@@ -45,7 +45,7 @@ def get_ref_concepts(seed_term, method='quick'):
                     name = nym.name()
                     word = name[0:name.find('.')]
                     out3.append(word)
-        out2 = wiki_query.similar(seed_term)
+        #out2 = wiki_query.similar(seed_term)
         out2 = [el for el in out2 if el.lower() != seed_term]
         seed_term = seed_term.split()
         seed_term = seed_term[len(seed_term) - 1]

@@ -107,7 +107,7 @@ def retrieve_text(address_book):  # Scrapes the text from a list of urls
 
     return trouble_child
 
-def google_scrape(search_text, pages, p = False):
+def google_scrape(search_text, pages):
     """Writes the text of n pages of Google search results into fulltext.p.
     This effectively joins all the scraperfunctions into one big function."""
     # For logging
@@ -120,8 +120,7 @@ def google_scrape(search_text, pages, p = False):
     address_book = gather_urls(search_text, pages)
     
     # Print the urls
-    if p == True:
-        print(address_book)
+    print(address_book)
     
     # Scrape the text from each page, clean it, and write it to a pickled file
     # ('fulltext.p'). Also returns a list of difficult web pages.

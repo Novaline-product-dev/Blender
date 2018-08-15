@@ -1,29 +1,29 @@
 import os, string
 import spacy
 from lxml import html
+from utils import stoplists
 
 
 nlp_prune = spacy.load('en', parser=False)
 nlp = spacy.load('en')
-default_stop_list = set(['[', ']', '\'', '\n', '==', \
-                         'com', '\n\n', '\'s', ' ', '  ',
-                         '===', '\n\n\n'])
-def prune(doc, stoplist=None, english_dict=True, ok_tags=None):
+#default_stop_list = set(['[', ']', '\'', '\n', '==', \
+#                         'com', '\n\n', '\'s', ' ', '  ',
+#                         '===', '\n\n\n'])
+default_stop_list = stoplists.long_stoplist
+def prune(doc, stoplist=default_stop_list, english_dict=True, ok_tags=None):
     '''This takes a single document and tokenizes the words, removes
     undesirable elements, and prepares it to be loaded into a dictionary.
     '''
-    if not stoplist:
-        stoplist = default_stop_list
     temp = nlp_prune(doc)
     temp = [w for w in temp if w.pos_ != 'PUNCT']
     temp = [w for w in temp if w.pos_ != 'NUM']
     if ok_tags:
         temp = [w for w in temp if w.tag_ in ok_tags]
-    temp = [w for w in temp if w.text not in stoplist]
     temp = [w for w in temp if not w.is_stop]
     if english_dict:
         temp = [w for w in temp if str(w) in nlp.vocab]
     out = [w.lemma_ for w in temp]
+    out = [w for w in out if w not in stoplist]
     out = [w.strip() for w in out if w.strip()]
     out = [w for w in out if w != len(w) * w[0]]
     return out

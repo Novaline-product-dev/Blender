@@ -161,6 +161,7 @@ long_stoplist = [
 'few',
 'ff',
 'fifth',
+'fig',
 'first',
 'five',
 'fix',

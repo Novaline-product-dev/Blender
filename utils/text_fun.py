@@ -23,6 +23,7 @@ def prune(doc, stoplist=default_stop_list, english_dict=True, ok_tags=None):
     if english_dict:
         temp = [w for w in temp if str(w) in nlp.vocab]
     out = [w.lemma_ for w in temp]
+    out = [w for w in out if w != '-PRON-']
     out = [w for w in out if w not in stoplist]
     out = [w.strip() for w in out if w.strip()]
     out = [w for w in out if w != len(w) * w[0]]

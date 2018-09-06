@@ -5,7 +5,7 @@ import math
 from numpy import dot
 from numpy.linalg import norm
 
-nlp = spacy.load('en')
+nlp = spacy.load('en_core_web_md')
 def load_vocab():    
     all_words = list({w for w in nlp.vocab if w.has_vector and \
         w.orth_.islower()})
@@ -43,12 +43,13 @@ def slow_analogy(a, a_star, b):
     a = nlp.vocab[a]
     a_star = nlp.vocab[a_star]
     b = nlp.vocab[b]
-    clust_mean = (a_star.cluster + b.cluster) / 2
     objective = lambda x: cos3mul(a.vector, a_star.vector, b.vector, x.vector)
     ranked = sorted(all_words, key = lambda w: objective(w), reverse = True)
     for word in ranked[:10]:
         if word not in [a, a_star, b]:   
             print(word.orth_)
+
+print(slow_analogy('man', 'woman', 'king'))
 
 queries = [w for w in nlp.vocab if w.prob >= -15]
 queries = [w for w in queries if w.is_lower]

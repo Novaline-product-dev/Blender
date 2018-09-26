@@ -4,7 +4,7 @@ from lxml import html
 from utils import stoplists
 
 
-nlp_prune = spacy.load('en', parser=False)
+nlp_prune = spacy.load('en')
 nlp = spacy.load('en')
 #default_stop_list = set(['[', ']', '\'', '\n', '==', \
 #                         'com', '\n\n', '\'s', ' ', '  ',

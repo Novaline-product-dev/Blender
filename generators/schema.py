@@ -8,7 +8,8 @@ import wikipedia
 
 with open('search_text.p', 'rb') as f:
 	seed_term = pickle.load(f)
-seed_term = seed_term.lower()
+#seed_term = seed_term.lower()
+seed_term = 'utensil drawer'
 article = wikipedia.page(seed_term).content
 with open('fulltext.p', 'rb') as f:
 	goog_list = pickle.load(f)
@@ -23,12 +24,12 @@ exclude = set(['==', '===', '(', ')', 'etc', 'e.g.'])
 targets = [t for t in targets if t not in exclude]
 targets = list(set(targets))
 
-ref_concepts = schema_fun.get_ref_concepts(seed_term, method='LSI')
+ref_concepts = schema_fun.get_ref_concepts(seed_term, method='quick')
 model = schema_fun.build_model(seed_term, ref_concepts, targets, article)
 
 # Remove stuff not in the vocab
-targets = [target for target in targets if target in model.vocab]
-ref_concepts = [rc.lower() for rc in ref_concepts if rc.lower() in model.vocab]
+targets = [target for target in targets if target in model.wv.vocab]
+ref_concepts = [rc.lower() for rc in ref_concepts if rc.lower() in model.wv.vocab]
 
 new_ideas = schema_fun.schema_framer(seed_term, targets, 
     ref_concepts, model, ksEvaluator, ok_tags, article)

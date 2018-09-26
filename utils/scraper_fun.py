@@ -10,29 +10,8 @@ from functools import wraps
 import errno
 import os
 import signal
+from interruptingcow import timeout
 
-
-
-class TimeoutError(Exception):
-    pass
-
-def timeout(seconds=10, error_message=os.strerror(errno.ETIME)):
-    def decorator(func):
-        def _handle_timeout(signum, frame):
-            raise TimeoutError(error_message)
-
-        def wrapper(*args, **kwargs):
-            signal.signal(signal.SIGALRM, _handle_timeout)
-            signal.alarm(seconds)
-            try:
-                result = func(*args, **kwargs)
-            finally:
-                signal.alarm(0)
-            return result
-
-        return wraps(func)(wrapper)
-
-    return decorator
 
 
 def gather_urls(search_term, page_count): # Gathers page_count urls from Google
@@ -74,7 +53,6 @@ def text_clean(text):
     text = text.replace(',', '')
 
 
-@timeout(30)
 def retrieve_text(address_book):  # Scrapes the text from a list of urls
     fulltext = [] # initialize empty list
     trouble_child = [] # initialize list to find pages that don't work
@@ -82,8 +60,9 @@ def retrieve_text(address_book):  # Scrapes the text from a list of urls
     for x in range(len(address_book)):
         proceed = "y"
         try:
-            r = requests.get(address_book[x])
-            html = r.text
+            with timeout(60, exception=RuntimeError):
+                r = requests.get(address_book[x])
+                html = r.text
         except:
             trouble = address_book[x]
             trouble_child.append(trouble)
@@ -126,15 +105,14 @@ def google_scrape(search_text, pages):
     # ('fulltext.p'). Also returns a list of difficult web pages.
     # Prints logging information
     trouble_child = retrieve_text(address_book)
-    if p == True:
-        print ('Text from %i web pages scanned.' % (len(address_book)-len(trouble_child)))
-        t=time.time()-start_time
-        ts = t % 60
-        tm = t // 60
-        print ('----- %i minutes, %i seconds -----' % (tm, ts))
-        if len(trouble_child) == 0:
-            print ("All pages successfully scanned.")
-        if len(trouble_child) == 1:
-            print ("1 problem child: ", trouble_child)
-        if len(trouble_child) > 1:
-            print("%i problem children: " % len(trouble_child),  trouble_child)
+    print ('Text from %i web pages scanned.' % (len(address_book)-len(trouble_child)))
+    t=time.time()-start_time
+    ts = t % 60
+    tm = t // 60
+    print ('----- %i minutes, %i seconds -----' % (tm, ts))
+    if len(trouble_child) == 0:
+        print ("All pages successfully scanned.")
+    if len(trouble_child) == 1:
+        print ("1 problem child: ", trouble_child)
+    if len(trouble_child) > 1:
+        print("%i problem children: " % len(trouble_child),  trouble_child)

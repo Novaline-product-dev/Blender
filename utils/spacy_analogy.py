@@ -56,11 +56,12 @@ queries = [w for w in queries if w.is_lower]
 queries = [w for w in queries if nlp(w.orth_)[0].pos_ == 'NOUN']
 
 def get_similar(word):
-    by_similarity = sorted(queries, key=lambda w: word.similarity(w), 
-                           reverse=True)
+    word = nlp.vocab[word]
+    by_similarity = sorted(queries, 
+        key=lambda w: word.similarity(w), reverse=True)
     out = []
     for el in by_similarity[:10]:
         out.append(el.orth_)
     return out
 
-get_similar(nlp.vocab['woman'])
+print(get_similar('woman'))

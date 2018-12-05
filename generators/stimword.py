@@ -12,7 +12,6 @@ goog_list = pickle.load( open("fulltext.p", "rb"))
 text_list = [text_fun.prune(doc) for doc in goog_list]
 seed_term = pickle.load(open('search_text.p', 'rb'))
 nlp = text_fun.nlp_prune # parser is not used on this one
-ksEvaluator = ksmirnov_fun.ksFunctionGenerator(text_list)
 
 def stim_words(num_ideas = 40):
     searchWords = []
@@ -20,26 +19,27 @@ def stim_words(num_ideas = 40):
         searchWords.extend(text)
     searchWords = set(searchWords)
 
-    words = []
-    if seed_term in nlp.vocab:
-        seed_lexeme = nlp.vocab[seed_term]
-    else:
-        split_term = seed_term.split()
-        seed_lexeme = nlp.vocab[split_term[len(split_term) - 1]]
-    for word in searchWords:
-        if word in nlp.vocab:
-            lexeme = nlp.vocab[word]
-            if lexeme.prob > -14:
-                sim = lexeme.similarity(seed_lexeme)
-                if sim < 0.7:
-                    tup = (word, sim)
-                    words.append(tup)
+    dictionary = corpora.Dictionary(text_list) 
+    corpus = [dictionary.doc2bow(doc) for doc in text_list] 
+    lsi = models.LsiModel(corpus, id2word = dictionary, 
+        num_topics = len(text_list))
+    index = similarities.MatrixSimilarity(lsi[corpus])
+
 
     #words = sorted(words, key=lambda x:x[1], reverse=True)
-    stim_words = [w[0] for w in words]
-    for i, stim_word in enumerate(stim_words):
-        score = ksEvaluator([seed_term, stim_word])
-        stim_words[i] = (stim_word, score)
+    stim_words = list()
+    for word in searchWords:
+        phrase = seed_term + ' ' + word
+        vec_repr = dictionary.doc2bow(phrase.split())
+        vec_lsi = lsi[vec_repr] # convert the query to LSI space
+        sim = sum(index[vec_lsi])
+        stim_words.append((word, sim))
+    
+    sim_frame = pd.DataFrame(stim_words)
+    sim_frame.index = sim_frame[0]
+    sim_frame = sim_frame.drop([0], axis=1)
+    sim_frame['med_dist'] = abs(sim_frame - sim_frame.median())
+    stim_words = list(zip(sim_frame.index, sim_frame['med_dist']))
     stim_words = sorted(stim_words, key= lambda x:x[1])
     [print(w[1]) for w in stim_words]
     stim_words = [w[0] for w in stim_words]

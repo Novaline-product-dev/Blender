@@ -1,11 +1,11 @@
 import wikipedia
 import random
-from spacy.en import English
+import spacy
 from spacy.symbols import amod
 
 
-nlp = English()
-seed = 'spatula'
+nlp = spacy.load('en')
+seed = 'radio'
 page = wikipedia.page(seed)
 seed_word = nlp(seed)[0]
 doc = page.content

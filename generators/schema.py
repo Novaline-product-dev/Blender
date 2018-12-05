@@ -8,8 +8,7 @@ import wikipedia
 
 with open('search_text.p', 'rb') as f:
 	seed_term = pickle.load(f)
-#seed_term = seed_term.lower()
-seed_term = 'utensil drawer'
+seed_term = seed_term.lower()
 article = wikipedia.page(seed_term).content
 with open('fulltext.p', 'rb') as f:
 	goog_list = pickle.load(f)

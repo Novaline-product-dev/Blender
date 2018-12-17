@@ -1,5 +1,3 @@
-## Defines the functions that will be used in GoogleScrape3.py
-
 from bs4 import BeautifulSoup as BS
 import requests
 import time
@@ -14,7 +12,7 @@ from interruptingcow import timeout
 
 
 
-def gather_urls(search_term, page_count): # Gathers page_count urls from Google
+def gather_urls(search_term, page_count): # Gathers urls from Google
     r = requests.get('http://www.google.com/search?q=' + search_term)
     soup = BS(r.text, 'lxml')
 
@@ -45,6 +43,33 @@ def gather_urls(search_term, page_count): # Gathers page_count urls from Google
         time.sleep(random.uniform(0, 5))
 
     return address_book
+
+def get_first_result(search_term): # Gathers urls from Google
+    r = requests.get('http://www.google.com/search?q=' + search_term)
+    soup = BS(r.text, 'lxml')
+
+    stop_str1 = 'Shop for ' + search_term + ' on Google'
+    stop_str2 = 'Images for ' + search_term
+    stop_list = [stop_str1, stop_str2]
+
+    address_book = []
+    r = requests.get('http://www.google.com/search?q=' + search_term)
+    soup = BS(r.text, 'lxml')
+    blue_links = soup('h3', class_ = 'r')
+    go = True
+    spot = 0
+    while go:
+        link = blue_links[spot]
+        if link.text not in stop_list:
+            first_href = link.a['href']
+            first_link = first_href.replace('/url?q=', '')
+            first_link = re.sub('&sa=.*', '', first_link)
+            if not re.search('/search\\?q=', first_link):
+                return first_link
+            else:
+                spot += 1
+                continue
+
 
 def text_clean(text): 
     lines = (line.strip() for line in text.splitlines())

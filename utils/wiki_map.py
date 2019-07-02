@@ -8,16 +8,16 @@ os.chdir(os.getenv('HOME') + '/Desktop')
 
 
 
-nlp = spacy.load('en_core_web_lg')
+#nlp = spacy.load('en_core_web_lg')
 spacy_stopwords = spacy.lang.en.stop_words.STOP_WORDS
-term = 'skateboard'
+term = 'logistics'
 print(f'Getting Wikipedia article for {term}.')
 pg = wikipedia.page(term).content
 pg = pg.replace('=', '')
 pg = pg.replace('\n', ' ')
 parsed = nlp(pg)
 words = [w for w in parsed if w.lemma_ not in spacy_stopwords]
-pos_drop = ['PUNCT', 'NUM', 'X', 'SYM', 'SPACE', 'PRON', 'PART']
+pos_drop = ['PUNCT', 'NUM', 'X', 'SYM', 'SPACE', 'PRON', 'PART', 'ADV']
 words = [w for w in words if w.pos_ not in pos_drop]
 words = [w for w in words if len(w.text) > 1]
 words = [w for w in words if w.text is not '─']
@@ -25,13 +25,20 @@ if words[len(words) -1].text == 'References':
 	words.pop(len(words) - 1)
 seen = list()
 tokens = list()
+freqs = list()
+probs = list()
 for w in words:
 	if w.lemma_ in seen:
 		continue
 	else:
+		freqs.append(len([el for el in words if el.lemma_ == w.lemma_]))
+		probs.append(w.prob)
 		seen.append(w.lemma_)
 		tokens.append(w)
-
+gen_probs = np.array(probs)
+doc_probs = np.log(np.array(freqs) / len(tokens))
+prefs = gen_probs - doc_probs
+prefs = prefs - np.mean(prefs) - 38
 
 X = list()
 for t in tokens:
@@ -42,7 +49,7 @@ pca = PCA(n_components=100)
 pca.fit(X)
 Xc = np.matmul(pca.components_, X.transpose()).transpose()
 
-af = AffinityPropagation(preference=-30).fit(Xc)
+af = AffinityPropagation(preference=prefs).fit(Xc)
 cluster_centers_indices = af.cluster_centers_indices_
 labels = af.labels_
 
@@ -57,4 +64,5 @@ with open('skateboard_schema.txt', 'w', encoding='utf-8') as f:
 	for k in range(n_clusters_):
 		class_members = labels == k
 		class_tokens = [el[0] for el in zip(tokens, class_members) if el[1]]
+		member_prefs = [el[0] for el in zip(prefs, class_members) if el[1]]
 		f.write(f'Cluster {k} with {len(class_tokens)} members: {class_tokens} \n')

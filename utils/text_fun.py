@@ -1,11 +1,12 @@
 import os, string
 import spacy
 from lxml import html
+os.chdir(os.getenv('HOME') + '/Documents/Blender')
 from utils import stoplists
 
 
-nlp_prune = spacy.load('en')
-nlp = spacy.load('en')
+nlp_prune = spacy.load('en_core_web_md')
+nlp = spacy.load('en_core_web_md')
 #default_stop_list = set(['[', ']', '\'', '\n', '==', \
 #                         'com', '\n\n', '\'s', ' ', '  ',
 #                         '===', '\n\n\n'])

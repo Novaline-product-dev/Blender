@@ -8,7 +8,6 @@ from functools import wraps
 import errno
 import os
 import signal
-from interruptingcow import timeout
 
 
 
@@ -85,9 +84,8 @@ def retrieve_text(address_book):  # Scrapes the text from a list of urls
     for x in range(len(address_book)):
         proceed = "y"
         try:
-            with timeout(60, exception=RuntimeError):
-                r = requests.get(address_book[x])
-                html = r.text
+            r = requests.get(address_book[x])
+            html = r.text
         except:
             trouble = address_book[x]
             trouble_child.append(trouble)

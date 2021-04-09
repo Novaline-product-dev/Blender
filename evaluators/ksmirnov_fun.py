@@ -45,7 +45,7 @@ def ksFunctionGenerator(text_list, grid_pts = 500):
     dtm = pd.DataFrame(dtm, columns = vocab) 
     tdm = dtm.transpose() # term-doc mat = transpose of doc-term mat
     idx = tdm.sum(axis = 1).sort_values(ascending = False).index 
-    tdm = tdm.ix[idx] # sort the term-doc mat by word frequency
+    tdm = tdm.iloc[idx] # sort the term-doc mat by word frequency
     print(list(tdm.index.values)[0:10])
     totals = tdm.sum(axis = 1)
     wordFreqThreshold = 10
